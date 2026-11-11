@@ -8,6 +8,7 @@ import { usersRouter } from "./routes/users.js";
 import { appointmentsRouter } from "./routes/appointments.js";
 import { medicinesRouter } from "./routes/medicines.js";
 import { prescriptionsRouter } from "./routes/prescriptions.js";
+import { consultationsRouter } from "./routes/consultations.js";
 import { seedRouter } from "./routes/seed.js";
 
 export const app = express();
@@ -22,6 +23,7 @@ v1.use("/users", usersRouter);
 v1.use("/appointments", appointmentsRouter);
 v1.use("/medicines", medicinesRouter);
 v1.use("/prescriptions", prescriptionsRouter);
+v1.use("/consultations", consultationsRouter);
 v1.use("/seed", seedRouter);
 app.use("/api/v1", v1);
 app.get("/api/health", healthCheck);

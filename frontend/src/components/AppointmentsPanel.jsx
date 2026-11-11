@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Calendar } from 'lucide-react';
 import { appointmentsApi } from '../services/api';
+import { WritePrescriptionModal } from './WritePrescriptionModal';
 
 const STATUS_STYLE = {
   SCHEDULED: 'bg-emerald-50 text-emerald-800 border-emerald-200',
@@ -49,6 +50,7 @@ export const AppointmentsPanel = ({ role, refreshKey = 0 }) => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [prescribingAppointment, setPrescribingAppointment] = useState(null);
 
   const load = () => {
     setLoading(true);
@@ -100,6 +102,15 @@ export const AppointmentsPanel = ({ role, refreshKey = 0 }) => {
               </div>
               <div className="flex items-center gap-2 flex-wrap">
                 <span className={`border font-bold px-2 py-0.5 rounded ${STATUS_STYLE[a.status]}`}>{a.status}</span>
+                {role === 'DOCTOR' && (
+                  <button
+                    type="button"
+                    onClick={() => setPrescribingAppointment(a)}
+                    className="border border-emerald-500 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-semibold px-2 py-1 rounded-lg transition"
+                  >
+                    ਪਰਚੀ ਲਿਖੋ (Rx)
+                  </button>
+                )}
                 {a.status === 'SCHEDULED' && (ACTIONS[role] || []).map(([status, label]) => (
                   <button
                     key={status}
@@ -114,6 +125,18 @@ export const AppointmentsPanel = ({ role, refreshKey = 0 }) => {
             </li>
           ))}
         </ul>
+      )}
+
+      {prescribingAppointment && (
+        <WritePrescriptionModal
+          patient={{ id: prescribingAppointment.patient_id, full_name: otherParty(prescribingAppointment) }}
+          appointmentId={prescribingAppointment.id}
+          onClose={() => setPrescribingAppointment(null)}
+          onCreated={() => {
+            setPrescribingAppointment(null);
+            load();
+          }}
+        />
       )}
     </section>
   );

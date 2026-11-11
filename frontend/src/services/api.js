@@ -84,6 +84,10 @@ export const appointmentsApi = {
 };
 
 export const medicinesApi = {
+  catalog: async (q) => {
+    const res = await api.get('/medicines/catalog', { params: { q } });
+    return res.data;
+  },
   availability: async (q) => {
     const res = await api.get('/medicines/availability', { params: { q } });
     return res.data;
@@ -94,6 +98,25 @@ export const medicinesApi = {
   },
   setStock: async (id, stock_quantity) => {
     const res = await api.patch(`/medicines/inventory/${id}`, { stock_quantity });
+    return res.data;
+  },
+};
+
+export const prescriptionsApi = {
+  list: async (params) => {
+    const res = await api.get('/prescriptions', { params });
+    return res.data;
+  },
+  get: async (idOrNumber) => {
+    const res = await api.get(`/prescriptions/${idOrNumber}`);
+    return res.data;
+  },
+  create: async (payload) => {
+    const res = await api.post('/prescriptions', payload);
+    return res.data;
+  },
+  dispense: async (id) => {
+    const res = await api.post(`/prescriptions/${id}/dispense`);
     return res.data;
   },
 };

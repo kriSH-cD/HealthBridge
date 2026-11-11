@@ -1,0 +1,29 @@
+# Environments
+.venv/
+venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.sqlite3
+*.db
+.pytest_cache/
+
+# Node
+node_modules/
+dist/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment files with secrets
+.env
+!.env.example
+
+# IDE
+.vscode/
+.idea/
+.DS_Store
+

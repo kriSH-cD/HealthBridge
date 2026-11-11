@@ -62,3 +62,45 @@ def decode_access_token(token: str) -> Optional[dict]:
     except (jwt.PyJWTError, Exception):
         return None
 
+
+def create_refresh_token(
+    subject: Union[str, Any],
+    expires_delta: Optional[timedelta] = None
+) -> tuple[str, datetime]:
+    """Generate a signed JWT refresh token with longer TTL."""
+    if expires_delta:
+        expire = datetime.now(timezone.utc) + expires_delta
+    else:
+        expire = datetime.now(timezone.utc) + timedelta(
+            days=settings.REFRESH_TOKEN_EXPIRE_DAYS
+        )
+
+    to_encode = {
+        "sub": str(subject),
+        "type": "refresh",
+        "exp": expire,
+        "iat": datetime.now(timezone.utc)
+    }
+
+    encoded_jwt = jwt.encode(
+        to_encode,
+        settings.SECRET_KEY,
+        algorithm=settings.ALGORITHM
+    )
+    return encoded_jwt, expire
+
+
+def decode_refresh_token(token: str) -> Optional[dict]:
+    """Decode and validate a refresh token."""
+    try:
+        payload = jwt.decode(
+            token,
+            settings.SECRET_KEY,
+            algorithms=[settings.ALGORITHM]
+        )
+        if payload.get("type") != "refresh":
+            return None
+        return payload
+    except (jwt.PyJWTError, Exception):
+        return None
+

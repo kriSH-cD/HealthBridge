@@ -12,6 +12,10 @@ class Settings(BaseSettings):
     SECRET_KEY: str = "sehatsetu_rural_punjab_secret_key_change_in_production_2026"
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24  # 24 hours
+    REFRESH_TOKEN_EXPIRE_DAYS: int = 7          # 7 days
+    
+    # Rate Limiting
+    RATE_LIMIT_PER_MINUTE: int = 30             # max auth requests per minute per IP
     
     # Database: Defaults to SQLite for local development & automated testing if Postgres is not specified
     DATABASE_URL: str = "sqlite:///./sehatsetu.db"

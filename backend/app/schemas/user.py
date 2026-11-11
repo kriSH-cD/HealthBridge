@@ -158,3 +158,43 @@ class UserResponse(BaseModel):
     hospital_profile: Optional[HospitalProfileResponse] = None
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class SendOTPRequest(BaseModel):
+    phone: str = Field(..., description="Indian 10-digit mobile number")
+    purpose: str = Field(default="LOGIN", description="Purpose: LOGIN, REGISTRATION, PASSWORD_RESET")
+
+    @field_validator("phone")
+    @classmethod
+    def validate_phone(cls, v: str) -> str:
+        clean_phone = re.sub(r"[^\d]", "", v)
+        if clean_phone.startswith("91") and len(clean_phone) == 12:
+            clean_phone = clean_phone[2:]
+        elif clean_phone.startswith("0") and len(clean_phone) == 11:
+            clean_phone = clean_phone[1:]
+        if len(clean_phone) != 10:
+            raise ValueError("Phone number must be a valid 10-digit mobile number")
+        return clean_phone
+
+
+class VerifyOTPRequest(BaseModel):
+    phone: str = Field(..., description="Indian 10-digit mobile number")
+    otp_code: str = Field(..., min_length=4, max_length=10)
+    purpose: str = Field(default="LOGIN")
+
+
+class ResetPasswordRequest(BaseModel):
+    phone: str = Field(...)
+    otp_code: str = Field(..., min_length=4, max_length=10)
+    new_password: str = Field(..., min_length=6, description="New password, at least 6 characters")
+
+
+class ProfileUpdateRequest(BaseModel):
+    full_name: Optional[str] = None
+    email: Optional[str] = None
+    village: Optional[str] = None
+    preferred_language: Optional[LanguagePreference] = None
+    
+    patient_data: Optional[PatientProfileBase] = None
+    doctor_data: Optional[DoctorProfileBase] = None
+    pharmacy_data: Optional[PharmacyProfileBase] = None

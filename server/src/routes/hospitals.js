@@ -69,3 +69,31 @@ hospitalsRouter.get("/", async (req, res) => {
 
   res.json(items.map(serializeHospital));
 });
+
+/**
+ * Public: Summary stats across all Nabha hospitals.
+ */
+hospitalsRouter.get("/summary", async (_req, res) => {
+  const hospitals = await prisma.hospital.findMany();
+
+  const total_facilities = hospitals.length;
+  const total_beds = hospitals.reduce((sum, h) => sum + h.total_beds, 0);
+  const total_available_beds = hospitals.reduce((sum, h) => sum + h.available_beds, 0);
+  const total_occupied_beds = Math.max(0, total_beds - total_available_beds);
+  const overall_occupancy_rate = total_beds > 0 ? Math.round((total_occupied_beds / total_beds) * 100) : 0;
+  const oxygen_facilities = hospitals.filter((h) => h.has_oxygen).length;
+  const emergency_facilities = hospitals.filter((h) => h.has_emergency).length;
+  const critical_facilities = hospitals.filter((h) => h.available_beds <= 5).length;
+
+  res.json({
+    total_facilities,
+    total_beds,
+    total_available_beds,
+    total_occupied_beds,
+    overall_occupancy_rate,
+    oxygen_facilities,
+    emergency_facilities,
+    critical_facilities,
+    last_updated: hospitals.length > 0 ? hospitals[0].updated_at : new Date().toISOString(),
+  });
+});

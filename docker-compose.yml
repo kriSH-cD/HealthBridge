@@ -15,7 +15,7 @@ services:
   backend:
     build: ./backend
     environment:
-      DATABASE_URL: postgresql://sehatsetu:sehatsetu@db:5432/sehatsetu
+      DATABASE_URL: postgresql+psycopg2://sehatsetu:sehatsetu@db:5432/sehatsetu
       SECRET_KEY: ${SECRET_KEY:-change_me_in_production}
     ports:
       - "8000:8000"

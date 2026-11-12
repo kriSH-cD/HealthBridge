@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { prisma } from "../db.js";
+import { HttpError } from "../lib/http.js";
 
 export const hospitalsRouter = Router();
 
@@ -96,4 +97,14 @@ hospitalsRouter.get("/summary", async (_req, res) => {
     critical_facilities,
     last_updated: hospitals.length > 0 ? hospitals[0].updated_at : new Date().toISOString(),
   });
+});
+
+/**
+ * Public: Get single hospital details by ID.
+ */
+hospitalsRouter.get("/:id", async (req, res) => {
+  const id = Number(req.params.id) || 0;
+  const hospital = await prisma.hospital.findUnique({ where: { id } });
+  if (!hospital) throw new HttpError(404, "Hospital not found");
+  res.json(serializeHospital(hospital));
 });

@@ -32,7 +32,6 @@ def run_migrations_offline() -> None:
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
-        render_as_batch=True if url.startswith("sqlite") else False,
     )
 
     with context.begin_transaction():
@@ -43,23 +42,17 @@ def run_migrations_online() -> None:
     """Run migrations in 'online' mode."""
     configuration = config.get_section(config.config_ini_section, {})
     configuration["sqlalchemy.url"] = settings.DATABASE_URL
-    
-    connect_args = {}
-    if settings.DATABASE_URL.startswith("sqlite"):
-        connect_args["check_same_thread"] = False
 
     connectable = engine_from_config(
         configuration,
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
-        connect_args=connect_args,
     )
 
     with connectable.connect() as connection:
         context.configure(
             connection=connection,
             target_metadata=target_metadata,
-            render_as_batch=True if settings.DATABASE_URL.startswith("sqlite") else False,
         )
 
         with context.begin_transaction():

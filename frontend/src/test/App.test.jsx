@@ -26,7 +26,7 @@ vi.mock('../services/api', () => ({
     getHealth: vi.fn().mockResolvedValue({ status: "online" }),
     getDirectApiHealth: vi.fn().mockResolvedValue({
       status: "online",
-      database: { status: "healthy", type: "SQLite" },
+      database: { status: "healthy", type: "PostgreSQL" },
       region: "Nabha, Patiala, Punjab"
     }),
     seedDemoData: vi.fn().mockResolvedValue({ status: "success", message: "Demo data seeded" }),

@@ -15,12 +15,11 @@ def health_check(db: Session = Depends(get_db)):
     database connectivity, and regional configuration for Nabha.
     """
     db_status = "unhealthy"
-    db_type = "unknown"
+    db_type = "PostgreSQL"
     try:
         # Simple test query
         db.execute(text("SELECT 1"))
         db_status = "healthy"
-        db_type = "PostgreSQL" if "postgres" in settings.DATABASE_URL.lower() else "SQLite"
     except Exception as e:
         db_status = f"unhealthy: {str(e)}"
 

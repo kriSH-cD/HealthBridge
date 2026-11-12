@@ -17,8 +17,7 @@ class Settings(BaseSettings):
     # Rate Limiting
     RATE_LIMIT_PER_MINUTE: int = 30             # max auth requests per minute per IP
     
-    # Database: Defaults to SQLite for local development & automated testing if Postgres is not specified
-    DATABASE_URL: str = "sqlite:///./sehatsetu.db"
+    DATABASE_URL: str = "postgresql+psycopg2://sehatsetu:sehatsetu@localhost:5432/sehatsetu"
     
     # CORS
     BACKEND_CORS_ORIGINS: List[str] = [

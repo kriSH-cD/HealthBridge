@@ -33,9 +33,33 @@ export const serializeHospital = (h) => {
 
 /**
  * Public: List all Nabha hospitals, CHCs, and PHCs with real-time bed and oxygen availability.
+ * Query filters: q (search name/address), has_oxygen (boolean), has_emergency (boolean), available_only (boolean).
  */
-hospitalsRouter.get("/", async (_req, res) => {
+hospitalsRouter.get("/", async (req, res) => {
+  const where = {};
+
+  if (req.query.q) {
+    const q = String(req.query.q).trim();
+    where.OR = [
+      { hospital_name: { contains: q, mode: "insensitive" } },
+      { address: { contains: q, mode: "insensitive" } },
+    ];
+  }
+
+  if (req.query.has_oxygen !== undefined) {
+    where.has_oxygen = req.query.has_oxygen === "true" || req.query.has_oxygen === true;
+  }
+
+  if (req.query.has_emergency !== undefined) {
+    where.has_emergency = req.query.has_emergency === "true" || req.query.has_emergency === true;
+  }
+
+  if (req.query.available_only === "true" || req.query.available_only === true) {
+    where.available_beds = { gt: 0 };
+  }
+
   const items = await prisma.hospital.findMany({
+    where,
     orderBy: [
       { has_emergency: "desc" },
       { available_beds: "desc" },

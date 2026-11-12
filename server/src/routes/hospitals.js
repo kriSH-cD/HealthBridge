@@ -30,3 +30,18 @@ export const serializeHospital = (h) => {
     updated_at: h.updated_at,
   };
 };
+
+/**
+ * Public: List all Nabha hospitals, CHCs, and PHCs with real-time bed and oxygen availability.
+ */
+hospitalsRouter.get("/", async (_req, res) => {
+  const items = await prisma.hospital.findMany({
+    orderBy: [
+      { has_emergency: "desc" },
+      { available_beds: "desc" },
+      { id: "asc" },
+    ],
+  });
+
+  res.json(items.map(serializeHospital));
+});

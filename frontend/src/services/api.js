@@ -179,6 +179,25 @@ export const consultationsApi = {
   },
 };
 
+export const hospitalsApi = {
+  list: async (params) => {
+    const res = await api.get('/hospitals', { params });
+    return res.data;
+  },
+  getSummary: async () => {
+    const res = await api.get('/hospitals/summary');
+    return res.data;
+  },
+  get: async (id) => {
+    const res = await api.get(`/hospitals/${id}`);
+    return res.data;
+  },
+  updateBeds: async (id, payload) => {
+    const res = await api.patch(`/hospitals/${id}/beds`, payload);
+    return res.data;
+  },
+};
+
 export const systemApi = {
   getHealth: async () => {
     const res = await api.get('/health');

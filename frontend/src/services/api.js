@@ -121,6 +121,45 @@ export const prescriptionsApi = {
   },
 };
 
+export const consultationsApi = {
+  list: async (params) => {
+    const res = await api.get('/consultations', { params });
+    return res.data;
+  },
+  initiate: async (payload) => {
+    const res = await api.post('/consultations', payload);
+    return res.data;
+  },
+  get: async (roomId) => {
+    const res = await api.get(`/consultations/${roomId}`);
+    return res.data;
+  },
+  updateStatus: async (roomId, payload) => {
+    const res = await api.patch(`/consultations/${roomId}/status`, payload);
+    return res.data;
+  },
+  setFallback: async (roomId, payload) => {
+    const res = await api.patch(`/consultations/${roomId}/fallback`, payload);
+    return res.data;
+  },
+  sendSignal: async (roomId, payload) => {
+    const res = await api.post(`/consultations/${roomId}/signal`, payload);
+    return res.data;
+  },
+  getSignals: async (roomId, since = 0) => {
+    const res = await api.get(`/consultations/${roomId}/signals`, { params: { since } });
+    return res.data;
+  },
+  sendChat: async (roomId, payload) => {
+    const res = await api.post(`/consultations/${roomId}/chat`, payload);
+    return res.data;
+  },
+  getChat: async (roomId, since = 0) => {
+    const res = await api.get(`/consultations/${roomId}/chat`, { params: { since } });
+    return res.data;
+  },
+};
+
 export const systemApi = {
   getHealth: async () => {
     const res = await api.get('/health');

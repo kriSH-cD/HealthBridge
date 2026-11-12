@@ -63,6 +63,13 @@ export const translations = {
     valid_until_label: "ਮਿਆਦ (Valid Until)",
     view_print: "ਪਰਚੀ ਵੇਖੋ / ਪ੍ਰਿੰਟ ਕਰੋ",
     dispense_success: "ਪਰਚੀ ਦੀਆਂ ਦਵਾਈਆਂ ਸਫਲਤਾਪੂਰਵਕ ਦਿੱਤੀਆਂ ਗਈਆਂ!",
+    teleconsultation: "ਟੈਲੀ-ਮਸ਼ਵਰਾ (Video Call)",
+    join_call: "ਵੀਡੀਓ ਕਾਲ ਸ਼ੁਰੂ ਕਰੋ",
+    join_teleconsultation: "ਟੈਲੀ-ਮਸ਼ਵਰੇ ਵਿੱਚ ਸ਼ਾਮਲ ਹੋਵੋ",
+    low_bandwidth_mode: "ਘੱਟ ਇੰਟਰਨੈੱਟ ਮੋਡ (2G/3G)",
+    low_bandwidth_active: "ਪੇਂਡੂ ਨੈੱਟਵਰਕ ਘੱਟ ਹੋਣ ਕਾਰਨ ਆਡੀਓ ਮੋਡ ਚਾਲੂ ਹੈ",
+    end_call: "ਕਾਲ ਸਮਾਪਤ ਕਰੋ",
+    rate_call: "ਕਾਲ ਦੀ ਗੁਣਵੱਤਾ ਰੇਟ ਕਰੋ",
   },
   hi: {
     app_title: "सेहत सेतु",
@@ -128,6 +135,13 @@ export const translations = {
     valid_until_label: "वैधता (Valid Until)",
     view_print: "पर्चा देखें / प्रिंट करें",
     dispense_success: "पर्चे की दवाएं सफलतापूर्वक दी गईं!",
+    teleconsultation: "टेली-परामर्श (Video Call)",
+    join_call: "वीडियो कॉल शुरू करें",
+    join_teleconsultation: "टेली-परामर्श में शामिल हों",
+    low_bandwidth_mode: "कम बैंडविड्थ मोड (2G/3G)",
+    low_bandwidth_active: "ग्रामीण नेटवर्क धीमा होने के कारण ऑडियो मोड सक्रिय है",
+    end_call: "कॉल समाप्त करें",
+    rate_call: "कॉल गुणवत्ता रेट करें",
   },
   en: {
     app_title: "SehatSetu",
@@ -193,6 +207,13 @@ export const translations = {
     valid_until_label: "Valid Until",
     view_print: "View / Print Prescription",
     dispense_success: "Prescription dispensed successfully!",
+    teleconsultation: "Teleconsultation (Video Call)",
+    join_call: "Start Video Call",
+    join_teleconsultation: "Join Teleconsultation",
+    low_bandwidth_mode: "Low Bandwidth Mode (2G/3G)",
+    low_bandwidth_active: "Low rural bandwidth detected: Audio-only mode active",
+    end_call: "End Consultation",
+    rate_call: "Rate Call Quality",
   }
 };
 

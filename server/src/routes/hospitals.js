@@ -1,6 +1,8 @@
 import { Router } from "express";
+import { z } from "zod";
 import { prisma } from "../db.js";
-import { HttpError } from "../lib/http.js";
+import { HttpError, parse } from "../lib/http.js";
+import { requireRoles } from "../lib/auth.js";
 
 export const hospitalsRouter = Router();
 
@@ -107,4 +109,47 @@ hospitalsRouter.get("/:id", async (req, res) => {
   const hospital = await prisma.hospital.findUnique({ where: { id } });
   if (!hospital) throw new HttpError(404, "Hospital not found");
   res.json(serializeHospital(hospital));
+});
+
+const updateBedsSchema = z.object({
+  available_beds: z.number().int().min(0).max(5000).optional(),
+  total_beds: z.number().int().min(1).max(5000).optional(),
+  has_oxygen: z.boolean().optional(),
+  has_emergency: z.boolean().optional(),
+  emergency_phone: z.string().min(5).max(20).optional(),
+});
+
+/**
+ * Protected: Update bed availability and emergency status.
+ * Accessible to HOSPITAL_ADMIN, DOCTOR, and ADMIN.
+ */
+hospitalsRouter.patch("/:id/beds", ...requireRoles("HOSPITAL_ADMIN", "DOCTOR", "ADMIN"), async (req, res) => {
+  const id = Number(req.params.id) || 0;
+  const data = parse(updateBedsSchema, req.body);
+
+  const existing = await prisma.hospital.findUnique({ where: { id } });
+  if (!existing) throw new HttpError(404, "Hospital not found");
+
+  // Authorization: HOSPITAL_ADMIN can update their own hospital, ADMIN can update any
+  if (req.user.role === "HOSPITAL_ADMIN" && existing.user_id !== req.user.id) {
+    throw new HttpError(403, "Cannot update other hospitals");
+  }
+
+  // Validate that available_beds does not exceed total_beds
+  const targetTotal = data.total_beds !== undefined ? data.total_beds : existing.total_beds;
+  const targetAvailable = data.available_beds !== undefined ? data.available_beds : existing.available_beds;
+
+  if (targetAvailable > targetTotal) {
+    throw new HttpError(400, "Available beds cannot exceed total beds");
+  }
+
+  const updated = await prisma.hospital.update({
+    where: { id },
+    data: {
+      ...data,
+      updated_at: new Date(),
+    },
+  });
+
+  res.json(serializeHospital(updated));
 });

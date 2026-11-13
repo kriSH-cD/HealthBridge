@@ -15,7 +15,7 @@ docker compose up --build
 
 ## Develop without Docker for the app
 
-Postgres and Redis still run in Docker.
+Postgres and Redis run in Docker via `docker-compose.dev.yml` (`make infra`); the app runs on the host with hot reload.
 
 ```bash
 npm install

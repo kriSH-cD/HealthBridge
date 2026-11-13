@@ -1,10 +1,12 @@
-import { randomUUID } from "node:crypto";
 import { Router } from "express";
 import { z } from "zod";
 import { prisma } from "../db.js";
 import { HttpError, parse } from "../lib/http.js";
 import { requireRoles, requireUser } from "../lib/auth.js";
 import { isoDate } from "../lib/serialize.js";
+import {
+  documentNumber, prescriptionInclude, recordInclude, serializePrescription, serializeRecord,
+} from "../lib/clinical.js";
 
 const include = { patient: { include: { user: true } }, doctor: { include: { user: true } } };
 
@@ -53,7 +55,7 @@ appointmentsRouter.post("/", ...requireRoles("PATIENT"), async (req, res) => {
 
   const appointment = await prisma.appointment.create({
     data: {
-      appointment_number: `APT-${randomUUID().replaceAll("-", "").slice(0, 10).toUpperCase()}`,
+      appointment_number: documentNumber("APT"),
       patient_id: req.user.patient.id,
       doctor_id: doctor.id,
       appointment_date: new Date(`${p.appointment_date}T00:00:00Z`),
@@ -100,4 +102,66 @@ appointmentsRouter.patch("/:id/status", requireUser, async (req, res) => {
     include,
   });
   res.json(serialize(updated));
+});
+
+const completeSchema = z.object({
+  title: z.string().trim().min(1).max(150).default("OPD visit"),
+  diagnosis: z.string().trim().min(1).max(5000),
+  clinical_notes: z.string().max(5000).nullish(),
+  vitals: z.record(z.string().max(30), z.union([z.string().max(30), z.number()])).nullish(),
+  is_confidential: z.boolean().default(false),
+  prescription: z.object({
+    instructions: z.string().max(2000).nullish(),
+    valid_days: z.number().int().min(1).max(365).default(30),
+    items: z.array(z.object({
+      medicine_id: z.number().int().positive(),
+      dosage: z.string().trim().min(1).max(50),
+      frequency: z.string().trim().min(1).max(50),
+      duration_days: z.number().int().min(1).max(365),
+      quantity_prescribed: z.number().int().min(1).max(1000),
+      instructions: z.string().max(255).nullish(),
+    })).min(1).max(20),
+  }).nullish(),
+});
+
+const addDays = (date, days) => new Date(date.getTime() + days * 86400000);
+
+/**
+ * Doctor closes a visit: writes the visit note, optionally a prescription, and marks it COMPLETED.
+ * All-or-nothing, so a completed visit always has its note.
+ */
+appointmentsRouter.post("/:id/complete", ...requireRoles("DOCTOR"), async (req, res) => {
+  const p = parse(completeSchema, req.body);
+  const appointment = await prisma.appointment.findUnique({ where: { id: Number(req.params.id) || 0 } });
+  if (!appointment || appointment.doctor_id !== req.user.doctor?.id) throw new HttpError(404, "Appointment not found");
+  if (appointment.status !== "SCHEDULED") throw new HttpError(400, "Only scheduled appointments can be completed");
+
+  const visit = { appointment_id: appointment.id, patient_id: appointment.patient_id, doctor_id: appointment.doctor_id };
+  const today = new Date(`${new Date().toLocaleDateString("en-CA")}T00:00:00Z`);
+
+  const result = await prisma.$transaction(async (tx) => {
+    const record = await tx.medicalRecord.create({
+      data: {
+        ...visit, record_number: documentNumber("REC"), record_type: "GENERAL_VISIT", record_date: today,
+        title: p.title, diagnosis: p.diagnosis, clinical_notes: p.clinical_notes ?? null,
+        vitals: p.vitals ?? undefined, is_confidential: p.is_confidential, is_demo: false,
+      },
+      include: recordInclude,
+    });
+    const prescription = p.prescription && await tx.prescription.create({
+      data: {
+        ...visit, prescription_number: documentNumber("RX"), issue_date: today,
+        valid_until: addDays(today, p.prescription.valid_days), diagnosis: p.diagnosis,
+        instructions: p.prescription.instructions ?? null, is_demo: false,
+        items: { create: p.prescription.items.map((i) => ({ ...i, instructions: i.instructions ?? null })) },
+      },
+      include: prescriptionInclude,
+    });
+    const updated = await tx.appointment.update({ where: { id: appointment.id }, data: { status: "COMPLETED" }, include });
+    return { appointment: serialize(updated), record: serializeRecord(record), prescription: prescription ? serializePrescription(prescription) : null };
+  }).catch((e) => {
+    if (e.code === "P2003") throw new HttpError(422, "Unknown medicine in prescription");
+    throw e;
+  });
+  res.status(201).json(result);
 });

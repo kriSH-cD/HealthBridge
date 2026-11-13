@@ -2,7 +2,7 @@
   "name": "sehatsetu",
   "private": true,
   "packageManager": "npm@11.12.1",
-  "workspaces": ["frontend", "backend", "server"],
+  "workspaces": ["frontend", "server"],
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",

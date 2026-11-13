@@ -1,8 +1,0 @@
-{
-  "name": "sehatsetu-backend",
-  "private": true,
-  "scripts": {
-    "dev": "uvicorn app.main:app --reload --port 8000",
-    "test": "python -m pytest"
-  }
-}

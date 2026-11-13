@@ -1,15 +1,3 @@
-# Environments
-.venv/
-venv/
-env/
-
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.sqlite3
-*.db
-.pytest_cache/
 
 # Node
 node_modules/

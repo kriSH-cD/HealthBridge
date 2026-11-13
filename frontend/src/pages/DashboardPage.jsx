@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { directoryApi } from '../services/api';
 import { AppointmentsPanel } from '../components/AppointmentsPanel';
+import { BookAppointmentForm } from '../components/BookAppointmentForm';
 import { 
   User, 
   Stethoscope, 
@@ -25,6 +26,8 @@ export const DashboardPage = () => {
   const [patients, setPatients] = useState([]);
   const [loadingPatients, setLoadingPatients] = useState(false);
   const [patientError, setPatientError] = useState(null);
+  const [booking, setBooking] = useState(false);
+  const [appointmentsKey, setAppointmentsKey] = useState(0);
 
   // If role is DOCTOR, ASHA_WORKER, or HOSPITAL_ADMIN, test fetching the restricted patient list!
   useEffect(() => {
@@ -139,7 +142,7 @@ export const DashboardPage = () => {
               <span>ਤੁਰੰਤ ਸੇਵਾਵਾਂ (Quick Actions)</span>
             </h3>
             <div className="space-y-2">
-              <button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 px-3 rounded-xl text-xs flex items-center justify-between transition">
+              <button type="button" onClick={() => setBooking(true)} className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 px-3 rounded-xl text-xs flex items-center justify-between transition">
                 <span>ਡਾਕਟਰ ਨਾਲ ਮੁਲਾਕਾਤ ਬੁੱਕ ਕਰੋ</span>
                 <span>→</span>
               </button>
@@ -154,7 +157,13 @@ export const DashboardPage = () => {
             </div>
           </div>
         </div>
-        <AppointmentsPanel role="PATIENT" />
+        {booking && (
+          <BookAppointmentForm
+            onCancel={() => setBooking(false)}
+            onBooked={() => { setBooking(false); setAppointmentsKey((k) => k + 1); }}
+          />
+        )}
+        <AppointmentsPanel role="PATIENT" refreshKey={appointmentsKey} />
         </div>
       )}
 

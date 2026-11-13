@@ -24,5 +24,6 @@ usersRouter.get("/doctors", async (req, res) => {
 usersRouter.get("/pharmacies", async (req, res) => res.json(await listUsers("PHARMACY", req)));
 
 usersRouter.get("/patients", ...requireRoles("DOCTOR", "ASHA_WORKER", "HOSPITAL_ADMIN"), async (req, res) => {
-  res.json(await listUsers("PATIENT", { query: {} }, { is_active: undefined }));
+  const patients = await prisma.user.findMany({ where: { role: "PATIENT" }, include: userInclude, orderBy: { id: "asc" } });
+  res.json(patients.map(serializeUser));
 });

@@ -6,9 +6,9 @@ from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_user, require_roles
 from app.db.session import get_db
-from app.models.clinical import Appointment
+from app.models.clinical import Appointment, AppointmentStatus
 from app.models.user import Doctor, User, UserRole
-from app.schemas.appointment import AppointmentCreate, AppointmentResponse
+from app.schemas.appointment import AppointmentCreate, AppointmentResponse, AppointmentStatusUpdate
 
 router = APIRouter()
 
@@ -61,3 +61,34 @@ def list_my_appointments(
     else:
         return []
     return query.order_by(Appointment.appointment_date, Appointment.appointment_time).all()
+
+
+@router.patch("/{appointment_id}/status", response_model=AppointmentResponse)
+def update_appointment_status(
+    appointment_id: int,
+    payload: AppointmentStatusUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Doctor completes / marks no-show / cancels; patient can only cancel."""
+    appointment = db.get(Appointment, appointment_id)
+    is_patient = current_user.patient is not None and appointment is not None \
+        and appointment.patient_id == current_user.patient.id
+    is_doctor = current_user.doctor is not None and appointment is not None \
+        and appointment.doctor_id == current_user.doctor.id
+    if not (is_patient or is_doctor):
+        raise HTTPException(status_code=404, detail="Appointment not found")
+
+    if appointment.status != AppointmentStatus.SCHEDULED:
+        raise HTTPException(status_code=400, detail="Only scheduled appointments can change")
+    if payload.status == AppointmentStatus.SCHEDULED:
+        raise HTTPException(status_code=400, detail="Appointment is already scheduled")
+    if is_patient and not is_doctor and payload.status != AppointmentStatus.CANCELLED:
+        raise HTTPException(status_code=403, detail="Patients can only cancel")
+
+    appointment.status = payload.status
+    if payload.notes is not None:
+        appointment.notes = payload.notes
+    db.commit()
+    db.refresh(appointment)
+    return appointment

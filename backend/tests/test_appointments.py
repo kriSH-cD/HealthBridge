@@ -64,3 +64,20 @@ def test_each_side_sees_only_their_appointments(client: TestClient):
         mine = client.get("/api/v1/appointments", headers=who["headers"]).json()
         assert len(mine) == 1
         assert mine[0]["patient_name"] == patient["user"]["full_name"]
+
+
+def _set_status(client: TestClient, who: dict, appointment_id: int, status: str):
+    return client.patch(f"/api/v1/appointments/{appointment_id}/status",
+                        json={"status": status}, headers=who["headers"])
+
+
+def test_status_rules(client: TestClient):
+    doctor, patient, stranger = _doctor(client), _patient(client), _patient(client, "9812300005")
+    first = _book(client, patient, doctor).json()["id"]
+    second = _book(client, patient, doctor).json()["id"]
+
+    assert _set_status(client, stranger, first, "CANCELLED").status_code == 404
+    assert _set_status(client, patient, first, "COMPLETED").status_code == 403
+    assert _set_status(client, doctor, first, "COMPLETED").json()["status"] == "COMPLETED"
+    assert _set_status(client, patient, first, "CANCELLED").status_code == 400  # already done
+    assert _set_status(client, patient, second, "CANCELLED").json()["status"] == "CANCELLED"

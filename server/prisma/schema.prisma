@@ -1,0 +1,457 @@
+// Tables and columns keep the snake_case names the original FastAPI schema used,
+// so API JSON stays identical to what the frontend already reads.
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  PATIENT
+  DOCTOR
+  PHARMACY
+  ADMIN
+  HOSPITAL_ADMIN
+  ASHA_WORKER
+
+  @@map("userrole")
+}
+
+enum LanguagePreference {
+  pa @map("PA")
+  hi @map("HI")
+  en @map("EN")
+
+  @@map("languagepreference")
+}
+
+enum AppointmentType {
+  IN_PERSON
+  TELECONSULTATION
+
+  @@map("appointmenttype")
+}
+
+enum AppointmentStatus {
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+
+  @@map("appointmentstatus")
+}
+
+enum RecordType {
+  GENERAL_VISIT
+  LAB_REPORT
+  DIAGNOSIS
+  VACCINATION
+  DISCHARGE_SUMMARY
+
+  @@map("recordtype")
+}
+
+enum ConsultationStatus {
+  INITIATED
+  CONNECTED
+  COMPLETED
+  FAILED
+
+  @@map("consultationstatus")
+}
+
+enum ConsultationType {
+  AUDIO
+  VIDEO
+  CHAT
+
+  @@map("consultationtype")
+}
+
+enum MedicineCategory {
+  TABLET
+  CAPSULE
+  SYRUP
+  INJECTION
+  OINTMENT
+  DROPS
+  INHALER
+
+  @@map("medicinecategory")
+}
+
+enum NotificationType {
+  APPOINTMENT_REMINDER
+  PRESCRIPTION_READY
+  LOW_STOCK_ALERT
+  SYSTEM_ALERT
+
+  @@map("notificationtype")
+}
+
+model User {
+  id                 Int                @id @default(autoincrement())
+  phone              String             @unique @db.VarChar(20)
+  email              String?            @unique @db.VarChar(120)
+  full_name          String             @db.VarChar(100)
+  hashed_password    String             @db.VarChar(255)
+  role               UserRole           @default(PATIENT)
+  preferred_language LanguagePreference @default(pa)
+  village            String?            @db.VarChar(100)
+  is_active          Boolean            @default(true)
+  is_demo            Boolean            @default(false)
+  created_at         DateTime           @default(now()) @db.Timestamptz(6)
+  updated_at         DateTime           @default(now()) @updatedAt @db.Timestamptz(6)
+
+  patient        Patient?
+  doctor         Doctor?
+  pharmacy       Pharmacy?
+  hospital       Hospital?
+  notifications  Notification[]
+  audit_logs     AuditLog[]
+  refresh_tokens RefreshToken[]
+
+  @@index([is_demo])
+  @@index([village])
+  @@map("users")
+}
+
+model Patient {
+  id                 Int      @id @default(autoincrement())
+  user_id            Int      @unique
+  age                Int?
+  gender             String?  @db.VarChar(20)
+  blood_group        String?  @db.VarChar(10)
+  emergency_contact  String?  @db.VarChar(20)
+  abha_id            String?  @unique @db.VarChar(50)
+  chronic_conditions String?
+  allergies          String?
+  address            String?  @db.VarChar(255)
+  created_at         DateTime @default(now()) @db.Timestamptz(6)
+  updated_at         DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+
+  user            User            @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  appointments    Appointment[]
+  medical_records MedicalRecord[]
+  prescriptions   Prescription[]
+  consultations   Consultation[]
+
+  @@index([blood_group])
+  @@map("patients")
+}
+
+model Doctor {
+  id               Int      @id @default(autoincrement())
+  user_id          Int      @unique
+  specialization   String   @db.VarChar(100)
+  license_number   String   @unique @db.VarChar(50)
+  qualification    String   @default("MBBS") @db.VarChar(100)
+  hospital_name    String   @db.VarChar(150)
+  consultation_fee Float    @default(0)
+  languages_spoken String   @default("Punjabi, Hindi") @db.VarChar(100)
+  experience_years Int      @default(1)
+  bio              String?
+  is_available     Boolean  @default(true)
+  is_verified      Boolean  @default(true)
+  created_at       DateTime @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+
+  user            User            @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  appointments    Appointment[]
+  prescriptions   Prescription[]
+  medical_records MedicalRecord[]
+  consultations   Consultation[]
+
+  @@index([specialization])
+  @@index([hospital_name])
+  @@index([is_available])
+  @@map("doctors")
+}
+
+model Pharmacy {
+  id              Int      @id @default(autoincrement())
+  user_id         Int      @unique
+  pharmacy_name   String   @db.VarChar(150)
+  license_number  String   @unique @db.VarChar(50)
+  address         String   @db.VarChar(255)
+  village         String?  @db.VarChar(100)
+  contact_phone   String   @db.VarChar(20)
+  operating_hours String   @default("08:00 AM - 09:00 PM") @db.VarChar(100)
+  is_verified     Boolean  @default(true)
+  created_at      DateTime @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+
+  user      User                @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  inventory PharmacyInventory[]
+
+  @@index([pharmacy_name])
+  @@index([village])
+  @@map("pharmacies")
+}
+
+model Hospital {
+  id              Int      @id @default(autoincrement())
+  user_id         Int      @unique
+  hospital_name   String   @db.VarChar(150)
+  address         String   @db.VarChar(255)
+  emergency_phone String   @db.VarChar(20)
+  total_beds      Int      @default(50)
+  available_beds  Int      @default(15)
+  has_oxygen      Boolean  @default(true)
+  has_emergency   Boolean  @default(true)
+  created_at      DateTime @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([hospital_name])
+  @@map("hospitals")
+}
+
+model RefreshToken {
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  token      String   @unique @db.VarChar(500)
+  expires_at DateTime @db.Timestamptz(6)
+  is_revoked Boolean  @default(false)
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@index([expires_at])
+  @@map("refresh_tokens")
+}
+
+model OtpVerification {
+  id          Int      @id @default(autoincrement())
+  phone       String   @db.VarChar(20)
+  otp_code    String   @db.VarChar(10)
+  purpose     String   @default("LOGIN") @db.VarChar(30)
+  is_verified Boolean  @default(false)
+  expires_at  DateTime @db.Timestamptz(6)
+  created_at  DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([phone])
+  @@map("otp_verifications")
+}
+
+model Medicine {
+  id                       Int              @id @default(autoincrement())
+  name                     String           @db.VarChar(150)
+  generic_name             String           @db.VarChar(150)
+  brand_name               String?          @db.VarChar(100)
+  category                 MedicineCategory @default(TABLET)
+  strength                 String           @db.VarChar(50)
+  manufacturer             String           @default("Jan Aushadhi Generic") @db.VarChar(100)
+  price                    Float            @default(10)
+  is_prescription_required Boolean          @default(true)
+  is_essential             Boolean          @default(true)
+  description              String?
+  is_demo                  Boolean          @default(true)
+  created_at               DateTime         @default(now()) @db.Timestamptz(6)
+  updated_at               DateTime         @default(now()) @updatedAt @db.Timestamptz(6)
+
+  inventory_items    PharmacyInventory[]
+  prescription_items PrescriptionItem[]
+
+  @@index([name])
+  @@index([generic_name])
+  @@index([category])
+  @@index([is_essential])
+  @@map("medicines")
+}
+
+model PharmacyInventory {
+  id             Int      @id @default(autoincrement())
+  pharmacy_id    Int
+  medicine_id    Int
+  batch_number   String   @db.VarChar(50)
+  stock_quantity Int      @default(0)
+  reorder_level  Int      @default(20)
+  unit_price     Float
+  expiry_date    DateTime @db.Date
+  is_available   Boolean  @default(true)
+  created_at     DateTime @default(now()) @db.Timestamptz(6)
+  updated_at     DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+
+  pharmacy Pharmacy @relation(fields: [pharmacy_id], references: [id], onDelete: Cascade)
+  medicine Medicine @relation(fields: [medicine_id], references: [id], onDelete: Cascade)
+
+  @@unique([pharmacy_id, medicine_id, batch_number], map: "uq_pharmacy_medicine_batch")
+  @@index([pharmacy_id])
+  @@index([medicine_id])
+  @@index([expiry_date])
+  @@index([is_available])
+  @@map("pharmacy_inventory")
+}
+
+model Appointment {
+  id                 Int               @id @default(autoincrement())
+  appointment_number String            @unique @db.VarChar(30)
+  patient_id         Int
+  doctor_id          Int
+  appointment_date   DateTime          @db.Date
+  appointment_time   String            @db.VarChar(20)
+  appointment_type   AppointmentType   @default(IN_PERSON)
+  status             AppointmentStatus @default(SCHEDULED)
+  symptom_summary    String?
+  notes              String?
+  is_demo            Boolean           @default(true)
+  created_at         DateTime          @default(now()) @db.Timestamptz(6)
+  updated_at         DateTime          @default(now()) @updatedAt @db.Timestamptz(6)
+
+  patient       Patient        @relation(fields: [patient_id], references: [id], onDelete: Cascade)
+  doctor        Doctor         @relation(fields: [doctor_id], references: [id], onDelete: Cascade)
+  consultation  Consultation?
+  prescriptions Prescription[]
+
+  @@index([patient_id])
+  @@index([doctor_id])
+  @@index([appointment_date])
+  @@index([status])
+  @@map("appointments")
+}
+
+model MedicalRecord {
+  id              Int        @id @default(autoincrement())
+  record_number   String     @unique @db.VarChar(30)
+  patient_id      Int
+  doctor_id       Int?
+  record_type     RecordType @default(GENERAL_VISIT)
+  title           String     @db.VarChar(150)
+  diagnosis       String?
+  clinical_notes  String?
+  vitals          String? // JSON text: BP, pulse, glucose, SpO2
+  record_date     DateTime   @default(now()) @db.Date
+  is_confidential Boolean    @default(false)
+  is_demo         Boolean    @default(true)
+  created_at      DateTime   @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime   @default(now()) @updatedAt @db.Timestamptz(6)
+
+  patient Patient @relation(fields: [patient_id], references: [id], onDelete: Cascade)
+  doctor  Doctor? @relation(fields: [doctor_id], references: [id], onDelete: SetNull)
+
+  @@index([patient_id])
+  @@index([doctor_id])
+  @@index([record_date])
+  @@map("medical_records")
+}
+
+model Prescription {
+  id                  Int       @id @default(autoincrement())
+  prescription_number String    @unique @db.VarChar(30)
+  appointment_id      Int?
+  patient_id          Int
+  doctor_id           Int
+  issue_date          DateTime  @default(now()) @db.Date
+  valid_until         DateTime? @db.Date
+  diagnosis           String?
+  instructions        String?
+  is_dispensed        Boolean   @default(false)
+  is_demo             Boolean   @default(true)
+  created_at          DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime  @default(now()) @updatedAt @db.Timestamptz(6)
+
+  appointment Appointment?       @relation(fields: [appointment_id], references: [id], onDelete: SetNull)
+  patient     Patient            @relation(fields: [patient_id], references: [id], onDelete: Cascade)
+  doctor      Doctor             @relation(fields: [doctor_id], references: [id], onDelete: Cascade)
+  items       PrescriptionItem[]
+
+  @@index([appointment_id])
+  @@index([patient_id])
+  @@index([doctor_id])
+  @@index([is_dispensed])
+  @@map("prescriptions")
+}
+
+model PrescriptionItem {
+  id                  Int      @id @default(autoincrement())
+  prescription_id     Int
+  medicine_id         Int
+  dosage              String   @db.VarChar(50)
+  frequency           String   @db.VarChar(50)
+  duration_days       Int      @default(5)
+  quantity_prescribed Int      @default(10)
+  instructions        String?  @db.VarChar(255)
+  created_at          DateTime @default(now()) @db.Timestamptz(6)
+
+  prescription Prescription @relation(fields: [prescription_id], references: [id], onDelete: Cascade)
+  medicine     Medicine     @relation(fields: [medicine_id], references: [id], onDelete: Restrict)
+
+  @@index([prescription_id])
+  @@index([medicine_id])
+  @@map("prescription_items")
+}
+
+model Consultation {
+  id                     Int                @id @default(autoincrement())
+  appointment_id         Int                @unique
+  doctor_id              Int
+  patient_id             Int
+  room_id                String             @unique @db.VarChar(100)
+  status                 ConsultationStatus @default(INITIATED)
+  consultation_type      ConsultationType   @default(VIDEO)
+  start_time             DateTime?          @db.Timestamptz(6)
+  end_time               DateTime?          @db.Timestamptz(6)
+  doctor_notes           String?
+  quality_rating         Int? // 1-5
+  low_bandwidth_fallback Boolean            @default(false)
+  created_at             DateTime           @default(now()) @db.Timestamptz(6)
+  updated_at             DateTime           @default(now()) @updatedAt @db.Timestamptz(6)
+
+  appointment Appointment @relation(fields: [appointment_id], references: [id], onDelete: Cascade)
+  doctor      Doctor      @relation(fields: [doctor_id], references: [id], onDelete: Cascade)
+  patient     Patient     @relation(fields: [patient_id], references: [id], onDelete: Cascade)
+
+  @@index([doctor_id])
+  @@index([patient_id])
+  @@index([status])
+  @@map("consultations")
+}
+
+model Notification {
+  id                Int              @id @default(autoincrement())
+  user_id           Int
+  title             String           @db.VarChar(150)
+  message           String
+  notification_type NotificationType @default(SYSTEM_ALERT)
+  is_read           Boolean          @default(false)
+  channel           String           @default("IN_APP") @db.VarChar(20)
+  language          String           @default("pa") @db.VarChar(10)
+  created_at        DateTime         @default(now()) @db.Timestamptz(6)
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@index([notification_type])
+  @@index([is_read])
+  @@index([created_at])
+  @@map("notifications")
+}
+
+model AuditLog {
+  id            Int      @id @default(autoincrement())
+  user_id       Int?
+  action        String   @db.VarChar(100)
+  resource_type String   @db.VarChar(50)
+  resource_id   String?  @db.VarChar(50)
+  ip_address    String?  @db.VarChar(50)
+  user_agent    String?  @db.VarChar(255)
+  status        String   @default("SUCCESS") @db.VarChar(20)
+  details       String?
+  timestamp     DateTime @default(now()) @db.Timestamptz(6)
+
+  user User? @relation(fields: [user_id], references: [id], onDelete: SetNull)
+
+  @@index([user_id])
+  @@index([action])
+  @@index([resource_type])
+  @@index([resource_id])
+  @@index([timestamp])
+  @@map("audit_logs")
+}

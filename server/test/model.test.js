@@ -37,3 +37,23 @@ describe("data model", () => {
     expect(rx.appointment_id).toBe(appointment.id);
   });
 });
+
+describe("check constraints", () => {
+  it("rejects negative stock and zero-quantity prescription items", async () => {
+    const { doctor, patient, appointment } = await visit();
+    const med = await prisma.medicine.create({ data: { name: "Test", generic_name: "Test", strength: "1 mg" } });
+    const pharmacy = (await registerAndLogin("9812300104", "PHARMACY")).user.pharmacy_profile;
+
+    await expect(prisma.pharmacyInventory.create({ data: {
+      pharmacy_id: pharmacy.id, medicine_id: med.id, batch_number: "B1", stock_quantity: -1,
+      unit_price: 1, expiry_date: new Date("2030-01-01"),
+    } })).rejects.toThrow(/chk_inventory_stock/);
+
+    const rx = await prisma.prescription.create({ data: {
+      prescription_number: "RX-C1", appointment_id: appointment.id, patient_id: patient.id, doctor_id: doctor.id,
+    } });
+    await expect(prisma.prescriptionItem.create({ data: {
+      prescription_id: rx.id, medicine_id: med.id, dosage: "1", frequency: "1-0-1", quantity_prescribed: 0,
+    } })).rejects.toThrow(/chk_item_quantity/);
+  });
+});

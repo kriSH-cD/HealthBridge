@@ -19,7 +19,7 @@ const availability = (i) => ({
   pharmacy_village: i.pharmacy.village,
   pharmacy_phone: i.pharmacy.contact_phone,
   stock_quantity: i.stock_quantity,
-  unit_price: i.unit_price,
+  unit_price: Number(i.unit_price), // Decimal in DB; JSON number for clients
   expiry_date: isoDate(i.expiry_date),
   updated_at: i.updated_at,
 });

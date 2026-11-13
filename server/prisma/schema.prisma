@@ -151,7 +151,7 @@ model Doctor {
   license_number   String   @unique @db.VarChar(50)
   qualification    String   @default("MBBS") @db.VarChar(100)
   hospital_name    String   @db.VarChar(150)
-  consultation_fee Float    @default(0)
+  consultation_fee Decimal  @default(0) @db.Decimal(10, 2)
   languages_spoken String   @default("Punjabi, Hindi") @db.VarChar(100)
   experience_years Int      @default(1)
   bio              String?
@@ -247,7 +247,7 @@ model Medicine {
   category                 MedicineCategory @default(TABLET)
   strength                 String           @db.VarChar(50)
   manufacturer             String           @default("Jan Aushadhi Generic") @db.VarChar(100)
-  price                    Float            @default(10)
+  price                    Decimal          @default(10) @db.Decimal(10, 2)
   is_prescription_required Boolean          @default(true)
   is_essential             Boolean          @default(true)
   description              String?
@@ -272,7 +272,7 @@ model PharmacyInventory {
   batch_number   String   @db.VarChar(50)
   stock_quantity Int      @default(0)
   reorder_level  Int      @default(20)
-  unit_price     Float
+  unit_price     Decimal  @db.Decimal(10, 2)
   expiry_date    DateTime @db.Date
   is_available   Boolean  @default(true)
   created_at     DateTime @default(now()) @db.Timestamptz(6)

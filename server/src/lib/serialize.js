@@ -15,7 +15,7 @@ export const userInclude = { patient: true, doctor: true, pharmacy: true, hospit
 export const serializeUser = (u) => ({
   ...pick(u, ["id", "phone", "email", "full_name", "role", "preferred_language", "village", "is_active", "is_demo", "created_at"]),
   patient_profile: pick(u.patient, PROFILE_FIELDS.patient),
-  doctor_profile: pick(u.doctor, PROFILE_FIELDS.doctor),
+  doctor_profile: u.doctor && { ...pick(u.doctor, PROFILE_FIELDS.doctor), consultation_fee: Number(u.doctor.consultation_fee) },
   pharmacy_profile: pick(u.pharmacy, PROFILE_FIELDS.pharmacy),
   hospital_profile: pick(u.hospital, PROFILE_FIELDS.hospital),
 });

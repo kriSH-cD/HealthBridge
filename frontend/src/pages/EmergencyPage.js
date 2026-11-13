@@ -38,8 +38,15 @@ export const EmergencyPage = () => {
   const [filterEmergency, setFilterEmergency] = useState(false);
   const [filterAvailableOnly, setFilterAvailableOnly] = useState(false);
 
-  // Bed Update Modal placeholder state for Part 15
+  // Bed Update Modal (for hospital staff / doctors)
   const [editingHospital, setEditingHospital] = useState(null);
+  const [editTotalBeds, setEditTotalBeds] = useState(50);
+  const [editAvailableBeds, setEditAvailableBeds] = useState(15);
+  const [editHasOxygen, setEditHasOxygen] = useState(true);
+  const [editHasEmergency, setEditHasEmergency] = useState(true);
+  const [editEmergencyPhone, setEditEmergencyPhone] = useState('');
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [updateSuccess, setUpdateSuccess] = useState(null);
 
   const canEditBeds = user && ['HOSPITAL_ADMIN', 'DOCTOR', 'ADMIN'].includes(user.role);
 
@@ -50,7 +57,7 @@ export const EmergencyPage = () => {
         hospitalsApi.list(),
         hospitalsApi.getSummary().catch(() => null),
       ]);
-      setHospitals(hospData || []);
+      setHospitals(hospData);
       setSummary(sumData);
       setError(null);
     } catch (err) {
@@ -84,6 +91,55 @@ export const EmergencyPage = () => {
     if (filterAvailableOnly && h.available_beds <= 0) return false;
     return true;
   });
+
+  const openEditModal = (h) => {
+    setEditingHospital(h);
+    setEditTotalBeds(h.total_beds);
+    setEditAvailableBeds(h.available_beds);
+    setEditHasOxygen(h.has_oxygen);
+    setEditHasEmergency(h.has_emergency);
+    setEditEmergencyPhone(h.emergency_phone || '');
+    setUpdateSuccess(null);
+  };
+
+  const handleUpdateBeds = async (e) => {
+    e.preventDefault();
+    if (!editingHospital) return;
+
+    if (Number(editAvailableBeds) > Number(editTotalBeds)) {
+      alert('ਉਪਲਬਧ ਬੈੱਡ ਕੁੱਲ ਬੈੱਡਾਂ ਤੋਂ ਵੱਧ ਨਹੀਂ ਹੋ ਸਕਦੇ (Available beds cannot exceed total beds)');
+      return;
+    }
+
+    setIsUpdating(true);
+    try {
+      const updated = await hospitalsApi.updateBeds(editingHospital.id, {
+        total_beds: Number(editTotalBeds),
+        available_beds: Number(editAvailableBeds),
+        has_oxygen: editHasOxygen,
+        has_emergency: editHasEmergency,
+        emergency_phone: editEmergencyPhone.trim() || undefined,
+      });
+
+      setHospitals((prev) => prev.map((h) => (h.id === updated.id ? updated : h)));
+      setUpdateSuccess('ਬੈੱਡ ਜਾਣਕਾਰੀ ਸਫਲਤਾਪੂਰਵਕ ਅੱਪਡੇਟ ਹੋਈ!');
+      setTimeout(() => {
+        setEditingHospital(null);
+        setUpdateSuccess(null);
+      }, 1200);
+    } catch (err) {
+      alert(err.response?.data?.detail || 'ਅੱਪਡੇਟ ਅਸਫਲ ਰਿਹਾ (Update failed)');
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const getOccupancyColor = (available, total) => {
+    if (total <= 0 || available <= 0) return 'text-red-600 bg-red-500';
+    const pct = (available / total) * 100;
+    if (pct <= 15) return 'text-amber-600 bg-amber-500';
+    return 'text-emerald-600 bg-emerald-500';
+  };
 
   return (
     <div className="flex-1 bg-slate-900 text-slate-100 min-h-screen pb-16">
@@ -444,7 +500,7 @@ export const EmergencyPage = () => {
                     {canEditBeds && (
                       <button
                         type="button"
-                        onClick={() => setEditingHospital(h)}
+                        onClick={() => openEditModal(h)}
                         className="bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-semibold p-2 rounded-xl transition flex items-center space-x-1"
                         title={t('update_beds')}
                       >
@@ -459,6 +515,113 @@ export const EmergencyPage = () => {
           </section>
         )}
       </div>
+
+      {/* 6. Staff Bed & Status Update Modal */}
+      {editingHospital && (
+        <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-slate-700 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl relative">
+            <button
+              onClick={() => setEditingHospital(null)}
+              className="absolute top-4 right-4 text-slate-400 hover:text-white"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <h3 className="text-base font-bold text-white flex items-center space-x-2">
+              <Building2 className="w-5 h-5 text-emerald-400" />
+              <span>ਬੈੱਡ ਜਾਣਕਾਰੀ ਅੱਪਡੇਟ ਕਰੋ</span>
+            </h3>
+            <p className="text-xs text-slate-400">
+              {editingHospital.hospital_name} ਲਈ ਰੀਅਲ-ਟਾਈਮ ਉਪਲਬਧ ਬੈੱਡ ਅਤੇ ਐਮਰਜੈਂਸੀ ਜਾਣਕਾਰੀ ਦਰਜ ਕਰੋ।
+            </p>
+
+            {updateSuccess && (
+              <div className="bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs p-2.5 rounded-xl flex items-center space-x-2">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                <span>{updateSuccess}</span>
+              </div>
+            )}
+
+            <form onSubmit={handleUpdateBeds} className="space-y-3.5 text-xs">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-slate-300 font-semibold mb-1">ਕੁੱਲ ਬੈੱਡ (Total Beds)</label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="5000"
+                    value={editTotalBeds}
+                    onChange={(e) => setEditTotalBeds(e.target.value)}
+                    required
+                    className="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white focus:outline-none focus:border-emerald-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-300 font-semibold mb-1">ਉਪਲਬਧ ਬੈੱਡ (Available)</label>
+                  <input
+                    type="number"
+                    min="0"
+                    max={editTotalBeds}
+                    value={editAvailableBeds}
+                    onChange={(e) => setEditAvailableBeds(e.target.value)}
+                    required
+                    className="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white focus:outline-none focus:border-emerald-500"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-slate-300 font-semibold mb-1">ਐਮਰਜੈਂਸੀ ਫ਼ੋਨ ਨੰਬਰ (Phone)</label>
+                <input
+                  type="text"
+                  value={editEmergencyPhone}
+                  onChange={(e) => setEditEmergencyPhone(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white focus:outline-none focus:border-emerald-500"
+                />
+              </div>
+
+              <div className="space-y-2 pt-1">
+                <label className="flex items-center space-x-2.5 cursor-pointer text-slate-200">
+                  <input
+                    type="checkbox"
+                    checked={editHasOxygen}
+                    onChange={(e) => setEditHasOxygen(e.target.checked)}
+                    className="w-4 h-4 rounded text-emerald-600 focus:ring-0 bg-slate-850 border-slate-700"
+                  />
+                  <span>ਆਕਸੀਜਨ ਸਹੂਲਤ ਸਰਗਰਮ ਹੈ (Oxygen Ready)</span>
+                </label>
+
+                <label className="flex items-center space-x-2.5 cursor-pointer text-slate-200">
+                  <input
+                    type="checkbox"
+                    checked={editHasEmergency}
+                    onChange={(e) => setEditHasEmergency(e.target.checked)}
+                    className="w-4 h-4 rounded text-emerald-600 focus:ring-0 bg-slate-850 border-slate-700"
+                  />
+                  <span>24/7 ਐਮਰਜੈਂਸੀ ਯੂਨਿਟ ਖੁੱਲ੍ਹਾ ਹੈ (24/7 Emergency Active)</span>
+                </label>
+              </div>
+
+              <div className="flex items-center justify-end space-x-2 pt-3">
+                <button
+                  type="button"
+                  onClick={() => setEditingHospital(null)}
+                  className="px-4 py-2 bg-slate-800 text-slate-300 rounded-xl hover:bg-slate-700 transition"
+                >
+                  ਰੱਦ ਕਰੋ
+                </button>
+                <button
+                  type="submit"
+                  disabled={isUpdating}
+                  className="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold transition shadow"
+                >
+                  {isUpdating ? 'ਅੱਪਡੇਟ ਹੋ ਰਿਹਾ ਹੈ...' : 'ਅੱਪਡੇਟ ਸੇਵ ਕਰੋ'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

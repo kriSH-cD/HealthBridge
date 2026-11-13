@@ -26,3 +26,5 @@ make test       # server + frontend tests
 Server tests use a separate `sehatsetu_test` database (created automatically) and Redis DB 15.
 
 Load demo data from the home page button, or `curl -X POST localhost:8000/api/v1/seed/seed-demo-data` (needs `ENABLE_DEMO_SEED=true`). Every demo account uses password `password123`.
+
+Data model and the rules the database enforces: [docs/er-diagram.md](docs/er-diagram.md).

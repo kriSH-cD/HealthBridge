@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.api.v1.endpoints import health, auth, users, seed
+from app.api.v1.endpoints import health, auth, users, seed, appointments
 
 api_router = APIRouter()
 
@@ -8,3 +8,4 @@ api_router.include_router(auth.router, prefix="/auth", tags=["Authentication & U
 api_router.include_router(users.router, prefix="/users", tags=["Users & Directory"])
 api_router.include_router(seed.router, prefix="/seed", tags=["Synthetic Nabha Demo Data"])
 
+api_router.include_router(appointments.router, prefix="/appointments", tags=["Appointments"])

@@ -68,6 +68,21 @@ export const directoryApi = {
   },
 };
 
+export const appointmentsApi = {
+  list: async () => {
+    const res = await api.get('/appointments');
+    return res.data;
+  },
+  book: async (payload) => {
+    const res = await api.post('/appointments', payload);
+    return res.data;
+  },
+  setStatus: async (id, status) => {
+    const res = await api.patch(`/appointments/${id}/status`, { status });
+    return res.data;
+  },
+};
+
 export const systemApi = {
   getHealth: async () => {
     const res = await api.get('/health');

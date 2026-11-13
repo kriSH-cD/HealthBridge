@@ -484,6 +484,22 @@ export const EmergencyPage = () => {
                         </span>
                       )}
                     </div>
+
+                    {/* Inter-Facility Referral Notification for full/critical rural centers */}
+                    {isFull && !isCivil && (
+                      <div className="bg-red-950/40 border border-red-800/60 rounded-xl p-2.5 flex items-center justify-between text-xs text-red-200">
+                        <div className="flex items-center space-x-1.5">
+                          <AlertTriangle className="w-3.5 h-3.5 text-red-400 shrink-0" />
+                          <span>ਬੈੱਡ ਉਪਲਬਧ ਨਹੀਂ - ਸਿਵਲ ਹਸਪਤਾਲ ਨਾਭਾ ਰੈਫ਼ਰ ਕਰੋ</span>
+                        </div>
+                        <a
+                          href="tel:01765220102"
+                          className="bg-red-700 hover:bg-red-600 text-white font-bold px-2.5 py-1 rounded-lg text-[11px] shrink-0 transition"
+                        >
+                          ਨਾਭਾ ਕਾਲ (01765-220102)
+                        </a>
+                      </div>
+                    )}
                   </div>
 
                   {/* Card Action Footer */}

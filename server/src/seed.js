@@ -144,6 +144,7 @@ export async function seedDatabase(prisma) {
     consultations: 0,
     notifications: 0,
     audit_logs: 0,
+    hospitals: 0,
   };
 
   // One transaction, like the single db.commit() in the Python version.
@@ -260,7 +261,21 @@ export async function seedDatabase(prisma) {
               has_emergency: h.has_emergency,
             },
           });
-          stats.hospitals = (stats.hospitals || 0) + 1;
+          stats.hospitals++;
+        } else {
+          await db.hospital.update({
+            where: { id: existingHosp.id },
+            data: {
+              hospital_name: h.hospital_name,
+              address: h.address,
+              emergency_phone: h.emergency_phone,
+              total_beds: h.total_beds,
+              available_beds: h.available_beds,
+              has_oxygen: h.has_oxygen,
+              has_emergency: h.has_emergency,
+            },
+          });
+          stats.hospitals++;
         }
       }
     }

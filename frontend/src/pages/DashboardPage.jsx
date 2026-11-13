@@ -5,6 +5,7 @@ import { directoryApi } from '../services/api';
 import { AppointmentsPanel } from '../components/AppointmentsPanel';
 import { BookAppointmentForm } from '../components/BookAppointmentForm';
 import { MedicineSearch } from '../components/MedicineSearch';
+import { PharmacyStock } from '../components/PharmacyStock';
 import { 
   User, 
   Stethoscope, 
@@ -14,7 +15,6 @@ import {
   Phone, 
   Calendar, 
   ShieldCheck, 
-  FileText, 
   AlertTriangle,
   Users,
   Activity
@@ -236,7 +236,7 @@ export const DashboardPage = () => {
       )}
 
       {user?.role === 'PHARMACY' && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
           <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-3">
             <h3 className="text-sm font-bold text-slate-900 flex items-center space-x-2">
               <Pill className="w-4 h-4 text-teal-600" />
@@ -258,18 +258,7 @@ export const DashboardPage = () => {
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-3">
-            <h3 className="text-sm font-bold text-slate-900 flex items-center space-x-2">
-              <FileText className="w-4 h-4 text-emerald-600" />
-              <span>ਦਵਾਈ ਸਟਾਕ ਪ੍ਰਬੰਧਨ (Inventory Management)</span>
-            </h3>
-            <p className="text-xs text-slate-500">
-              ਅਗਲੇ ਪੜਾਅ ਵਿੱਚ: ਜ਼ਰੂਰੀ ਦਵਾਈਆਂ ਦਾ ਲਾਈਵ ਸਟਾਕ ਅੱਪਡੇਟ ਕਰੋ ਤਾਂ ਜੋ ਨਾਭਾ ਦੇ ਪਿੰਡਾਂ ਦੇ ਮਰੀਜ਼ ਦੇਖ ਸਕਣ।
-            </p>
-            <button className="bg-teal-600 hover:bg-teal-700 text-white font-semibold text-xs py-2 px-4 rounded-xl transition">
-              ਸਟਾਕ ਸੂਚੀ ਵੇਖੋ (View Stock)
-            </button>
-          </div>
+          <div className="md:col-span-2"><PharmacyStock /></div>
         </div>
       )}
 

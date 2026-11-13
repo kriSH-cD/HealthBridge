@@ -1,28 +1,7 @@
+include:
+  - docker-compose.dev.yml
+
 services:
-  db:
-    image: postgres:17-alpine
-    environment:
-      POSTGRES_USER: sehatsetu
-      POSTGRES_PASSWORD: sehatsetu
-      POSTGRES_DB: sehatsetu
-    ports:
-      - "5432:5432"
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U sehatsetu"]
-      interval: 5s
-      retries: 10
-
-  redis:
-    image: redis:8-alpine
-    ports:
-      - "6379:6379"
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      retries: 10
-
   server:
     build: ./server
     environment:
@@ -47,5 +26,3 @@ services:
     depends_on:
       - server
 
-volumes:
-  pgdata:

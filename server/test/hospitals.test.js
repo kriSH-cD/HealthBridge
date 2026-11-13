@@ -110,4 +110,22 @@ describe("hospitals routes", () => {
       });
     expect(invalidRes.status).toBe(400);
   });
+
+  it("classifies oxygen source telemetry and provides critical bed alert status", async () => {
+    const listRes = await api().get("/api/v1/hospitals");
+    expect(listRes.status).toBe(200);
+
+    const civil = listRes.body.find((h) => h.hospital_name.includes("Civil"));
+    expect(civil).toBeDefined();
+    expect(civil.oxygen_type).toBe("OXYGEN_PLANT");
+
+    const duladdi = listRes.body.find((h) => h.hospital_name.includes("Duladdi"));
+    if (duladdi) {
+      expect(duladdi.oxygen_type).toBe("OXYGEN_CONCENTRATOR");
+    }
+
+    const summaryRes = await api().get("/api/v1/hospitals/summary");
+    expect(summaryRes.status).toBe(200);
+    expect(typeof summaryRes.body.critical_bed_alert).toBe("boolean");
+  });
 });

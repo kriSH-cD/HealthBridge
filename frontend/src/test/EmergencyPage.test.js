@@ -148,4 +148,43 @@ describe('EmergencyPage Component', () => {
     const fullTag = screen.getByText(/ਬੈੱਡ ਭਰੇ ਹੋਏ ਹਨ/i);
     expect(fullTag).toBeInTheDocument();
   });
+
+  it('displays inter-facility referral action when rural facility has no available beds', async () => {
+    hospitalsApi.list.mockResolvedValue(sampleHospitals);
+    hospitalsApi.getSummary.mockResolvedValue(sampleSummary);
+
+    renderPage();
+
+    await screen.findByText(/Sub-Divisional Civil Hospital Nabha/i);
+
+    // Alhoran has available_beds = 0 and is not civil, so it should trigger referral CTA
+    expect(screen.getByText(/ਸਿਵਲ ਹਸਪਤਾਲ ਨਾਭਾ ਰੈਫ਼ਰ ਕਰੋ/i)).toBeInTheDocument();
+    expect(screen.getByText(/ਨਾਭਾ ਕਾਲ \(01765-220102\)/i)).toBeInTheDocument();
+  });
+
+  it('displays critical capacity alert when regional beds are low', async () => {
+    hospitalsApi.list.mockResolvedValue(sampleHospitals);
+    hospitalsApi.getSummary.mockResolvedValue({
+      ...sampleSummary,
+      critical_bed_alert: true,
+      total_available_beds: 14,
+    });
+
+    renderPage();
+
+    expect(await screen.findByText(/ਖੇਤਰੀ ਬੈੱਡ ਸਮਰੱਥਾ ਨਾਜ਼ੁਕ ਪੱਧਰ 'ਤੇ ਹੈ/i)).toBeInTheDocument();
+  });
+
+  it('hydrates from local cache when network call fails', async () => {
+    localStorage.setItem('sehatsetu_cached_hospitals', JSON.stringify(sampleHospitals));
+    localStorage.setItem('sehatsetu_cached_emergency_summary', JSON.stringify(sampleSummary));
+
+    hospitalsApi.list.mockRejectedValue(new Error('Network error'));
+    hospitalsApi.getSummary.mockRejectedValue(new Error('Network error'));
+
+    renderPage();
+
+    expect(await screen.findByText(/Sub-Divisional Civil Hospital Nabha/i)).toBeInTheDocument();
+    expect(screen.getByText(/ਔਫਲਾਈਨ ਕੈਸ਼ਡ ਮੋਡ/i)).toBeInTheDocument();
+  });
 });

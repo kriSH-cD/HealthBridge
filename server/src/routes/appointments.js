@@ -63,6 +63,9 @@ appointmentsRouter.post("/", ...requireRoles("PATIENT"), async (req, res) => {
       is_demo: false,
     },
     include,
+  }).catch((e) => {
+    if (e.code === "P2002") throw new HttpError(409, "This time slot is already booked with this doctor");
+    throw e;
   });
   res.status(201).json(serialize(appointment));
 });

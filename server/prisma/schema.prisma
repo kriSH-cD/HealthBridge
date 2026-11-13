@@ -2,8 +2,9 @@
 // so API JSON stays identical to what the frontend already reads.
 
 generator client {
-  provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
+  provider        = "prisma-client-js"
+  previewFeatures = ["partialIndexes"]
+  output          = "../src/generated/prisma"
 }
 
 datasource db {
@@ -311,6 +312,8 @@ model Appointment {
 
   // Target for composite FKs: clinical rows must name the same patient and doctor as their visit.
   @@unique([id, patient_id, doctor_id], map: "uq_appointment_parties")
+  // A doctor's slot can hold one live booking; cancelled/no-show ones free it again.
+  @@unique([doctor_id, appointment_date, appointment_time], map: "uq_doctor_slot_scheduled", where: raw("status = 'SCHEDULED'"))
   @@index([patient_id])
   @@index([doctor_id])
   @@index([appointment_date])

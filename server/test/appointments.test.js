@@ -48,12 +48,26 @@ describe("appointments", () => {
   it("enforces status rules", async () => {
     const [d, p, stranger] = [await doctor(), await patient(), await patient("9812300005")];
     const first = (await book(p, d)).body.id;
-    const second = (await book(p, d)).body.id;
+    const second = (await book(p, d, { appointment_time: "11:30 AM" })).body.id;
 
     expect((await setStatus(stranger, first, "CANCELLED")).status).toBe(404);
     expect((await setStatus(p, first, "COMPLETED")).status).toBe(403);
     expect((await setStatus(d, first, "COMPLETED")).body.status).toBe("COMPLETED");
     expect((await setStatus(p, first, "CANCELLED")).status).toBe(400); // already done
     expect((await setStatus(p, second, "CANCELLED")).body.status).toBe("CANCELLED");
+  });
+});
+
+describe("slots", () => {
+  it("one live booking per doctor slot; cancelling frees it", async () => {
+    const [d, p, p2] = [await doctor(), await patient(), await patient("9812300006")];
+    const first = await book(p, d);
+    expect(first.status).toBe(201);
+    const clash = await book(p2, d);
+    expect(clash.status).toBe(409);
+    expect(clash.body.detail).toContain("already booked");
+
+    await setStatus(p, first.body.id, "CANCELLED");
+    expect((await book(p2, d)).status).toBe(201);
   });
 });

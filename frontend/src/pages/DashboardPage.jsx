@@ -14,7 +14,6 @@ import {
   MapPin, 
   Phone, 
   Calendar, 
-  ShieldCheck, 
   AlertTriangle,
   Users,
   Activity
@@ -86,12 +85,10 @@ export const DashboardPage = () => {
       {/* Role-Specific View */}
       {user?.role === 'PATIENT' && (
         <div className="space-y-6">
+        <AppointmentsPanel role="PATIENT" refreshKey={appointmentsKey} />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Synthetic ABHA Card */}
-          <div className="bg-gradient-to-br from-emerald-800 to-teal-900 text-white rounded-2xl p-6 shadow-md relative overflow-hidden">
-            <div className="absolute right-0 bottom-0 opacity-10 translate-x-4 translate-y-4">
-              <ShieldCheck className="w-36 h-36" />
-            </div>
+          <div className="bg-emerald-900 text-white rounded-2xl p-6 shadow-sm">
             <p className="text-[10px] font-bold uppercase tracking-widest text-emerald-200 mb-4">
               Nabha Digital Health ID (DEMO ABHA)
             </p>
@@ -128,8 +125,8 @@ export const DashboardPage = () => {
               </p>
             </div>
             <div className="pt-3 border-t border-slate-100 flex gap-2">
-              <button className="flex-1 bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-semibold py-2 rounded-lg hover:bg-emerald-100 transition">
-                ਪਰਚੀਆਂ ਦੇਖੋ (Prescriptions)
+              <button type="button" disabled className="flex-1 border border-dashed border-slate-300 text-slate-400 text-xs font-semibold py-2 rounded-lg cursor-not-allowed">
+                ਪਰਚੀਆਂ (Prescriptions) · Soon
               </button>
             </div>
           </div>
@@ -141,17 +138,17 @@ export const DashboardPage = () => {
               <span>ਤੁਰੰਤ ਸੇਵਾਵਾਂ (Quick Actions)</span>
             </h3>
             <div className="space-y-2">
-              <button type="button" onClick={() => setBooking(true)} className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 px-3 rounded-xl text-xs flex items-center justify-between transition">
+              <button type="button" onClick={() => setBooking(true)} className="w-full min-h-11 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white font-semibold px-3 rounded-xl text-xs flex items-center justify-between transition-[background-color,transform]">
                 <span>ਡਾਕਟਰ ਨਾਲ ਮੁਲਾਕਾਤ ਬੁੱਕ ਕਰੋ</span>
                 <span>→</span>
               </button>
-              <a href="#find-medicine" className="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-3 rounded-xl text-xs flex items-center justify-between transition">
+              <a href="#find-medicine" className="w-full min-h-11 border border-slate-300 hover:bg-slate-50 text-slate-800 font-semibold px-3 rounded-xl text-xs flex items-center justify-between transition-colors">
                 <span>ਨੇੜਲੇ ਮੈਡੀਕਲ ਸਟੋਰ 'ਤੇ ਦਵਾਈ ਲੱਭੋ</span>
                 <span>→</span>
               </a>
-              <button className="w-full bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-between transition">
-                <span>AI ਲੱਛਣ ਜਾਂਚ ਸ਼ੁਰੂ ਕਰੋ</span>
-                <span>→</span>
+              <button type="button" disabled className="w-full min-h-11 border border-dashed border-slate-300 text-slate-400 font-semibold px-3 rounded-xl text-xs flex items-center justify-between cursor-not-allowed">
+                <span>AI ਲੱਛਣ ਜਾਂਚ (Symptom checker)</span>
+                <span className="text-[10px] uppercase tracking-wider">Soon</span>
               </button>
             </div>
           </div>
@@ -162,7 +159,6 @@ export const DashboardPage = () => {
             onBooked={() => { setBooking(false); setAppointmentsKey((k) => k + 1); }}
           />
         )}
-        <AppointmentsPanel role="PATIENT" refreshKey={appointmentsKey} />
         <div id="find-medicine" className="scroll-mt-28"><MedicineSearch /></div>
         </div>
       )}
@@ -263,7 +259,7 @@ export const DashboardPage = () => {
       {user?.role === 'HOSPITAL_ADMIN' && (
         <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
           <h3 className="text-sm font-bold text-slate-900 flex items-center space-x-2">
-            <Hospital className="w-4 h-4 text-red-600" />
+            <Hospital className="w-4 h-4 text-emerald-600" />
             <span>ਹਸਪਤਾਲ ਪ੍ਰਬੰਧਨ ({user?.hospital_profile?.hospital_name || 'Hospital'} • Bed Status)</span>
           </h3>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -275,13 +271,13 @@ export const DashboardPage = () => {
               <p className="text-xs text-emerald-700">ਉਪਲਬਧ ਬਿਸਤਰੇ</p>
               <p className="text-2xl font-bold text-emerald-800">{user?.hospital_profile?.available_beds ?? '—'}</p>
             </div>
-            <div className="bg-blue-50 p-4 rounded-xl text-center">
-              <p className="text-xs text-blue-700">ਆਕਸੀਜਨ ਸੁਵਿਧਾ</p>
-              <p className="text-2xl font-bold text-blue-800">{user?.hospital_profile?.has_oxygen ? 'ਹਾਂ' : 'ਨਹੀਂ'}</p>
+            <div className="bg-slate-50 p-4 rounded-xl text-center">
+              <p className="text-xs text-slate-500">ਆਕਸੀਜਨ ਸੁਵਿਧਾ</p>
+              <p className="text-2xl font-bold text-slate-900">{user?.hospital_profile?.has_oxygen ? 'ਹਾਂ' : 'ਨਹੀਂ'}</p>
             </div>
-            <div className="bg-amber-50 p-4 rounded-xl text-center">
-              <p className="text-xs text-amber-700">ਐਮਰਜੈਂਸੀ ਓ.ਪੀ.ਡੀ</p>
-              <p className="text-2xl font-bold text-amber-800">{user?.hospital_profile?.has_emergency ? '24x7' : 'ਨਹੀਂ'}</p>
+            <div className="bg-slate-50 p-4 rounded-xl text-center">
+              <p className="text-xs text-slate-500">ਐਮਰਜੈਂਸੀ ਓ.ਪੀ.ਡੀ</p>
+              <p className="text-2xl font-bold text-slate-900">{user?.hospital_profile?.has_emergency ? '24x7' : 'ਨਹੀਂ'}</p>
             </div>
           </div>
         </div>

@@ -28,7 +28,7 @@ const friendlyDate = (ymd) => {
 
 /** The next visit, styled like the OPD slip (parchi) patients carry to the hospital. */
 const NextVisitSlip = ({ appointment, who }) => (
-  <div className="mb-4 rounded-xl border-2 border-dashed border-emerald-300 bg-emerald-50/60 p-4 flex items-start justify-between gap-4">
+  <div className="mb-4 rounded-xl border-2 border-dashed border-emerald-300 bg-emerald-50/60 p-4 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
     <div className="min-w-0">
       <p className="text-[11px] font-semibold uppercase tracking-wider text-emerald-800">ਅਗਲੀ ਮੁਲਾਕਾਤ · Next visit</p>
       <p className="text-xl font-semibold text-slate-900 mt-1 tabular-nums">
@@ -38,7 +38,7 @@ const NextVisitSlip = ({ appointment, who }) => (
         {who} · {appointment.appointment_type === 'TELECONSULTATION' ? 'Video call' : 'At the clinic'}
       </p>
     </div>
-    <div className="shrink-0 text-right">
+    <div className="shrink-0 sm:text-right border-t border-dashed border-emerald-300 pt-3 sm:border-0 sm:pt-0">
       <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">OPD token</p>
       <p className="font-mono text-sm font-bold text-slate-900">{appointment.appointment_number}</p>
     </div>

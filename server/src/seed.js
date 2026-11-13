@@ -273,7 +273,7 @@ export async function seedDatabase(prisma) {
           record_number: recNo,
           patient_id: patientEntities[pIdx % patientEntities.length].id,
           doctor_id: doctorEntities[dIdx % doctorEntities.length].id,
-          record_type: recType, title, diagnosis: diag, clinical_notes: notes, vitals,
+          record_type: recType, title, diagnosis: diag, clinical_notes: notes, vitals: vitals ? JSON.parse(vitals) : undefined,
           record_date: dayOffset(-pIdx * 4), is_confidential: false, is_demo: true,
         } });
         stats.medical_records++;

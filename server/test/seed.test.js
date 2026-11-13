@@ -78,3 +78,9 @@ it("links every seeded prescription to its own appointment's patient and doctor"
     expect([rx.patient_id, rx.doctor_id]).toEqual([rx.appointment.patient_id, rx.appointment.doctor_id]);
   }
 });
+
+it("stores vitals as structured JSON", async () => {
+  await seedDatabase(prisma);
+  const rec = await prisma.medicalRecord.findUnique({ where: { record_number: "REC-NBH-2026-0001" } });
+  expect(rec.vitals).toMatchObject({ bp: "138/88", pulse: 76 });
+});

@@ -258,7 +258,7 @@ model Medicine {
   inventory_items    PharmacyInventory[]
   prescription_items PrescriptionItem[]
 
-  @@index([name])
+  @@unique([name, strength]) // one catalogue entry per product strength
   @@index([generic_name])
   @@index([category])
   @@index([is_essential])
@@ -331,7 +331,7 @@ model MedicalRecord {
   title           String     @db.VarChar(150)
   diagnosis       String?
   clinical_notes  String?
-  vitals          String? // JSON text: BP, pulse, glucose, SpO2
+  vitals          Json? // e.g. {"bp": "138/88", "pulse": 76, "spo2": 98}
   record_date     DateTime   @default(now()) @db.Date
   is_confidential Boolean    @default(false)
   is_demo         Boolean    @default(true)

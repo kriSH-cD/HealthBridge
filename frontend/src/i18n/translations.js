@@ -87,6 +87,7 @@ export const translations = {
     oxygen_concentrator: "ਆਕਸੀਜਨ ਕੰਸਨਟ੍ਰੇਟਰ",
     oxygen_cylinders: "ਆਕਸੀਜਨ ਸਿਲੰਡਰ",
     critical_capacity_alert: "ਚੇਤਾਵਨੀ: ਖੇਤਰੀ ਬੈੱਡ ਸਮਰੱਥਾ ਨਾਜ਼ੁਕ ਪੱਧਰ 'ਤੇ ਹੈ। ਐਮਰਜੈਂਸੀ ਰੈਫ਼ਰਲ ਲਈ ਤੁਰੰਤ 108 ਜਾਂ ਸਿਵਲ ਹਸਪਤਾਲ ਸੰਪਰਕ ਕਰੋ।",
+    offline_cache_active: "ਔਫਲਾਈਨ ਕੈਸ਼ਡ ਮੋਡ (Offline Cache)",
   },
   hi: {
     app_title: "सेहत सेतु",
@@ -176,6 +177,7 @@ export const translations = {
     oxygen_concentrator: "ऑक्सीजन कंसंट्रेटर",
     oxygen_cylinders: "ऑक्सीजन सिलेंडर",
     critical_capacity_alert: "चेतावनी: क्षेत्रीय बेड क्षमता गंभीर स्तर पर है। आपातकालीन रेफरल के लिए तुरंत 108 या सिविल अस्पताल संपर्क करें।",
+    offline_cache_active: "ऑफ़लाइन कैश्ड मोड (Offline Cache)",
   },
   en: {
     app_title: "SehatSetu",
@@ -265,6 +267,7 @@ export const translations = {
     oxygen_concentrator: "Oxygen Concentrator",
     oxygen_cylinders: "Oxygen Cylinders",
     critical_capacity_alert: "Regional Alert: Emergency bed occupancy is critical. Please contact 108 Ambulance or Civil Hospital Nabha immediately.",
+    offline_cache_active: "Offline Cached Mode",
   }
 };
 

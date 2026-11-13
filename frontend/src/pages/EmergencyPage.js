@@ -31,6 +31,7 @@ export const EmergencyPage = () => {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState(null);
+  const [isOfflineCached, setIsOfflineCached] = useState(false);
 
   // Filters
   const [searchQuery, setSearchQuery] = useState('');
@@ -60,8 +61,31 @@ export const EmergencyPage = () => {
       setHospitals(hospData);
       setSummary(sumData);
       setError(null);
+      setIsOfflineCached(false);
+
+      // Persist to local cache for offline/2G rural resilience
+      try {
+        localStorage.setItem('sehatsetu_cached_hospitals', JSON.stringify(hospData));
+        if (sumData) localStorage.setItem('sehatsetu_cached_emergency_summary', JSON.stringify(sumData));
+      } catch (cacheWriteErr) {
+        // quota exceeded or private mode
+      }
     } catch (err) {
       console.error('Failed to load emergency data:', err);
+      // Fallback to offline cached data for rural connectivity drops
+      try {
+        const cachedHosp = localStorage.getItem('sehatsetu_cached_hospitals');
+        const cachedSum = localStorage.getItem('sehatsetu_cached_emergency_summary');
+        if (cachedHosp) {
+          setHospitals(JSON.parse(cachedHosp));
+          if (cachedSum) setSummary(JSON.parse(cachedSum));
+          setIsOfflineCached(true);
+          setError(null);
+          return;
+        }
+      } catch (cacheReadErr) {
+        // ignore
+      }
       setError('ਹਸਪਤਾਲਾਂ ਦਾ ਲਾਈਵ ਡਾਟਾ ਪ੍ਰਾਪਤ ਕਰਨ ਵਿੱਚ ਅਸਮਰੱਥ (Unable to load live hospital data)');
     } finally {
       setLoading(false);
@@ -210,10 +234,17 @@ export const EmergencyPage = () => {
               <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin text-emerald-400' : ''}`} />
               <span>{refreshing ? 'ਤਾਜ਼ਾ ਹੋ ਰਿਹਾ ਹੈ...' : 'ਤਾਜ਼ਾ ਕਰੋ (Refresh)'}</span>
             </button>
-            <div className="hidden sm:inline-flex items-center space-x-1.5 bg-emerald-950/60 border border-emerald-800/60 px-3 py-1.5 rounded-xl text-emerald-400 text-xs font-bold">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span>ਰੀਅਲ-ਟਾਈਮ ਸਿੰਕ (Live)</span>
-            </div>
+            {isOfflineCached ? (
+              <div className="inline-flex items-center space-x-1.5 bg-amber-950/60 border border-amber-800/60 px-3 py-1.5 rounded-xl text-amber-400 text-xs font-bold">
+                <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                <span>{t('offline_cache_active')}</span>
+              </div>
+            ) : (
+              <div className="hidden sm:inline-flex items-center space-x-1.5 bg-emerald-950/60 border border-emerald-800/60 px-3 py-1.5 rounded-xl text-emerald-400 text-xs font-bold">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>ਰੀਅਲ-ਟਾਈਮ ਸਿੰਕ (Live)</span>
+              </div>
+            )}
           </div>
         </div>
 

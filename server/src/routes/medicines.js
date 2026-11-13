@@ -2,7 +2,7 @@ import { Router } from "express";
 import { z } from "zod";
 import { prisma } from "../db.js";
 import { HttpError, parse } from "../lib/http.js";
-import { requireRoles } from "../lib/auth.js";
+import { requireRoles, requireUser } from "../lib/auth.js";
 import { isoDate } from "../lib/serialize.js";
 
 const include = { medicine: true, pharmacy: true };
@@ -31,6 +31,19 @@ const inventoryItem = (i) => ({
 const todayUtcMidnight = () => new Date(`${new Date().toLocaleDateString("en-CA")}T00:00:00Z`);
 
 export const medicinesRouter = Router();
+
+/** Catalogue lookup for prescribing: id + name + strength. */
+medicinesRouter.get("/", requireUser, async (req, res) => {
+  const { q } = parse(z.object({ q: z.string().trim().max(100).default("") }), req.query);
+  const match = { contains: q, mode: "insensitive" };
+  const medicines = await prisma.medicine.findMany({
+    where: q ? { OR: [{ name: match }, { generic_name: match }, { brand_name: match }] } : {},
+    select: { id: true, name: true, generic_name: true, strength: true, category: true },
+    orderBy: [{ name: "asc" }, { strength: "asc" }],
+    take: 20,
+  });
+  res.json(medicines);
+});
 
 /** Public: which Nabha pharmacies have this medicine in stock right now (cheapest first). */
 medicinesRouter.get("/availability", async (req, res) => {

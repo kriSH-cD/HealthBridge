@@ -49,3 +49,17 @@ describe("medicines", () => {
     expect((await api().get("/api/v1/medicines/inventory").set(patient.headers)).status).toBe(403);
   });
 });
+
+describe("medicine catalogue", () => {
+  it("searches by name for signed-in users", async () => {
+    await prisma.medicine.createMany({ data: [
+      { name: "Paracetamol", generic_name: "Paracetamol", strength: "500 mg" },
+      { name: "Paracetamol", generic_name: "Paracetamol", strength: "650 mg" },
+      { name: "Metformin", generic_name: "Metformin", strength: "500 mg" },
+    ] });
+    const doc = await registerAndLogin("9812300021", "DOCTOR");
+    const res = await api().get("/api/v1/medicines?q=para").set(doc.headers);
+    expect(res.body.map((m) => m.strength)).toEqual(["500 mg", "650 mg"]);
+    expect((await api().get("/api/v1/medicines")).status).toBe(401);
+  });
+});

@@ -84,7 +84,7 @@ appointmentsRouter.get("/", requireUser, async (req, res) => {
   res.json(items.map(serialize));
 });
 
-/** Doctor completes / marks no-show / cancels; patient can only cancel. */
+/** Doctor marks no-show / cancels; patient can only cancel. Completing goes through /complete. */
 appointmentsRouter.patch("/:id/status", requireUser, async (req, res) => {
   const p = parse(statusSchema, req.body);
   const appointment = await prisma.appointment.findUnique({ where: { id: Number(req.params.id) || 0 } });
@@ -94,6 +94,7 @@ appointmentsRouter.patch("/:id/status", requireUser, async (req, res) => {
 
   if (appointment.status !== "SCHEDULED") throw new HttpError(400, "Only scheduled appointments can change");
   if (p.status === "SCHEDULED") throw new HttpError(400, "Appointment is already scheduled");
+  if (p.status === "COMPLETED") throw new HttpError(400, "Complete a visit via POST /appointments/:id/complete with a visit note");
   if (isPatient && !isDoctor && p.status !== "CANCELLED") throw new HttpError(403, "Patients can only cancel");
 
   const updated = await prisma.appointment.update({

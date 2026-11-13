@@ -51,9 +51,10 @@ describe("appointments", () => {
     const second = (await book(p, d, { appointment_time: "11:30 AM" })).body.id;
 
     expect((await setStatus(stranger, first, "CANCELLED")).status).toBe(404);
-    expect((await setStatus(p, first, "COMPLETED")).status).toBe(403);
-    expect((await setStatus(d, first, "COMPLETED")).body.status).toBe("COMPLETED");
-    expect((await setStatus(p, first, "CANCELLED")).status).toBe(400); // already done
+    expect((await setStatus(p, first, "NO_SHOW")).status).toBe(403);
+    expect((await setStatus(d, first, "COMPLETED")).status).toBe(400); // needs a visit note
+    expect((await setStatus(d, first, "NO_SHOW")).body.status).toBe("NO_SHOW");
+    expect((await setStatus(p, first, "CANCELLED")).status).toBe(400); // already closed
     expect((await setStatus(p, second, "CANCELLED")).body.status).toBe("CANCELLED");
   });
 });

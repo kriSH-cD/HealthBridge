@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { directoryApi } from '../services/api';
+import { AppointmentsPanel } from '../components/AppointmentsPanel';
 import { 
   User, 
   Stethoscope, 
@@ -78,6 +79,7 @@ export const DashboardPage = () => {
 
       {/* Role-Specific View */}
       {user?.role === 'PATIENT' && (
+        <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Synthetic ABHA Card */}
           <div className="bg-gradient-to-br from-emerald-800 to-teal-900 text-white rounded-2xl p-6 shadow-md relative overflow-hidden">
@@ -152,10 +154,13 @@ export const DashboardPage = () => {
             </div>
           </div>
         </div>
+        <AppointmentsPanel role="PATIENT" />
+        </div>
       )}
 
       {user?.role === 'DOCTOR' && (
         <div className="space-y-6">
+          <AppointmentsPanel role="DOCTOR" />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-2">
               <span className="text-xs text-slate-400 uppercase font-semibold">ਵਿਸ਼ੇਸ਼ਤਾ (Specialization)</span>

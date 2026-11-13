@@ -72,13 +72,15 @@ export const DashboardPage = () => {
         </div>
 
         {/* Synthetic Demo Tag */}
+        {user?.is_demo && (
         <div className="bg-amber-50 border border-amber-300 rounded-xl px-3.5 py-2 text-right">
           <p className="text-[11px] font-bold text-amber-900 flex items-center space-x-1">
             <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
             <span>{t('demo_badge')}</span>
           </p>
-          <p className="text-[10px] text-amber-700">Account ID: #{user?.id} • Verified Demo</p>
+          <p className="text-[10px] text-amber-700">Account #{user?.id}</p>
         </div>
+        )}
       </div>
 
       {/* Role-Specific View */}
@@ -95,16 +97,16 @@ export const DashboardPage = () => {
             </p>
             <h3 className="text-lg font-bold">{user?.full_name?.replace(' [DEMO DATA]', '')}</h3>
             <p className="font-mono text-sm tracking-wider text-amber-300 my-2">
-              {user?.patient_profile?.abha_id || `91-${user?.id}098-7654-3210-DEMO`}
+              {user?.patient_profile?.abha_id || 'ABHA ID not linked'}
             </p>
             <div className="grid grid-cols-2 text-xs text-emerald-100 gap-2 mt-4 pt-3 border-t border-emerald-700">
               <div>
                 <span className="text-[10px] text-emerald-300 block">ਉਮਰ / ਲਿੰਗ:</span>
-                <span>{user?.patient_profile?.age || 45} Yrs • {user?.patient_profile?.gender || 'Male'}</span>
+                <span>{[user?.patient_profile?.age != null && `${user.patient_profile.age} Yrs`, user?.patient_profile?.gender].filter(Boolean).join(' • ') || '—'}</span>
               </div>
               <div>
                 <span className="text-[10px] text-emerald-300 block">ਬਲੱਡ ਗਰੁੱਪ:</span>
-                <span className="font-bold text-white">{user?.patient_profile?.blood_group || 'B+'}</span>
+                <span className="font-bold text-white">{user?.patient_profile?.blood_group || '—'}</span>
               </div>
             </div>
           </div>
@@ -122,11 +124,7 @@ export const DashboardPage = () => {
               </p>
               <p>
                 <strong>ਐਮਰਜੈਂਸੀ ਸੰਪਰਕ:</strong>{' '}
-                <span className="text-slate-800">{user?.patient_profile?.emergency_contact || '+91 9876543991'}</span>
-              </p>
-              <p>
-                <strong>ਸੰਬੰਧਿਤ ਪੀ.ਐਚ.ਸੀ:</strong>{' '}
-                <span className="text-slate-800">Civil Hospital Nabha Sector</span>
+                <span className="text-slate-800">{user?.patient_profile?.emergency_contact || 'Not added'}</span>
               </p>
             </div>
             <div className="pt-3 border-t border-slate-100 flex gap-2">
@@ -266,24 +264,24 @@ export const DashboardPage = () => {
         <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
           <h3 className="text-sm font-bold text-slate-900 flex items-center space-x-2">
             <Hospital className="w-4 h-4 text-red-600" />
-            <span>ਹਸਪਤਾਲ ਪ੍ਰਬੰਧਨ (Civil Hospital Nabha Bed Status)</span>
+            <span>ਹਸਪਤਾਲ ਪ੍ਰਬੰਧਨ ({user?.hospital_profile?.hospital_name || 'Hospital'} • Bed Status)</span>
           </h3>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             <div className="bg-slate-50 p-4 rounded-xl text-center">
               <p className="text-xs text-slate-500">ਕੁੱਲ ਬਿਸਤਰੇ</p>
-              <p className="text-2xl font-bold text-slate-900">100</p>
+              <p className="text-2xl font-bold text-slate-900">{user?.hospital_profile?.total_beds ?? '—'}</p>
             </div>
             <div className="bg-emerald-50 p-4 rounded-xl text-center">
               <p className="text-xs text-emerald-700">ਉਪਲਬਧ ਬਿਸਤਰੇ</p>
-              <p className="text-2xl font-bold text-emerald-800">24</p>
+              <p className="text-2xl font-bold text-emerald-800">{user?.hospital_profile?.available_beds ?? '—'}</p>
             </div>
             <div className="bg-blue-50 p-4 rounded-xl text-center">
               <p className="text-xs text-blue-700">ਆਕਸੀਜਨ ਸੁਵਿਧਾ</p>
-              <p className="text-2xl font-bold text-blue-800">ਹਾਂ</p>
+              <p className="text-2xl font-bold text-blue-800">{user?.hospital_profile?.has_oxygen ? 'ਹਾਂ' : 'ਨਹੀਂ'}</p>
             </div>
             <div className="bg-amber-50 p-4 rounded-xl text-center">
               <p className="text-xs text-amber-700">ਐਮਰਜੈਂਸੀ ਓ.ਪੀ.ਡੀ</p>
-              <p className="text-2xl font-bold text-amber-800">24x7</p>
+              <p className="text-2xl font-bold text-amber-800">{user?.hospital_profile?.has_emergency ? '24x7' : 'ਨਹੀਂ'}</p>
             </div>
           </div>
         </div>

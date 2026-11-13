@@ -1,12 +1,14 @@
 from datetime import date
 from typing import List
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import or_
 from sqlalchemy.orm import Session
 
+from app.api.deps import require_roles
 from app.db.session import get_db
 from app.models.pharmacy import Medicine, PharmacyInventory
-from app.schemas.medicine import MedicineAvailability
+from app.models.user import User, UserRole
+from app.schemas.medicine import InventoryItem, MedicineAvailability, StockUpdate
 
 router = APIRouter()
 
@@ -31,3 +33,43 @@ def medicine_availability(
         .limit(50)
         .all()
     )
+
+
+def _own_pharmacy(user: User):
+    if user.pharmacy is None:
+        raise HTTPException(status_code=400, detail="Pharmacy profile missing")
+    return user.pharmacy
+
+
+@router.get("/inventory", response_model=List[InventoryItem])
+def my_inventory(
+    current_user: User = Depends(require_roles([UserRole.PHARMACY])),
+    db: Session = Depends(get_db),
+):
+    """Pharmacy's own stock, lowest quantity first so reorders surface."""
+    pharmacy = _own_pharmacy(current_user)
+    return (
+        db.query(PharmacyInventory)
+        .filter(PharmacyInventory.pharmacy_id == pharmacy.id)
+        .order_by(PharmacyInventory.stock_quantity, PharmacyInventory.id)
+        .all()
+    )
+
+
+@router.patch("/inventory/{inventory_id}", response_model=InventoryItem)
+def update_stock(
+    inventory_id: int,
+    payload: StockUpdate,
+    current_user: User = Depends(require_roles([UserRole.PHARMACY])),
+    db: Session = Depends(get_db),
+):
+    """Pharmacy sets the current quantity for one of its batches."""
+    pharmacy = _own_pharmacy(current_user)
+    item = db.get(PharmacyInventory, inventory_id)
+    if item is None or item.pharmacy_id != pharmacy.id:
+        raise HTTPException(status_code=404, detail="Inventory item not found")
+    item.stock_quantity = payload.stock_quantity
+    item.is_available = payload.stock_quantity > 0
+    db.commit()
+    db.refresh(item)
+    return item

@@ -3,6 +3,7 @@ import cors from "cors";
 import { config } from "./config.js";
 import { HttpError } from "./lib/http.js";
 import { healthCheck, healthRouter } from "./routes/health.js";
+import { authRouter } from "./routes/auth.js";
 
 export const app = express();
 app.set("trust proxy", 1); // real client IP behind the Vite/Docker proxy, for rate limiting
@@ -11,6 +12,7 @@ app.use(express.json({ limit: "100kb" }));
 
 const v1 = express.Router();
 v1.use(healthRouter);
+v1.use("/auth", authRouter);
 app.use("/api/v1", v1);
 app.get("/api/health", healthCheck);
 

@@ -284,11 +284,13 @@ export async function seedDatabase(prisma) {
     for (const [rxNo, aptIdx, pIdx, dIdx, diag, inst, items] of samplePrescriptions) {
       const existingRx = await db.prescription.findUnique({ where: { prescription_number: rxNo } });
       if (!existingRx && patientEntities.length && doctorEntities.length) {
+        // A prescription written at a visit belongs to that visit's patient and doctor.
+        const apt = appointmentEntities[aptIdx];
         const rx = await db.prescription.create({ data: {
           prescription_number: rxNo,
-          appointment_id: aptIdx < appointmentEntities.length ? appointmentEntities[aptIdx].id : null,
-          patient_id: patientEntities[pIdx % patientEntities.length].id,
-          doctor_id: doctorEntities[dIdx % doctorEntities.length].id,
+          appointment_id: apt?.id ?? null,
+          patient_id: apt?.patient_id ?? patientEntities[pIdx % patientEntities.length].id,
+          doctor_id: apt?.doctor_id ?? doctorEntities[dIdx % doctorEntities.length].id,
           issue_date: dayOffset(-aptIdx * 2), valid_until: dayOffset(30),
           diagnosis: diag, instructions: inst, is_dispensed: aptIdx % 2 === 1, is_demo: true,
         } });

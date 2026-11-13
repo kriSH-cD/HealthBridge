@@ -69,3 +69,12 @@ describe("POST /seed/seed-demo-data", () => {
     }
   });
 });
+
+it("links every seeded prescription to its own appointment's patient and doctor", async () => {
+  await seedDatabase(prisma);
+  const rxs = await prisma.prescription.findMany({ where: { appointment_id: { not: null } }, include: { appointment: true } });
+  expect(rxs.length).toBeGreaterThan(0);
+  for (const rx of rxs) {
+    expect([rx.patient_id, rx.doctor_id]).toEqual([rx.appointment.patient_id, rx.appointment.doctor_id]);
+  }
+});

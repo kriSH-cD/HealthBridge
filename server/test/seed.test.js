@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { prisma } from "../src/db.js";
 import { seedDatabase } from "../src/seed.js";
-import { login } from "./helpers.js";
+import { api, login } from "./helpers.js";
+import { config } from "../src/config.js";
 
 describe("seedDatabase", () => {
   it("creates the demo counts with demo flags", async () => {
@@ -51,5 +52,20 @@ describe("seedDatabase", () => {
   it("lets a demo doctor log in", async () => {
     await seedDatabase(prisma);
     await login("9876543201");
+  });
+});
+
+describe("POST /seed/seed-demo-data", () => {
+  it("is 404 unless ENABLE_DEMO_SEED is on", async () => {
+    expect((await api().post("/api/v1/seed/seed-demo-data")).status).toBe(404);
+    config.enableDemoSeed = true;
+    try {
+      const res = await api().post("/api/v1/seed/seed-demo-data");
+      expect(res.status).toBe(200);
+      expect(res.body.note).toContain("DEMO DATA");
+      expect(res.body.seeded_counts.doctors).toBe(8);
+    } finally {
+      config.enableDemoSeed = false;
+    }
   });
 });

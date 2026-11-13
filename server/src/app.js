@@ -5,6 +5,7 @@ import { HttpError } from "./lib/http.js";
 import { healthCheck, healthRouter } from "./routes/health.js";
 import { authRouter } from "./routes/auth.js";
 import { usersRouter } from "./routes/users.js";
+import { appointmentsRouter } from "./routes/appointments.js";
 
 export const app = express();
 app.set("trust proxy", 1); // real client IP behind the Vite/Docker proxy, for rate limiting
@@ -15,6 +16,7 @@ const v1 = express.Router();
 v1.use(healthRouter);
 v1.use("/auth", authRouter);
 v1.use("/users", usersRouter);
+v1.use("/appointments", appointmentsRouter);
 app.use("/api/v1", v1);
 app.get("/api/health", healthCheck);
 

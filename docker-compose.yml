@@ -23,10 +23,11 @@ services:
       interval: 5s
       retries: 10
 
-  backend:
-    build: ./backend
+  server:
+    build: ./server
     environment:
-      DATABASE_URL: postgresql+psycopg2://sehatsetu:sehatsetu@db:5432/sehatsetu
+      DATABASE_URL: postgresql://sehatsetu:sehatsetu@db:5432/sehatsetu
+      REDIS_URL: redis://redis:6379
       SECRET_KEY: ${SECRET_KEY:-change_me_in_production}
       ENABLE_DEMO_SEED: ${ENABLE_DEMO_SEED:-true}
     ports:
@@ -34,15 +35,17 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      redis:
+        condition: service_healthy
 
   frontend:
     build: ./frontend
     environment:
-      API_PROXY_TARGET: http://backend:8000
+      API_PROXY_TARGET: http://server:8000
     ports:
       - "5173:5173"
     depends_on:
-      - backend
+      - server
 
 volumes:
   pgdata:

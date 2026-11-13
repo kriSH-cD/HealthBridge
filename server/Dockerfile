@@ -3,7 +3,7 @@ FROM node:22-alpine
 WORKDIR /app
 
 COPY package.json package-lock.json ./
-RUN npm ci
+RUN npm ci --ignore-scripts
 
 COPY . .
 # generate needs a syntactically valid url, not a live database

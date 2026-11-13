@@ -1,4 +1,4 @@
-// Port of backend/app/db/seed_data.py: idempotent synthetic demo data for Nabha, all flagged as DEMO DATA.
+// Idempotent synthetic demo data for Nabha; every record is flagged as DEMO DATA.
 import { hashPassword } from "./lib/security.js";
 
 /** Today's local calendar date plus n days, as UTC midnight (what Prisma expects for @db.Date). */

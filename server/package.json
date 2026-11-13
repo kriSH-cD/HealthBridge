@@ -5,6 +5,8 @@
   "scripts": {
     "dev": "node --watch --env-file-if-exists=.env src/index.js",
     "start": "node src/index.js",
+    "migrate": "prisma migrate deploy",
+    "postinstall": "prisma generate",
     "test": "vitest run"
   },
   "devDependencies": {

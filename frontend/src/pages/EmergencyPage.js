@@ -32,6 +32,12 @@ export const EmergencyPage = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState(null);
 
+  // Filters
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterOxygen, setFilterOxygen] = useState(false);
+  const [filterEmergency, setFilterEmergency] = useState(false);
+  const [filterAvailableOnly, setFilterAvailableOnly] = useState(false);
+
   const fetchData = useCallback(async (isManualRefresh = false) => {
     if (isManualRefresh) setRefreshing(true);
     try {
@@ -54,6 +60,20 @@ export const EmergencyPage = () => {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+
+  // Client-side filter matching
+  const filteredHospitals = hospitals.filter((h) => {
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      const matchName = h.hospital_name.toLowerCase().includes(query);
+      const matchAddr = h.address.toLowerCase().includes(query);
+      if (!matchName && !matchAddr) return false;
+    }
+    if (filterOxygen && !h.has_oxygen) return false;
+    if (filterEmergency && !h.has_emergency) return false;
+    if (filterAvailableOnly && h.available_beds <= 0) return false;
+    return true;
+  });
 
   return (
     <div className="flex-1 bg-slate-900 text-slate-100 min-h-screen pb-16">
@@ -130,6 +150,155 @@ export const EmergencyPage = () => {
             </div>
           </div>
         </div>
+
+        {/* 3. Live Stats Overview Strip */}
+        <section className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          {/* Card 1: Available Beds */}
+          <div className="bg-slate-800/90 border border-slate-700/80 rounded-2xl p-4 shadow-lg flex items-center space-x-3.5">
+            <div className="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center shrink-0">
+              <Bed className="w-6 h-6" />
+            </div>
+            <div>
+              <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">{t('available_beds')}</p>
+              <p className="text-2xl font-black text-emerald-400">
+                {summary ? summary.total_available_beds : hospitals.reduce((acc, h) => acc + h.available_beds, 0)}
+              </p>
+              <p className="text-[10px] text-slate-400">
+                ਕੁੱਲ {summary ? summary.total_beds : hospitals.reduce((acc, h) => acc + h.total_beds, 0)} ਬੈੱਡਾਂ ਵਿੱਚੋਂ
+              </p>
+            </div>
+          </div>
+
+          {/* Card 2: Total Facilities */}
+          <div className="bg-slate-800/90 border border-slate-700/80 rounded-2xl p-4 shadow-lg flex items-center space-x-3.5">
+            <div className="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20 flex items-center justify-center shrink-0">
+              <Building2 className="w-6 h-6" />
+            </div>
+            <div>
+              <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">ਹਸਪਤਾਲ / ਕੇਂਦਰ</p>
+              <p className="text-2xl font-black text-blue-400">
+                {summary ? summary.total_facilities : hospitals.length}
+              </p>
+              <p className="text-[10px] text-slate-400">ਨਾਭਾ ਤਹਿਸੀਲ ਅਧੀਨ</p>
+            </div>
+          </div>
+
+          {/* Card 3: Oxygen Ready Facilities */}
+          <div className="bg-slate-800/90 border border-slate-700/80 rounded-2xl p-4 shadow-lg flex items-center space-x-3.5">
+            <div className="w-12 h-12 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 flex items-center justify-center shrink-0">
+              <Wind className="w-6 h-6" />
+            </div>
+            <div>
+              <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">ਆਕਸੀਜਨ ਸਹੂਲਤ</p>
+              <p className="text-2xl font-black text-cyan-400">
+                {summary ? summary.oxygen_facilities : hospitals.filter((h) => h.has_oxygen).length}
+              </p>
+              <p className="text-[10px] text-slate-400">ਪਲਾਂਟ ਅਤੇ ਸਿਲੰਡਰ ਸਮਰਥਿਤ</p>
+            </div>
+          </div>
+
+          {/* Card 4: 24/7 Emergency Units */}
+          <div className="bg-slate-800/90 border border-slate-700/80 rounded-2xl p-4 shadow-lg flex items-center space-x-3.5">
+            <div className="w-12 h-12 rounded-xl bg-red-500/10 text-red-400 border border-red-500/20 flex items-center justify-center shrink-0">
+              <ShieldAlert className="w-6 h-6" />
+            </div>
+            <div>
+              <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">24/7 ਐਮਰਜੈਂਸੀ</p>
+              <p className="text-2xl font-black text-red-400">
+                {summary ? summary.emergency_facilities : hospitals.filter((h) => h.has_emergency).length}
+              </p>
+              <p className="text-[10px] text-slate-400">ਸਿਵਲ ਤੇ ਸੀ.ਐਚ.ਸੀ. ਯੂਨਿਟ</p>
+            </div>
+          </div>
+        </section>
+
+        {/* 4. Search and Filter Bar */}
+        <section className="bg-slate-800/70 border border-slate-700/70 rounded-2xl p-3 sm:p-4 space-y-3 shadow">
+          <div className="flex flex-col md:flex-row items-stretch md:items-center gap-3">
+            {/* Search Box */}
+            <div className="relative flex-1">
+              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="ਹਸਪਤਾਲ ਦਾ ਨਾਮ ਜਾਂ ਪਿੰਡ ਖੋਜੋ (Search hospital or village)..."
+                className="w-full bg-slate-900 border border-slate-700 rounded-xl pl-10 pr-4 py-2 text-xs sm:text-sm text-white placeholder-slate-400 focus:outline-none focus:border-emerald-500"
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white text-xs"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+
+            {/* Filter Toggle Buttons */}
+            <div className="flex items-center gap-2 flex-wrap text-xs">
+              <button
+                type="button"
+                onClick={() => setFilterAvailableOnly(!filterAvailableOnly)}
+                className={`px-3 py-2 rounded-xl font-semibold border transition flex items-center space-x-1.5 ${
+                  filterAvailableOnly
+                    ? 'bg-emerald-600 text-white border-emerald-500 shadow-sm'
+                    : 'bg-slate-900 text-slate-300 border-slate-700 hover:bg-slate-750'
+                }`}
+              >
+                <Bed className="w-3.5 h-3.5" />
+                <span>ਉਪਲਬਧ ਬੈੱਡ ਹੀ (Available)</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setFilterOxygen(!filterOxygen)}
+                className={`px-3 py-2 rounded-xl font-semibold border transition flex items-center space-x-1.5 ${
+                  filterOxygen
+                    ? 'bg-cyan-600 text-white border-cyan-500 shadow-sm'
+                    : 'bg-slate-900 text-slate-300 border-slate-700 hover:bg-slate-750'
+                }`}
+              >
+                <Wind className="w-3.5 h-3.5" />
+                <span>ਆਕਸੀਜਨ ਸਮਰਥਿਤ</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setFilterEmergency(!filterEmergency)}
+                className={`px-3 py-2 rounded-xl font-semibold border transition flex items-center space-x-1.5 ${
+                  filterEmergency
+                    ? 'bg-red-600 text-white border-red-500 shadow-sm'
+                    : 'bg-slate-900 text-slate-300 border-slate-700 hover:bg-slate-750'
+                }`}
+              >
+                <ShieldAlert className="w-3.5 h-3.5" />
+                <span>24/7 ਐਮਰਜੈਂਸੀ</span>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        {/* Status Feedback */}
+        {loading ? (
+          <div className="text-center py-16 space-y-3">
+            <div className="w-10 h-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+            <p className="text-sm font-semibold text-slate-300">ਲਾਈਵ ਹਸਪਤਾਲ ਬੈੱਡ ਡਾਟਾ ਲੋਡ ਹੋ ਰਿਹਾ ਹੈ...</p>
+            <p className="text-xs text-slate-500">Connecting to Nabha Regional Healthcare Network...</p>
+          </div>
+        ) : error ? (
+          <div className="bg-slate-800 border border-red-500/40 rounded-2xl p-6 text-center text-red-400 space-y-2">
+            <AlertTriangle className="w-8 h-8 mx-auto text-red-400" />
+            <p className="text-sm font-semibold">{error}</p>
+            <button
+              onClick={() => fetchData(true)}
+              className="text-xs bg-red-600/30 hover:bg-red-600/50 text-white px-3 py-1.5 rounded-lg border border-red-500/40 transition"
+            >
+              ਮੁੜ ਕੋਸ਼ਿਸ਼ ਕਰੋ (Retry)
+            </button>
+          </div>
+        ) : null}
       </div>
     </div>
   );

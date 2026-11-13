@@ -63,11 +63,11 @@ export const Navbar = () => {
           <div>
             <div className="flex items-center space-x-1.5">
               <span className="text-xl font-bold text-slate-900 tracking-tight">{t('app_title')}</span>
-              <span className="text-xs bg-blue-50 text-blue-700 font-semibold px-2 py-0.5 rounded-full border border-blue-200">
+              <span className="hidden sm:inline text-xs bg-blue-50 text-blue-700 font-semibold px-2 py-0.5 rounded-full border border-blue-200">
                 ਨਾਭਾ
               </span>
             </div>
-            <p className="text-[11px] text-slate-500 leading-none">Rural Health Bridge</p>
+            <p className="hidden sm:block text-[11px] text-slate-500 leading-none">Rural Health Bridge</p>
           </div>
         </Link>
 
@@ -114,8 +114,9 @@ export const Navbar = () => {
                 className="flex items-center space-x-1.5 bg-blue-50 text-blue-800 border border-blue-200 text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-blue-100 transition"
               >
                 <UserIcon className="w-3.5 h-3.5" />
-                <span className="max-w-[100px] truncate">{user?.full_name?.replace(' [DEMO DATA]', '')}</span>
-                <span className="text-[10px] bg-blue-200 text-blue-900 px-1.5 py-0.2 rounded font-bold uppercase">
+                <span className="sr-only sm:hidden">{t('dashboard')}</span>
+                <span className="hidden sm:inline max-w-[100px] truncate">{user?.full_name?.replace(' [DEMO DATA]', '')}</span>
+                <span className="hidden sm:inline text-[10px] bg-blue-200 text-blue-900 px-1.5 py-0.2 rounded font-bold uppercase">
                   {user?.role}
                 </span>
               </Link>

@@ -15,6 +15,36 @@ const ACTIONS = {
   PATIENT: [['CANCELLED', 'ਰੱਦ ਕਰੋ (Cancel)']],
 };
 
+const localToday = () => new Date().toLocaleDateString('en-CA');
+
+/** "Today" / "Tomorrow" / "Fri, 14 Nov" for a YYYY-MM-DD date. */
+const friendlyDate = (ymd) => {
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  if (ymd === localToday()) return 'Today (ਅੱਜ)';
+  if (ymd === tomorrow.toLocaleDateString('en-CA')) return 'Tomorrow (ਕੱਲ੍ਹ)';
+  return new Date(`${ymd}T00:00:00`).toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' });
+};
+
+/** The next visit, styled like the OPD slip (parchi) patients carry to the hospital. */
+const NextVisitSlip = ({ appointment, who }) => (
+  <div className="mb-4 rounded-xl border-2 border-dashed border-emerald-300 bg-emerald-50/60 p-4 flex items-start justify-between gap-4">
+    <div className="min-w-0">
+      <p className="text-[11px] font-semibold uppercase tracking-wider text-emerald-800">ਅਗਲੀ ਮੁਲਾਕਾਤ · Next visit</p>
+      <p className="text-xl font-semibold text-slate-900 mt-1 tabular-nums">
+        {friendlyDate(appointment.appointment_date)} · {appointment.appointment_time}
+      </p>
+      <p className="text-sm text-slate-700 mt-0.5 truncate">
+        {who} · {appointment.appointment_type === 'TELECONSULTATION' ? 'Video call' : 'At the clinic'}
+      </p>
+    </div>
+    <div className="shrink-0 text-right">
+      <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">OPD token</p>
+      <p className="font-mono text-sm font-bold text-slate-900">{appointment.appointment_number}</p>
+    </div>
+  </div>
+);
+
 export const AppointmentsPanel = ({ role, refreshKey = 0 }) => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -39,6 +69,7 @@ export const AppointmentsPanel = ({ role, refreshKey = 0 }) => {
     }
   };
 
+  const next = items.find((a) => a.status === 'SCHEDULED' && a.appointment_date >= localToday());
   const otherParty = (a) => (role === 'DOCTOR' ? a.patient_name : a.doctor_name).replace(' [DEMO DATA]', '');
 
   return (
@@ -49,6 +80,8 @@ export const AppointmentsPanel = ({ role, refreshKey = 0 }) => {
       </h3>
 
       {error && <p role="alert" className="text-xs text-red-600 pb-3">{error}</p>}
+
+      {next && <NextVisitSlip appointment={next} who={otherParty(next)} />}
 
       {loading ? (
         <p className="text-xs text-slate-400 py-4">Loading…</p>

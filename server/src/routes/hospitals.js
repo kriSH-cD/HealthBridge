@@ -16,6 +16,20 @@ export const serializeHospital = (h) => {
     bed_status = "CRITICAL";
   }
 
+  let oxygen_type = "NONE";
+  if (h.has_oxygen) {
+    const nameLower = (h.hospital_name || "").toLowerCase();
+    if (nameLower.includes("civil")) {
+      oxygen_type = "OXYGEN_PLANT";
+    } else if (nameLower.includes("duladdi")) {
+      oxygen_type = "OXYGEN_CONCENTRATOR";
+    } else if (nameLower.includes("rohti")) {
+      oxygen_type = "OXYGEN_CYLINDERS";
+    } else {
+      oxygen_type = "OXYGEN_SUPPORTED";
+    }
+  }
+
   return {
     id: h.id,
     user_id: h.user_id,
@@ -28,6 +42,7 @@ export const serializeHospital = (h) => {
     occupancy_rate,
     bed_status,
     has_oxygen: h.has_oxygen,
+    oxygen_type,
     has_emergency: h.has_emergency,
     created_at: h.created_at,
     updated_at: h.updated_at,
@@ -87,6 +102,7 @@ hospitalsRouter.get("/summary", async (_req, res) => {
   const oxygen_facilities = hospitals.filter((h) => h.has_oxygen).length;
   const emergency_facilities = hospitals.filter((h) => h.has_emergency).length;
   const critical_facilities = hospitals.filter((h) => h.available_beds <= 5).length;
+  const critical_bed_alert = total_available_beds <= 20 || overall_occupancy_rate >= 85;
 
   res.json({
     total_facilities,
@@ -97,6 +113,7 @@ hospitalsRouter.get("/summary", async (_req, res) => {
     oxygen_facilities,
     emergency_facilities,
     critical_facilities,
+    critical_bed_alert,
     last_updated: hospitals.length > 0 ? hospitals[0].updated_at : new Date().toISOString(),
   });
 });

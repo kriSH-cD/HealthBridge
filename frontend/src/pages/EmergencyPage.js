@@ -217,6 +217,32 @@ export const EmergencyPage = () => {
           </div>
         </div>
 
+        {/* Critical Capacity Alert Banner */}
+        {summary && (summary.critical_bed_alert || summary.total_available_beds <= 20) && (
+          <div className="bg-red-900/60 border border-red-600/80 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-red-100 shadow-lg animate-pulse">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 rounded-xl bg-red-600/30 text-red-300 flex items-center justify-center shrink-0 border border-red-500/40">
+                <AlertTriangle className="w-5 h-5 text-red-400" />
+              </div>
+              <div>
+                <h4 className="text-sm font-extrabold text-white tracking-wide">
+                  {t('critical_capacity_alert')}
+                </h4>
+                <p className="text-xs text-red-300 mt-0.5">
+                  ਖੇਤਰ ਵਿੱਚ ਕੁੱਲ ਉਪਲਬਧ ਬੈੱਡ: <span className="font-bold text-white font-mono">{summary.total_available_beds}</span> (ਨਾਭਾ ਤਹਿਸੀਲ ਅਧੀਨ)।
+                </p>
+              </div>
+            </div>
+            <a
+              href="tel:01765220102"
+              className="bg-white text-red-800 hover:bg-red-50 font-black px-3.5 py-2 rounded-xl text-xs shrink-0 shadow transition flex items-center space-x-1"
+            >
+              <PhoneCall className="w-3.5 h-3.5" />
+              <span>ਸਿਵਲ ਕਾਲ (Nabha Apex)</span>
+            </a>
+          </div>
+        )}
+
         {/* 3. Live Stats Overview Strip */}
         <section className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {/* Card 1: Available Beds */}
@@ -463,7 +489,15 @@ export const EmergencyPage = () => {
                       {h.has_oxygen ? (
                         <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-cyan-950/50 text-cyan-300 border border-cyan-800/50 font-medium">
                           <Wind className="w-3.5 h-3.5 text-cyan-400" />
-                          <span>ਆਕਸੀਜਨ ਉਪਲਬਧ (O₂ Ready)</span>
+                          <span>
+                            {h.oxygen_type === 'OXYGEN_PLANT'
+                              ? t('oxygen_plant')
+                              : h.oxygen_type === 'OXYGEN_CONCENTRATOR'
+                              ? t('oxygen_concentrator')
+                              : h.oxygen_type === 'OXYGEN_CYLINDERS'
+                              ? t('oxygen_cylinders')
+                              : t('oxygen_supported')}
+                          </span>
                         </span>
                       ) : (
                         <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-slate-900 text-slate-500 border border-slate-800">

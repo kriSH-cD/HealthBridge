@@ -83,6 +83,10 @@ export const translations = {
     bed_status_available: "ਬੈੱਡ ਉਪਲਬਧ ਹਨ",
     bed_status_critical: "ਨਾਜ਼ੁਕ (ਘੱਟ ਬੈੱਡ)",
     bed_status_full: "ਬੈੱਡ ਭਰੇ ਹੋਏ ਹਨ",
+    oxygen_plant: "ਪੀ.ਐਸ.ਏ. ਆਕਸੀਜਨ ਪਲਾਂਟ",
+    oxygen_concentrator: "ਆਕਸੀਜਨ ਕੰਸਨਟ੍ਰੇਟਰ",
+    oxygen_cylinders: "ਆਕਸੀਜਨ ਸਿਲੰਡਰ",
+    critical_capacity_alert: "ਚੇਤਾਵਨੀ: ਖੇਤਰੀ ਬੈੱਡ ਸਮਰੱਥਾ ਨਾਜ਼ੁਕ ਪੱਧਰ 'ਤੇ ਹੈ। ਐਮਰਜੈਂਸੀ ਰੈਫ਼ਰਲ ਲਈ ਤੁਰੰਤ 108 ਜਾਂ ਸਿਵਲ ਹਸਪਤਾਲ ਸੰਪਰਕ ਕਰੋ।",
   },
   hi: {
     app_title: "सेहत सेतु",
@@ -168,6 +172,10 @@ export const translations = {
     bed_status_available: "बेड उपलब्ध हैं",
     bed_status_critical: "गंभीर (कम बेड)",
     bed_status_full: "बेड भर चुके हैं",
+    oxygen_plant: "पीएसए ऑक्सीजन प्लांट",
+    oxygen_concentrator: "ऑक्सीजन कंसंट्रेटर",
+    oxygen_cylinders: "ऑक्सीजन सिलेंडर",
+    critical_capacity_alert: "चेतावनी: क्षेत्रीय बेड क्षमता गंभीर स्तर पर है। आपातकालीन रेफरल के लिए तुरंत 108 या सिविल अस्पताल संपर्क करें।",
   },
   en: {
     app_title: "SehatSetu",
@@ -253,6 +261,10 @@ export const translations = {
     bed_status_available: "Beds Available",
     bed_status_critical: "Critical (Low Beds)",
     bed_status_full: "Beds Full",
+    oxygen_plant: "PSA Oxygen Plant",
+    oxygen_concentrator: "Oxygen Concentrator",
+    oxygen_cylinders: "Oxygen Cylinders",
+    critical_capacity_alert: "Regional Alert: Emergency bed occupancy is critical. Please contact 108 Ambulance or Civil Hospital Nabha immediately.",
   }
 };
 

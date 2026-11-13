@@ -52,3 +52,15 @@ def test_booking_rejects_past_date_unknown_doctor_and_non_patient(client: TestCl
     assert _book(client, patient, doctor, appointment_date=yesterday).status_code == 400
     assert _book(client, patient, doctor, doctor_id=99999).status_code == 404
     assert _book(client, doctor, doctor).status_code == 403
+
+
+def test_each_side_sees_only_their_appointments(client: TestClient):
+    doctor, patient = _doctor(client), _patient(client)
+    other_doctor, other_patient = _doctor(client, "9812300003"), _patient(client, "9812300004")
+    _book(client, patient, doctor)
+    _book(client, other_patient, other_doctor)
+
+    for who in (patient, doctor):
+        mine = client.get("/api/v1/appointments", headers=who["headers"]).json()
+        assert len(mine) == 1
+        assert mine[0]["patient_name"] == patient["user"]["full_name"]

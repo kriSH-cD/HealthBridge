@@ -1,9 +1,10 @@
 import uuid
+from typing import List
 from datetime import date
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from app.api.deps import require_roles
+from app.api.deps import get_current_user, require_roles
 from app.db.session import get_db
 from app.models.clinical import Appointment
 from app.models.user import Doctor, User, UserRole
@@ -44,3 +45,19 @@ def book_appointment(
     db.commit()
     db.refresh(appointment)
     return appointment
+
+
+@router.get("", response_model=List[AppointmentResponse])
+def list_my_appointments(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Appointments of the logged-in patient or doctor, soonest first."""
+    query = db.query(Appointment)
+    if current_user.role == UserRole.PATIENT and current_user.patient:
+        query = query.filter(Appointment.patient_id == current_user.patient.id)
+    elif current_user.role == UserRole.DOCTOR and current_user.doctor:
+        query = query.filter(Appointment.doctor_id == current_user.doctor.id)
+    else:
+        return []
+    return query.order_by(Appointment.appointment_date, Appointment.appointment_time).all()

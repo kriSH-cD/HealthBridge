@@ -138,7 +138,6 @@ model Patient {
   appointments    Appointment[]
   medical_records MedicalRecord[]
   prescriptions   Prescription[]
-  consultations   Consultation[]
 
   @@index([blood_group])
   @@map("patients")
@@ -164,7 +163,6 @@ model Doctor {
   appointments    Appointment[]
   prescriptions   Prescription[]
   medical_records MedicalRecord[]
-  consultations   Consultation[]
 
   @@index([specialization])
   @@index([hospital_name])
@@ -305,11 +303,14 @@ model Appointment {
   created_at         DateTime          @default(now()) @db.Timestamptz(6)
   updated_at         DateTime          @default(now()) @updatedAt @db.Timestamptz(6)
 
-  patient       Patient        @relation(fields: [patient_id], references: [id], onDelete: Cascade)
-  doctor        Doctor         @relation(fields: [doctor_id], references: [id], onDelete: Cascade)
-  consultation  Consultation?
-  prescriptions Prescription[]
+  patient         Patient         @relation(fields: [patient_id], references: [id], onDelete: Cascade)
+  doctor          Doctor          @relation(fields: [doctor_id], references: [id], onDelete: Cascade)
+  consultation    Consultation?
+  prescriptions   Prescription[]
+  medical_records MedicalRecord[]
 
+  // Target for composite FKs: clinical rows must name the same patient and doctor as their visit.
+  @@unique([id, patient_id, doctor_id], map: "uq_appointment_parties")
   @@index([patient_id])
   @@index([doctor_id])
   @@index([appointment_date])
@@ -320,6 +321,7 @@ model Appointment {
 model MedicalRecord {
   id              Int        @id @default(autoincrement())
   record_number   String     @unique @db.VarChar(30)
+  appointment_id  Int? // visit this note was written at, if any
   patient_id      Int
   doctor_id       Int?
   record_type     RecordType @default(GENERAL_VISIT)
@@ -333,9 +335,11 @@ model MedicalRecord {
   created_at      DateTime   @default(now()) @db.Timestamptz(6)
   updated_at      DateTime   @default(now()) @updatedAt @db.Timestamptz(6)
 
-  patient Patient @relation(fields: [patient_id], references: [id], onDelete: Cascade)
-  doctor  Doctor? @relation(fields: [doctor_id], references: [id], onDelete: SetNull)
+  patient     Patient      @relation(fields: [patient_id], references: [id], onDelete: Cascade)
+  doctor      Doctor?      @relation(fields: [doctor_id], references: [id], onDelete: SetNull)
+  appointment Appointment? @relation(fields: [appointment_id, patient_id, doctor_id], references: [id, patient_id, doctor_id], onDelete: NoAction)
 
+  @@index([appointment_id])
   @@index([patient_id])
   @@index([doctor_id])
   @@index([record_date])
@@ -357,7 +361,7 @@ model Prescription {
   created_at          DateTime  @default(now()) @db.Timestamptz(6)
   updated_at          DateTime  @default(now()) @updatedAt @db.Timestamptz(6)
 
-  appointment Appointment?       @relation(fields: [appointment_id], references: [id], onDelete: SetNull)
+  appointment Appointment?       @relation(fields: [appointment_id, patient_id, doctor_id], references: [id, patient_id, doctor_id], onDelete: NoAction)
   patient     Patient            @relation(fields: [patient_id], references: [id], onDelete: Cascade)
   doctor      Doctor             @relation(fields: [doctor_id], references: [id], onDelete: Cascade)
   items       PrescriptionItem[]
@@ -391,8 +395,6 @@ model PrescriptionItem {
 model Consultation {
   id                     Int                @id @default(autoincrement())
   appointment_id         Int                @unique
-  doctor_id              Int
-  patient_id             Int
   room_id                String             @unique @db.VarChar(100)
   status                 ConsultationStatus @default(INITIATED)
   consultation_type      ConsultationType   @default(VIDEO)
@@ -404,12 +406,9 @@ model Consultation {
   created_at             DateTime           @default(now()) @db.Timestamptz(6)
   updated_at             DateTime           @default(now()) @updatedAt @db.Timestamptz(6)
 
+  // patient and doctor come from the appointment; not duplicated here
   appointment Appointment @relation(fields: [appointment_id], references: [id], onDelete: Cascade)
-  doctor      Doctor      @relation(fields: [doctor_id], references: [id], onDelete: Cascade)
-  patient     Patient     @relation(fields: [patient_id], references: [id], onDelete: Cascade)
 
-  @@index([doctor_id])
-  @@index([patient_id])
   @@index([status])
   @@map("consultations")
 }

@@ -316,7 +316,7 @@ export async function seedDatabase(prisma) {
         const completed = apt.status === "COMPLETED";
         const minutesAgo = (min) => new Date(Date.now() - min * 60_000);
         await db.consultation.create({ data: {
-          appointment_id: apt.id, doctor_id: apt.doctor_id, patient_id: apt.patient_id,
+          appointment_id: apt.id,
           room_id: `sehatsetu-nabha-room-${apt.appointment_number.toLowerCase()}`,
           status: completed ? "COMPLETED" : "INITIATED",
           consultation_type: idx % 2 === 1 ? "VIDEO" : "AUDIO",

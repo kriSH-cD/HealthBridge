@@ -4,6 +4,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { directoryApi } from '../services/api';
 import { AppointmentsPanel } from '../components/AppointmentsPanel';
 import { BookAppointmentForm } from '../components/BookAppointmentForm';
+import { MedicineSearch } from '../components/MedicineSearch';
 import { 
   User, 
   Stethoscope, 
@@ -146,10 +147,10 @@ export const DashboardPage = () => {
                 <span>ਡਾਕਟਰ ਨਾਲ ਮੁਲਾਕਾਤ ਬੁੱਕ ਕਰੋ</span>
                 <span>→</span>
               </button>
-              <button className="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-3 rounded-xl text-xs flex items-center justify-between transition">
+              <a href="#find-medicine" className="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-3 rounded-xl text-xs flex items-center justify-between transition">
                 <span>ਨੇੜਲੇ ਮੈਡੀਕਲ ਸਟੋਰ 'ਤੇ ਦਵਾਈ ਲੱਭੋ</span>
                 <span>→</span>
-              </button>
+              </a>
               <button className="w-full bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-between transition">
                 <span>AI ਲੱਛਣ ਜਾਂਚ ਸ਼ੁਰੂ ਕਰੋ</span>
                 <span>→</span>
@@ -164,6 +165,7 @@ export const DashboardPage = () => {
           />
         )}
         <AppointmentsPanel role="PATIENT" refreshKey={appointmentsKey} />
+        <div id="find-medicine" className="scroll-mt-28"><MedicineSearch /></div>
         </div>
       )}
 

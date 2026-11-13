@@ -18,14 +18,9 @@ docker compose up --build
 Postgres and Redis still run in Docker.
 
 ```bash
-docker compose up -d db redis
-
 npm install
-cp server/.env.example server/.env
-npm run migrate -w server   # apply Prisma migrations
-
-npm run dev     # server :8000 + frontend :5173
-npm test        # server + frontend tests
+make dev        # starts db + redis, migrates, runs server :8000 + frontend :5173
+make test       # server + frontend tests
 ```
 
 Server tests use a separate `sehatsetu_test` database (created automatically) and Redis DB 15.

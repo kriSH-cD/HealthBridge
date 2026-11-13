@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Calendar } from 'lucide-react';
 import { appointmentsApi } from '../services/api';
+import { CompleteVisitForm } from './CompleteVisitForm';
 
 const STATUS_STYLE = {
   SCHEDULED: 'bg-emerald-50 text-emerald-800 border-emerald-200',
@@ -49,6 +50,7 @@ export const AppointmentsPanel = ({ role, refreshKey = 0 }) => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [completing, setCompleting] = useState(null); // appointment id with the visit form open
 
   const load = () => {
     setLoading(true);
@@ -90,7 +92,8 @@ export const AppointmentsPanel = ({ role, refreshKey = 0 }) => {
       ) : (
         <ul className="divide-y divide-slate-100">
           {items.map((a) => (
-            <li key={a.id} className="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+            <li key={a.id} className="py-3 text-xs">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div>
                 <p className="font-bold text-slate-800">{otherParty(a)}</p>
                 <p className="text-slate-500">
@@ -104,13 +107,24 @@ export const AppointmentsPanel = ({ role, refreshKey = 0 }) => {
                   <button
                     key={status}
                     type="button"
-                    onClick={() => changeStatus(a.id, status)}
+                    onClick={() => (status === 'COMPLETED' ? setCompleting(a.id) : changeStatus(a.id, status))}
                     className="border border-slate-300 hover:bg-slate-50 font-semibold px-2 py-1 rounded-lg transition"
                   >
                     {label}
                   </button>
                 ))}
               </div>
+              </div>
+              {completing === a.id && (
+                <CompleteVisitForm
+                  appointment={a}
+                  onCancel={() => setCompleting(null)}
+                  onDone={({ appointment }) => {
+                    setItems((prev) => prev.map((x) => (x.id === appointment.id ? appointment : x)));
+                    setCompleting(null);
+                  }}
+                />
+              )}
             </li>
           ))}
         </ul>

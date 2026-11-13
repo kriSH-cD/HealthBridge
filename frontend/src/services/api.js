@@ -83,6 +83,25 @@ export const appointmentsApi = {
   },
 };
 
+export const clinicalApi = {
+  completeVisit: async (appointmentId, payload) => {
+    const res = await api.post(`/appointments/${appointmentId}/complete`, payload);
+    return res.data;
+  },
+  records: async (params) => {
+    const res = await api.get('/records', { params });
+    return res.data;
+  },
+  prescriptions: async (params) => {
+    const res = await api.get('/prescriptions', { params });
+    return res.data;
+  },
+  catalogue: async (q) => {
+    const res = await api.get('/medicines', { params: { q } });
+    return res.data;
+  },
+};
+
 export const medicinesApi = {
   availability: async (q) => {
     const res = await api.get('/medicines/availability', { params: { q } });

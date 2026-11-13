@@ -17,6 +17,9 @@ class Settings(BaseSettings):
     # Rate Limiting
     RATE_LIMIT_PER_MINUTE: int = 30             # max auth requests per minute per IP
     
+    # Unauthenticated demo seeding; keep off outside local dev.
+    ENABLE_DEMO_SEED: bool = False
+
     DATABASE_URL: str = "postgresql+psycopg2://sehatsetu:sehatsetu@localhost:5432/sehatsetu"
     
     # CORS

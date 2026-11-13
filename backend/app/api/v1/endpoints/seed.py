@@ -1,7 +1,8 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.db.session import get_db
 from app.db.seed_data import seed_database
+from app.core.config import settings
 
 router = APIRouter()
 
@@ -14,6 +15,8 @@ def seed_demo_data(db: Session = Depends(get_db)):
     Seeds 20 patients, 8 doctors, 5 pharmacies, 30 medicines, 15 appointments,
     and associated clinical records according to Phase 2 specifications.
     """
+    if not settings.ENABLE_DEMO_SEED:
+        raise HTTPException(status_code=404, detail="Not Found")
     seeded_counts = seed_database(db)
 
     return {

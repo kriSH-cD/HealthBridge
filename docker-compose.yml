@@ -19,6 +19,7 @@ services:
     environment:
       DATABASE_URL: postgresql+psycopg2://sehatsetu:sehatsetu@db:5432/sehatsetu
       SECRET_KEY: ${SECRET_KEY:-change_me_in_production}
+      ENABLE_DEMO_SEED: ${ENABLE_DEMO_SEED:-true}
     ports:
       - "8000:8000"
     depends_on:

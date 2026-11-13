@@ -1,4 +1,16 @@
 from fastapi.testclient import TestClient
+import pytest
+from app.core.config import settings
+
+
+@pytest.fixture(autouse=True)
+def demo_seed_on(monkeypatch):
+    monkeypatch.setattr(settings, "ENABLE_DEMO_SEED", True)
+
+
+def test_seed_disabled_by_default(client: TestClient, monkeypatch):
+    monkeypatch.setattr(settings, "ENABLE_DEMO_SEED", False)
+    assert client.post("/api/v1/seed/seed-demo-data").status_code == 404
 
 
 def test_synthetic_seed_and_directory(client: TestClient):

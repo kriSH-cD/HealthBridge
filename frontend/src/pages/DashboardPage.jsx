@@ -6,6 +6,7 @@ import { AppointmentsPanel } from '../components/AppointmentsPanel';
 import { BookAppointmentForm } from '../components/BookAppointmentForm';
 import { MedicineSearch } from '../components/MedicineSearch';
 import { PharmacyStock } from '../components/PharmacyStock';
+import { HealthHistory } from '../components/HealthHistory';
 import { 
   User, 
   Stethoscope, 
@@ -125,9 +126,9 @@ export const DashboardPage = () => {
               </p>
             </div>
             <div className="pt-3 border-t border-slate-100 flex gap-2">
-              <button type="button" disabled className="flex-1 border border-dashed border-slate-300 text-slate-400 text-xs font-semibold py-2 rounded-lg cursor-not-allowed">
-                ਪਰਚੀਆਂ (Prescriptions) · Soon
-              </button>
+              <a href="#health-history" className="flex-1 text-center bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-semibold py-2 rounded-lg hover:bg-emerald-100 transition-colors">
+                ਪਰਚੀਆਂ ਦੇਖੋ (Prescriptions)
+              </a>
             </div>
           </div>
 
@@ -153,6 +154,7 @@ export const DashboardPage = () => {
             </div>
           </div>
         </div>
+        <div id="health-history" className="scroll-mt-28"><HealthHistory /></div>
         {booking && (
           <BookAppointmentForm
             onCancel={() => setBooking(false)}

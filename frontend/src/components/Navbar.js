@@ -34,13 +34,21 @@ export const Navbar = () => {
           </span>
         </div>
         <div className="flex items-center space-x-4">
+          <Link
+            to="/emergency"
+            className="flex items-center space-x-1 font-bold text-red-400 hover:text-red-300 bg-red-950/60 px-2 py-0.5 rounded border border-red-800/80 transition"
+          >
+            <ShieldAlert className="w-3.5 h-3.5 animate-pulse" />
+            <span>ਬੈੱਡ ਟ੍ਰੈਕਰ (Live Beds)</span>
+          </Link>
+          <span className="text-slate-600">|</span>
           <a 
-            href="tel:01765220100" 
+            href="tel:01765220102" 
             className="flex items-center space-x-1 text-slate-300 hover:text-white transition"
             title="Civil Hospital Nabha Emergency"
           >
             <PhoneCall className="w-3.5 h-3.5 text-amber-400" />
-            <span>ਸਿਵਲ ਹਸਪਤਾਲ: 01765-220100</span>
+            <span>ਸਿਵਲ ਹਸਪਤਾਲ: 01765-220102</span>
           </a>
           <span className="text-slate-600">|</span>
           <a 
@@ -75,6 +83,10 @@ export const Navbar = () => {
         <nav className="hidden md:flex items-center space-x-6 text-sm font-medium text-slate-700">
           <Link to="/" className="hover:text-blue-600 transition">
             {t('home')}
+          </Link>
+          <Link to="/emergency" className="text-red-600 hover:text-red-700 font-semibold transition flex items-center space-x-1">
+            <span className="w-2 h-2 rounded-full bg-red-500 animate-ping inline-block"></span>
+            <span>{t('emergency_dashboard')}</span>
           </Link>
           <Link to="/#doctors" className="hover:text-blue-600 transition">
             {t('find_doctors')}

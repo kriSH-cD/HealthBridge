@@ -10,6 +10,7 @@ import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { ConsultationRoom } from './pages/ConsultationRoom';
+import { EmergencyPage } from './pages/EmergencyPage';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
             <main className="flex-1 flex flex-col">
               <Routes>
                 <Route path="/" element={<HomePage />} />
+                <Route path="/emergency" element={<EmergencyPage />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
                 <Route element={<ProtectedRoute />}>

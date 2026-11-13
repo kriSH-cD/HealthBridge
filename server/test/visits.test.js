@@ -1,19 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { prisma } from "../src/db.js";
-import { api, registerAndLogin } from "./helpers.js";
-
-const tomorrow = () => { const d = new Date(); d.setDate(d.getDate() + 1); return d.toLocaleDateString("en-CA"); };
-
-/** Doctor + patient with one scheduled visit and one medicine in the catalogue. */
-export async function scheduledVisit() {
-  const doctor = await registerAndLogin("9812300031", "DOCTOR");
-  const patient = await registerAndLogin("9812300032", "PATIENT");
-  const medicine = await prisma.medicine.create({ data: { name: "Paracetamol", generic_name: "Paracetamol", strength: "500 mg" } });
-  const appt = (await api().post("/api/v1/appointments").set(patient.headers).send({
-    doctor_id: doctor.user.doctor_profile.id, appointment_date: tomorrow(), appointment_time: "10:00 AM",
-  })).body;
-  return { doctor, patient, medicine, appt };
-}
+import { api, registerAndLogin, scheduledVisit } from "./helpers.js";
 
 const complete = (who, id, body) => api().post(`/api/v1/appointments/${id}/complete`).set(who.headers).send(body);
 

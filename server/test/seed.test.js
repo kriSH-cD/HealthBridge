@@ -32,7 +32,7 @@ describe("seedDatabase", () => {
     expect(medicines).toHaveLength(30);
     for (const m of medicines) {
       expect(m.is_demo).toBe(true);
-      expect(m.price).toBeGreaterThan(0);
+      expect(Number(m.price)).toBeGreaterThan(0);
     }
   });
 

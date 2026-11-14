@@ -10,6 +10,7 @@ import { medicinesRouter } from "./routes/medicines.js";
 import { prescriptionsRouter } from "./routes/prescriptions.js";
 import { consultationsRouter } from "./routes/consultations.js";
 import { hospitalsRouter } from "./routes/hospitals.js";
+import { ambulancesRouter } from "./routes/ambulances.js";
 import { seedRouter } from "./routes/seed.js";
 import { patientPrescriptionsRouter, recordsRouter } from "./routes/records.js";
 
@@ -27,6 +28,7 @@ v1.use("/medicines", medicinesRouter);
 v1.use("/prescriptions", prescriptionsRouter);
 v1.use("/consultations", consultationsRouter);
 v1.use("/hospitals", hospitalsRouter);
+v1.use("/ambulances", ambulancesRouter);
 v1.use("/seed", seedRouter);
 v1.use("/records/prescriptions", patientPrescriptionsRouter);
 v1.use("/records", recordsRouter);

@@ -145,6 +145,8 @@ export async function seedDatabase(prisma) {
     notifications: 0,
     audit_logs: 0,
     hospitals: 0,
+    ambulances: 0,
+    emergency_requests: 0,
   };
 
   // One transaction, like the single db.commit() in the Python version.
@@ -277,6 +279,140 @@ export async function seedDatabase(prisma) {
           });
           stats.hospitals++;
         }
+      }
+    }
+
+    // 2b. Ambulances (108 Emergency Rapid Fleet)
+    const ambulanceSeedData = [
+      {
+        vehicle_number: "PB-11-AB-1081",
+        ambulance_type: "ALS",
+        station_location: "Sub-Divisional Civil Hospital Nabha",
+        driver_name: "Gurmeet Singh",
+        driver_phone: "+91-98765-43501",
+        paramedic_name: "Satnam Singh (EMT)",
+        status: "AVAILABLE",
+        has_oxygen: true,
+        has_ventilator: true,
+      },
+      {
+        vehicle_number: "PB-11-AB-1082",
+        ambulance_type: "BLS",
+        station_location: "Community Health Centre (CHC) Bhadson",
+        driver_name: "Sukhdev Singh",
+        driver_phone: "+91-98765-43502",
+        paramedic_name: "Baljit Kaur (ANM)",
+        status: "AVAILABLE",
+        has_oxygen: true,
+        has_ventilator: false,
+      },
+      {
+        vehicle_number: "PB-11-AB-1083",
+        ambulance_type: "BLS",
+        station_location: "Primary Health Centre (PHC) Rohti Chhanna",
+        driver_name: "Hardeep Singh",
+        driver_phone: "+91-98765-43503",
+        paramedic_name: "Kulwant Singh (EMT)",
+        status: "AVAILABLE",
+        has_oxygen: true,
+        has_ventilator: false,
+      },
+      {
+        vehicle_number: "PB-11-AB-1084",
+        ambulance_type: "PATIENT_TRANSPORT",
+        station_location: "Duladdi Health & Wellness Centre",
+        driver_name: "Amarjit Singh",
+        driver_phone: "+91-98765-43504",
+        paramedic_name: "Nirmal Singh (Health Worker)",
+        status: "AVAILABLE",
+        has_oxygen: true,
+        has_ventilator: false,
+      },
+      {
+        vehicle_number: "PB-11-AB-1085",
+        ambulance_type: "ALS",
+        station_location: "Sub-Divisional Civil Hospital Nabha",
+        driver_name: "Jagtar Singh",
+        driver_phone: "+91-98765-43505",
+        paramedic_name: "Harpreet Kaur (EMT)",
+        status: "DISPATCHED",
+        has_oxygen: true,
+        has_ventilator: true,
+      },
+    ];
+
+    const ambulanceEntities = [];
+    for (const amb of ambulanceSeedData) {
+      const existingAmb = await db.ambulance.findUnique({ where: { vehicle_number: amb.vehicle_number } });
+      if (!existingAmb) {
+        const created = await db.ambulance.create({ data: amb });
+        ambulanceEntities.push(created);
+        stats.ambulances++;
+      } else {
+        const updated = await db.ambulance.update({
+          where: { id: existingAmb.id },
+          data: amb,
+        });
+        ambulanceEntities.push(updated);
+        stats.ambulances++;
+      }
+    }
+
+    // 2c. Sample Emergency Requests
+    const civilHospital = await db.hospital.findFirst({
+      where: { hospital_name: { contains: "Civil Hospital" } },
+    });
+    const duladdiClinic = await db.hospital.findFirst({
+      where: { hospital_name: { contains: "Duladdi" } },
+    });
+
+    const requestsSeedData = [
+      {
+        request_number: "EMR-NBH-2026-0001",
+        caller_name: "Balwinder Singh",
+        caller_phone: "+91-98765-43101",
+        pickup_village: "Alhoran",
+        pickup_landmark: "Near Alhoran Bus Stand Adda",
+        destination_hospital_id: civilHospital?.id ?? null,
+        ambulance_id: ambulanceEntities.find((a) => a.vehicle_number === "PB-11-AB-1085")?.id ?? null,
+        triage_severity: "CRITICAL",
+        chief_complaint: "Acute chest pain, severe shortness of breath and cold sweating",
+        patient_name: "Balwinder Singh",
+        patient_age: 54,
+        status: "DISPATCHED",
+        notes: "ALS ambulance dispatched from Nabha Civil Hospital. Oxygen pre-activated.",
+        dispatched_at: new Date(Date.now() - 15 * 60_000),
+      },
+      {
+        request_number: "EMR-NBH-2026-0002",
+        caller_name: "Manjit Kaur",
+        caller_phone: "+91-98765-43102",
+        pickup_village: "Duladdi",
+        pickup_landmark: "Near Gurdwara Sahib, Duladdi",
+        destination_hospital_id: duladdiClinic?.id ?? null,
+        ambulance_id: ambulanceEntities.find((a) => a.vehicle_number === "PB-11-AB-1084")?.id ?? null,
+        triage_severity: "URGENT",
+        chief_complaint: "Severe hyperglycemia with disorientation and dehydration",
+        patient_name: "Manjit Kaur",
+        patient_age: 42,
+        status: "COMPLETED",
+        notes: "Patient stabilized at Duladdi Health Post and vitals recorded.",
+        dispatched_at: new Date(Date.now() - 90 * 60_000),
+        completed_at: new Date(Date.now() - 40 * 60_000),
+      },
+    ];
+
+    for (const req of requestsSeedData) {
+      const existingReq = await db.emergencyRequest.findUnique({ where: { request_number: req.request_number } });
+      if (!existingReq) {
+        await db.emergencyRequest.create({ data: req });
+        stats.emergency_requests++;
+      } else {
+        await db.emergencyRequest.update({
+          where: { id: existingReq.id },
+          data: req,
+        });
+        stats.emergency_requests++;
       }
     }
 

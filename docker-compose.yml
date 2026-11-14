@@ -9,8 +9,6 @@ services:
       REDIS_URL: redis://redis:6379
       SECRET_KEY: ${SECRET_KEY:-change_me_in_production}
       ENABLE_DEMO_SEED: ${ENABLE_DEMO_SEED:-true}
-    ports:
-      - "8000:8000"
     depends_on:
       db:
         condition: service_healthy
@@ -21,8 +19,6 @@ services:
     build: ./frontend
     environment:
       API_PROXY_TARGET: http://server:8000
-    ports:
-      - "5173:5173"
     depends_on:
       - server
 

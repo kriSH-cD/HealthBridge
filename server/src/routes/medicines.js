@@ -45,6 +45,19 @@ medicinesRouter.get("/", requireUser, async (req, res) => {
   res.json(medicines);
 });
 
+/** Public / Doctor: search medicine catalog. */
+medicinesRouter.get("/catalog", async (req, res) => {
+  const q = req.query.q ? String(req.query.q).trim() : "";
+  const match = q ? { contains: q, mode: "insensitive" } : undefined;
+  const where = match ? { OR: [{ name: match }, { generic_name: match }, { brand_name: match }] } : {};
+  const items = await prisma.medicine.findMany({
+    where,
+    orderBy: { name: "asc" },
+    take: 100,
+  });
+  res.json(items);
+});
+
 /** Public: which Nabha pharmacies have this medicine in stock right now (cheapest first). */
 medicinesRouter.get("/availability", async (req, res) => {
   const { q } = parse(z.object({ q: z.string().trim().min(2).max(100) }), req.query);

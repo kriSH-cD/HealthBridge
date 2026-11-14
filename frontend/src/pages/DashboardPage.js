@@ -7,6 +7,8 @@ import { BookAppointmentForm } from '../components/BookAppointmentForm';
 import { MedicineSearch } from '../components/MedicineSearch';
 import { PharmacyStock } from '../components/PharmacyStock';
 import { HealthHistory } from '../components/HealthHistory';
+import { PrescriptionsList } from '../components/PrescriptionsList';
+import { WritePrescriptionModal } from '../components/WritePrescriptionModal';
 import { 
   User, 
   Stethoscope, 
@@ -29,6 +31,8 @@ export const DashboardPage = () => {
   const [patientError, setPatientError] = useState(null);
   const [booking, setBooking] = useState(false);
   const [appointmentsKey, setAppointmentsKey] = useState(0);
+  const [prescriptionsKey, setPrescriptionsKey] = useState(0);
+  const [doctorPrescribingPatient, setDoctorPrescribingPatient] = useState(null);
 
   // If role is DOCTOR, ASHA_WORKER, or HOSPITAL_ADMIN, test fetching the restricted patient list!
   useEffect(() => {
@@ -126,8 +130,11 @@ export const DashboardPage = () => {
               </p>
             </div>
             <div className="pt-3 border-t border-slate-100 flex gap-2">
-              <a href="#health-history" className="flex-1 text-center bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-semibold py-2 rounded-lg hover:bg-emerald-100 transition-colors">
-                ਪਰਚੀਆਂ ਦੇਖੋ (Prescriptions)
+              <a
+                href="#prescriptions-section"
+                className="flex-1 text-center bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 text-emerald-800 text-xs font-semibold py-2 rounded-lg transition"
+              >
+                ਮੇਰੀਆਂ ਪਰਚੀਆਂ (Digital Prescriptions) ↓
               </a>
             </div>
           </div>
@@ -147,14 +154,27 @@ export const DashboardPage = () => {
                 <span>ਨੇੜਲੇ ਮੈਡੀਕਲ ਸਟੋਰ 'ਤੇ ਦਵਾਈ ਲੱਭੋ</span>
                 <span>→</span>
               </a>
-              <button type="button" disabled className="w-full min-h-11 border border-dashed border-slate-300 text-slate-400 font-semibold px-3 rounded-xl text-xs flex items-center justify-between cursor-not-allowed">
-                <span>AI ਲੱਛਣ ਜਾਂਚ (Symptom checker)</span>
-                <span className="text-[10px] uppercase tracking-wider">Soon</span>
-              </button>
+              <a href="#prescriptions-section" className="w-full min-h-11 border border-slate-300 hover:bg-slate-50 text-slate-800 font-semibold px-3 rounded-xl text-xs flex items-center justify-between transition-colors">
+                <span>ਡਿਜੀਟਲ ਪਰਚੀ ਵੇਖੋ (View Rx)</span>
+                <span>→</span>
+              </a>
             </div>
           </div>
         </div>
         <div id="health-history" className="scroll-mt-28"><HealthHistory /></div>
+
+        {/* Patient Prescriptions Panel */}
+        <div id="prescriptions-section" className="scroll-mt-28">
+          <PrescriptionsList 
+            role="PATIENT" 
+            refreshKey={prescriptionsKey}
+            onFindMedicines={(med) => {
+              const elem = document.getElementById('find-medicine');
+              if (elem) elem.scrollIntoView({ behavior: 'smooth' });
+            }}
+          />
+        </div>
+
         {booking && (
           <BookAppointmentForm
             onCancel={() => setBooking(false)}
@@ -168,6 +188,10 @@ export const DashboardPage = () => {
       {user?.role === 'DOCTOR' && (
         <div className="space-y-6">
           <AppointmentsPanel role="DOCTOR" />
+
+          {/* Doctor Prescriptions Panel */}
+          <PrescriptionsList role="DOCTOR" refreshKey={prescriptionsKey} />
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-2">
               <span className="text-xs text-slate-400 uppercase font-semibold">ਵਿਸ਼ੇਸ਼ਤਾ (Specialization)</span>
@@ -218,7 +242,14 @@ export const DashboardPage = () => {
                         ਪਿੰਡ: {pt.village} • ਮੋਬਾਈਲ: {pt.phone}
                       </p>
                     </div>
-                    <div className="text-right">
+                    <div className="text-right flex items-center space-x-2">
+                      <button
+                        type="button"
+                        onClick={() => setDoctorPrescribingPatient(pt)}
+                        className="bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 text-emerald-800 font-bold px-2 py-1 rounded-lg text-xs transition"
+                      >
+                        ਪਰਚੀ ਲਿਖੋ (Rx)
+                      </button>
                       <span className="bg-slate-100 text-slate-700 font-bold px-2 py-1 rounded">
                         ਬਲੱਡ: {pt.patient_profile?.blood_group || 'N/A'}
                       </span>
@@ -228,33 +259,48 @@ export const DashboardPage = () => {
               </div>
             )}
           </div>
+
+          {doctorPrescribingPatient && (
+            <WritePrescriptionModal
+              patient={doctorPrescribingPatient}
+              onClose={() => setDoctorPrescribingPatient(null)}
+              onCreated={() => {
+                setDoctorPrescribingPatient(null);
+                setPrescriptionsKey((k) => k + 1);
+              }}
+            />
+          )}
         </div>
       )}
 
       {user?.role === 'PHARMACY' && (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-3">
-            <h3 className="text-sm font-bold text-slate-900 flex items-center space-x-2">
-              <Pill className="w-4 h-4 text-teal-600" />
-              <span>ਫਾਰਮੇਸੀ ਪ੍ਰੋਫਾਈਲ ਵੇਰਵਾ</span>
-            </h3>
-            <div className="text-xs text-slate-600 space-y-2">
-              <p>
-                <strong>ਦੁਕਾਨ ਦਾ ਨਾਮ:</strong> {user?.pharmacy_profile?.pharmacy_name || user?.full_name}
-              </p>
-              <p>
-                <strong>ਪਤਾ:</strong> {user?.pharmacy_profile?.address}
-              </p>
-              <p>
-                <strong>ਖੁੱਲ੍ਹਣ ਦਾ ਸਮਾਂ:</strong> {user?.pharmacy_profile?.operating_hours}
-              </p>
-              <p>
-                <strong>ਲਾਇਸੈਂਸ ਨੰਬਰ:</strong> {user?.pharmacy_profile?.license_number}
-              </p>
-            </div>
-          </div>
+        <div className="space-y-6">
+          <PrescriptionsList role="PHARMACY" />
 
-          <div className="md:col-span-2"><PharmacyStock /></div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+            <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-3">
+              <h3 className="text-sm font-bold text-slate-900 flex items-center space-x-2">
+                <Pill className="w-4 h-4 text-teal-600" />
+                <span>ਫਾਰਮੇਸੀ ਪ੍ਰੋਫਾਈਲ ਵੇਰਵਾ</span>
+              </h3>
+              <div className="text-xs text-slate-600 space-y-2">
+                <p>
+                  <strong>ਦੁਕਾਨ ਦਾ ਨਾਮ:</strong> {user?.pharmacy_profile?.pharmacy_name || user?.full_name}
+                </p>
+                <p>
+                  <strong>ਪਤਾ:</strong> {user?.pharmacy_profile?.address}
+                </p>
+                <p>
+                  <strong>ਖੁੱਲ੍ਹਣ ਦਾ ਸਮਾਂ:</strong> {user?.pharmacy_profile?.operating_hours}
+                </p>
+                <p>
+                  <strong>ਲਾਇਸੈਂਸ ਨੰਬਰ:</strong> {user?.pharmacy_profile?.license_number}
+                </p>
+              </div>
+            </div>
+
+            <div className="md:col-span-2"><PharmacyStock /></div>
+          </div>
         </div>
       )}
 

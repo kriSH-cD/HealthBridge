@@ -16,7 +16,7 @@ describe("records and prescriptions", () => {
     const { patient } = await completedVisit();
     const records = (await api().get("/api/v1/records").set(patient.headers)).body;
     expect(records.map((r) => r.diagnosis)).toEqual(["Viral fever"]);
-    const rxs = (await api().get("/api/v1/prescriptions").set(patient.headers)).body;
+    const rxs = (await api().get("/api/v1/records/prescriptions").set(patient.headers)).body;
     expect(rxs[0].items[0].medicine_name).toBe("Paracetamol");
   });
 
@@ -31,7 +31,7 @@ describe("records and prescriptions", () => {
 
     const stranger = await registerAndLogin("9812300041", "DOCTOR");
     expect((await api().get(`/api/v1/records?patient_id=${patientId}`).set(stranger.headers)).status).toBe(403);
-    expect((await api().get(`/api/v1/prescriptions?patient_id=${patientId}`).set(stranger.headers)).status).toBe(403);
+    expect((await api().get(`/api/v1/records/prescriptions?patient_id=${patientId}`).set(stranger.headers)).status).toBe(403);
     expect((await api().get("/api/v1/records").set(doctor.headers)).status).toBe(422); // patient_id required
   });
 

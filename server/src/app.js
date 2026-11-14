@@ -7,8 +7,11 @@ import { authRouter } from "./routes/auth.js";
 import { usersRouter } from "./routes/users.js";
 import { appointmentsRouter } from "./routes/appointments.js";
 import { medicinesRouter } from "./routes/medicines.js";
+import { prescriptionsRouter } from "./routes/prescriptions.js";
+import { consultationsRouter } from "./routes/consultations.js";
+import { hospitalsRouter } from "./routes/hospitals.js";
 import { seedRouter } from "./routes/seed.js";
-import { prescriptionsRouter, recordsRouter } from "./routes/records.js";
+import { patientPrescriptionsRouter, recordsRouter } from "./routes/records.js";
 
 export const app = express();
 app.set("trust proxy", 1); // real client IP behind the Vite/Docker proxy, for rate limiting
@@ -21,9 +24,12 @@ v1.use("/auth", authRouter);
 v1.use("/users", usersRouter);
 v1.use("/appointments", appointmentsRouter);
 v1.use("/medicines", medicinesRouter);
-v1.use("/seed", seedRouter);
-v1.use("/records", recordsRouter);
 v1.use("/prescriptions", prescriptionsRouter);
+v1.use("/consultations", consultationsRouter);
+v1.use("/hospitals", hospitalsRouter);
+v1.use("/seed", seedRouter);
+v1.use("/records/prescriptions", patientPrescriptionsRouter);
+v1.use("/records", recordsRouter);
 app.use("/api/v1", v1);
 app.get("/api/health", healthCheck);
 

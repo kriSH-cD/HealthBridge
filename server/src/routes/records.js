@@ -39,9 +39,9 @@ recordsRouter.get("/", ...requireRoles("PATIENT", "DOCTOR"), async (req, res) =>
   res.json(records.map(serializeRecord));
 });
 
-export const prescriptionsRouter = Router();
+export const patientPrescriptionsRouter = Router();
 
-prescriptionsRouter.get("/", ...requireRoles("PATIENT", "DOCTOR"), async (req, res) => {
+patientPrescriptionsRouter.get("/", ...requireRoles("PATIENT", "DOCTOR"), async (req, res) => {
   const { patientId } = await resolvePatient(req, "VIEW_PRESCRIPTIONS");
   const prescriptions = await prisma.prescription.findMany({
     where: { patient_id: patientId },

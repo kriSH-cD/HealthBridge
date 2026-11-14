@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Calendar } from 'lucide-react';
-import { appointmentsApi } from '../services/api';
+import { useNavigate } from 'react-router-dom';
+import { Calendar, Video } from 'lucide-react';
+import { appointmentsApi, consultationsApi } from '../services/api';
+import { WritePrescriptionModal } from './WritePrescriptionModal';
 import { CompleteVisitForm } from './CompleteVisitForm';
 
 const STATUS_STYLE = {
@@ -28,7 +30,7 @@ const friendlyDate = (ymd) => {
 };
 
 /** The next visit, styled like the OPD slip (parchi) patients carry to the hospital. */
-const NextVisitSlip = ({ appointment, who }) => (
+const NextVisitSlip = ({ appointment, who, onJoinCall }) => (
   <div className="mb-4 rounded-xl border-2 border-dashed border-emerald-300 bg-emerald-50/60 p-4 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
     <div className="min-w-0">
       <p className="text-[11px] font-semibold uppercase tracking-wider text-emerald-800">ਅਗਲੀ ਮੁਲਾਕਾਤ · Next visit</p>
@@ -39,18 +41,39 @@ const NextVisitSlip = ({ appointment, who }) => (
         {who} · {appointment.appointment_type === 'TELECONSULTATION' ? 'Video call' : 'At the clinic'}
       </p>
     </div>
-    <div className="shrink-0 sm:text-right border-t border-dashed border-emerald-300 pt-3 sm:border-0 sm:pt-0">
-      <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">OPD token</p>
-      <p className="font-mono text-sm font-bold text-slate-900">{appointment.appointment_number}</p>
+    <div className="shrink-0 flex sm:flex-col items-center sm:items-end justify-between border-t border-dashed border-emerald-300 pt-3 sm:border-0 sm:pt-0 gap-2">
+      <div>
+        <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 sm:text-right">OPD token</p>
+        <p className="font-mono text-sm font-bold text-slate-900">{appointment.appointment_number}</p>
+      </div>
+      {appointment.appointment_type === 'TELECONSULTATION' && onJoinCall && (
+        <button
+          type="button"
+          onClick={() => onJoinCall(appointment)}
+          className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition flex items-center space-x-1 shadow-sm"
+        >
+          <Video className="w-3.5 h-3.5" />
+          <span>ਕਾਲ ਸ਼ੁਰੂ ਕਰੋ (Join)</span>
+        </button>
+      )}
     </div>
   </div>
 );
 
 export const AppointmentsPanel = ({ role, refreshKey = 0 }) => {
+  let navigate;
+  try {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    navigate = useNavigate();
+  } catch {
+    navigate = (path) => { window.location.href = path; };
+  }
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [completing, setCompleting] = useState(null); // appointment id with the visit form open
+  const [prescribingAppointment, setPrescribingAppointment] = useState(null);
+  const [joiningId, setJoiningId] = useState(null);
 
   const load = () => {
     setLoading(true);
@@ -61,6 +84,20 @@ export const AppointmentsPanel = ({ role, refreshKey = 0 }) => {
   };
 
   useEffect(load, [refreshKey]);
+
+  const joinTeleconsultation = async (appointment) => {
+    setJoiningId(appointment.id);
+    try {
+      const res = await consultationsApi.initiate({
+        appointment_id: appointment.id,
+        consultation_type: 'VIDEO',
+      });
+      navigate(`/consultation/${res.room_id}`);
+    } catch (err) {
+      setError(err.response?.data?.detail || 'ਵੀਡੀਓ ਕਾਲ ਸ਼ੁਰੂ ਕਰਨ ਵਿੱਚ ਅਸਮਰੱਥ (Could not start video call)');
+      setJoiningId(null);
+    }
+  };
 
   const changeStatus = async (id, status) => {
     try {
@@ -83,7 +120,7 @@ export const AppointmentsPanel = ({ role, refreshKey = 0 }) => {
 
       {error && <p role="alert" className="text-xs text-red-600 pb-3">{error}</p>}
 
-      {next && <NextVisitSlip appointment={next} who={otherParty(next)} />}
+      {next && <NextVisitSlip appointment={next} who={otherParty(next)} onJoinCall={joinTeleconsultation} />}
 
       {loading ? (
         <p className="text-xs text-slate-400 py-4">Loading…</p>
@@ -103,6 +140,26 @@ export const AppointmentsPanel = ({ role, refreshKey = 0 }) => {
               </div>
               <div className="flex items-center gap-2 flex-wrap">
                 <span className={`border font-bold px-2 py-0.5 rounded ${STATUS_STYLE[a.status]}`}>{a.status}</span>
+                {a.appointment_type === 'TELECONSULTATION' && a.status === 'SCHEDULED' && (
+                  <button
+                    type="button"
+                    disabled={joiningId === a.id}
+                    onClick={() => joinTeleconsultation(a)}
+                    className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-2.5 py-1 rounded-lg transition flex items-center space-x-1 shadow-sm"
+                  >
+                    <Video className="w-3.5 h-3.5" />
+                    <span>{joiningId === a.id ? 'ਜੁੜ ਰਿਹਾ ਹੈ...' : 'ਵੀਡੀਓ ਕਾਲ (Call)'}</span>
+                  </button>
+                )}
+                {role === 'DOCTOR' && (
+                  <button
+                    type="button"
+                    onClick={() => setPrescribingAppointment(a)}
+                    className="border border-emerald-500 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-semibold px-2 py-1 rounded-lg transition"
+                  >
+                    ਪਰਚੀ ਲਿਖੋ (Rx)
+                  </button>
+                )}
                 {a.status === 'SCHEDULED' && (ACTIONS[role] || []).map(([status, label]) => (
                   <button
                     key={status}
@@ -128,6 +185,18 @@ export const AppointmentsPanel = ({ role, refreshKey = 0 }) => {
             </li>
           ))}
         </ul>
+      )}
+
+      {prescribingAppointment && (
+        <WritePrescriptionModal
+          patient={{ id: prescribingAppointment.patient_id, full_name: otherParty(prescribingAppointment) }}
+          appointmentId={prescribingAppointment.id}
+          onClose={() => setPrescribingAppointment(null)}
+          onCreated={() => {
+            setPrescribingAppointment(null);
+            load();
+          }}
+        />
       )}
     </section>
   );

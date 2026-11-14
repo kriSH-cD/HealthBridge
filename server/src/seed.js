@@ -189,6 +189,82 @@ export async function seedDatabase(prisma) {
       }
     }
 
+    // 2b. Nabha Hospitals & CHCs (Bed & Emergency Availability)
+    const hospitalsSeedData = [
+      {
+        docIdx: 0,
+        hospital_name: "Sub-Divisional Civil Hospital Nabha",
+        address: "Circular Road, Near Cantt Gate, Nabha, Punjab 147201",
+        emergency_phone: "01765-220102",
+        total_beds: 100,
+        available_beds: 28,
+        has_oxygen: true,
+        has_emergency: true,
+      },
+      {
+        docIdx: 2,
+        hospital_name: "Community Health Centre (CHC) Bhadson",
+        address: "Main Bhadson-Nabha Road, Bhadson, Punjab 147202",
+        emergency_phone: "01765-260222",
+        total_beds: 30,
+        available_beds: 9,
+        has_oxygen: true,
+        has_emergency: true,
+      },
+      {
+        docIdx: 7,
+        hospital_name: "Primary Health Centre (PHC) Rohti Chhanna",
+        address: "Village Rohti Chhanna, Nabha Block, Patiala District 147201",
+        emergency_phone: "+91-98765-43403",
+        total_beds: 12,
+        available_beds: 4,
+        has_oxygen: true,
+        has_emergency: true,
+      },
+      {
+        docIdx: 3,
+        hospital_name: "Duladdi Health & Wellness Centre",
+        address: "Near Panchayat Ghar, Duladdi, Nabha Tehsil 147201",
+        emergency_phone: "+91-98765-43404",
+        total_beds: 8,
+        available_beds: 3,
+        has_oxygen: true,
+        has_emergency: false,
+      },
+      {
+        docIdx: 6,
+        hospital_name: "Alhoran Rural Health Post",
+        address: "Alhoran Gate Road, Alhoran, Nabha Tehsil 147201",
+        emergency_phone: "+91-98765-43405",
+        total_beds: 6,
+        available_beds: 2,
+        has_oxygen: false,
+        has_emergency: false,
+      },
+    ];
+
+    for (const h of hospitalsSeedData) {
+      if (h.docIdx < doctorEntities.length) {
+        const userId = doctorEntities[h.docIdx].user_id;
+        const existingHosp = await db.hospital.findUnique({ where: { user_id: userId } });
+        if (!existingHosp) {
+          await db.hospital.create({
+            data: {
+              user_id: userId,
+              hospital_name: h.hospital_name,
+              address: h.address,
+              emergency_phone: h.emergency_phone,
+              total_beds: h.total_beds,
+              available_beds: h.available_beds,
+              has_oxygen: h.has_oxygen,
+              has_emergency: h.has_emergency,
+            },
+          });
+          stats.hospitals = (stats.hospitals || 0) + 1;
+        }
+      }
+    }
+
     // 3. Medicines
     const medicineEntities = [];
     for (const [name, generic, brand, cat, strength, price, rx, ess, desc] of medicinesCatalog) {

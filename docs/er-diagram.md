@@ -29,6 +29,9 @@ erDiagram
     PHARMACY ||--o{ PHARMACY_INVENTORY : stocks
     MEDICINE ||--o{ PHARMACY_INVENTORY : "stocked as"
 
+    HOSPITAL ||--o{ EMERGENCY_REQUEST : receives
+    AMBULANCE ||--o{ EMERGENCY_REQUEST : dispatched
+
     USER {
         int id PK
         varchar phone UK
@@ -154,6 +157,31 @@ erDiagram
         varchar phone
         varchar otp_code
         timestamptz expires_at
+    }
+    AMBULANCE {
+        int id PK
+        varchar vehicle_number UK
+        ambulancetype ambulance_type
+        varchar station_location
+        varchar driver_name
+        varchar driver_phone
+        ambulancestatus status
+        bool has_oxygen
+        bool has_ventilator
+    }
+    EMERGENCY_REQUEST {
+        int id PK
+        varchar request_number UK
+        varchar caller_name
+        varchar caller_phone
+        varchar pickup_village
+        int destination_hospital_id FK
+        int ambulance_id FK
+        triageseverity triage_severity
+        text chief_complaint
+        emergencyrequeststatus status
+        timestamptz dispatched_at
+        timestamptz completed_at
     }
 ```
 

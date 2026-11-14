@@ -198,6 +198,33 @@ export const hospitalsApi = {
   },
 };
 
+export const ambulancesApi = {
+  list: async (params) => {
+    const res = await api.get('/ambulances', { params });
+    return res.data;
+  },
+  getSummary: async () => {
+    const res = await api.get('/ambulances/summary');
+    return res.data;
+  },
+  get: async (id) => {
+    const res = await api.get(`/ambulances/${id}`);
+    return res.data;
+  },
+  requestAmbulance: async (payload) => {
+    const res = await api.post('/ambulances/requests', payload);
+    return res.data;
+  },
+  listRequests: async (params) => {
+    const res = await api.get('/ambulances/requests', { params });
+    return res.data;
+  },
+  updateRequestStatus: async (id, payload) => {
+    const res = await api.patch(`/ambulances/requests/${id}/status`, payload);
+    return res.data;
+  },
+};
+
 export const systemApi = {
   getHealth: async () => {
     const res = await api.get('/health');

@@ -447,17 +447,24 @@ export const EmergencyPage = () => {
                   }`}
                 >
                   <div className="flex items-start justify-between gap-1">
-                    <div>
-                      <span className="font-mono font-black text-xs text-white tracking-wide">
+                    <div className="flex items-center flex-wrap gap-1">
+                      <span className="font-mono font-black text-xs text-white tracking-wide whitespace-nowrap">
                         {amb.vehicle_number}
                       </span>
-                      <span className={`ml-2 text-[10px] px-1.5 py-0.5 rounded font-bold uppercase ${
-                        amb.ambulance_type === 'ALS' ? 'bg-purple-900/50 text-purple-300 border border-purple-500/40' : 'bg-blue-900/50 text-blue-300'
-                      }`}>
-                        {amb.ambulance_type}
+                      <span
+                        title={amb.ambulance_type}
+                        className={`text-[10px] px-1.5 py-0.5 rounded font-bold uppercase whitespace-nowrap ${
+                          amb.ambulance_type === 'ALS'
+                            ? 'bg-purple-900/50 text-purple-300 border border-purple-500/40'
+                            : amb.ambulance_type === 'PATIENT_TRANSPORT'
+                            ? 'bg-sky-900/50 text-sky-300 border border-sky-500/40'
+                            : 'bg-blue-900/50 text-blue-300'
+                        }`}
+                      >
+                        {amb.ambulance_type === 'PATIENT_TRANSPORT' ? 'PTS Transport' : amb.ambulance_type}
                       </span>
                     </div>
-                    <span className={`text-[10px] font-black px-2 py-0.5 rounded-full uppercase ${
+                    <span className={`text-[10px] font-black px-2 py-0.5 rounded-full uppercase shrink-0 ${
                       isAvail ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
                     }`}>
                       {isAvail ? 'ਉਪਲਬਧ' : 'ਰਵਾਨਾ'}

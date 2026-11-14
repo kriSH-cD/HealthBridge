@@ -33,6 +33,12 @@ v1.use("/records", recordsRouter);
 app.use("/api/v1", v1);
 app.get("/api/health", healthCheck);
 
+if (config.webDist) {
+  app.use(express.static(config.webDist));
+  // Client-side routes (/dashboard, /consultation/:id) all load the SPA.
+  app.get(/^\/(?!api\/).*/, (_req, res) => res.sendFile("index.html", { root: config.webDist }));
+}
+
 app.get("/", (_req, res) => res.json({
   platform: config.projectName,
   region: config.region,

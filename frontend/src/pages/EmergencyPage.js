@@ -16,11 +16,14 @@ import {
   Clock,
   ArrowLeft,
   Edit3,
-  X
+  X,
+  Siren,
+  Truck
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
-import { hospitalsApi } from '../services/api';
+import { hospitalsApi, ambulancesApi } from '../services/api';
+import { NABHA_VILLAGES } from '../i18n/translations';
 
 export const EmergencyPage = () => {
   const { t } = useLanguage();
@@ -28,10 +31,24 @@ export const EmergencyPage = () => {
 
   const [hospitals, setHospitals] = useState([]);
   const [summary, setSummary] = useState(null);
+  const [ambulances, setAmbulances] = useState([]);
+  const [ambulanceSummary, setAmbulanceSummary] = useState(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState(null);
   const [isOfflineCached, setIsOfflineCached] = useState(false);
+
+  // 108 Ambulance Dispatch Modal & State
+  const [isDispatchModalOpen, setIsDispatchModalOpen] = useState(false);
+  const [dispatchLoading, setDispatchLoading] = useState(false);
+  const [dispatchSuccess, setDispatchSuccess] = useState(null);
+  const [callerName, setCallerName] = useState('');
+  const [callerPhone, setCallerPhone] = useState('');
+  const [pickupVillage, setPickupVillage] = useState(NABHA_VILLAGES[0] || 'Nabha City');
+  const [pickupLandmark, setPickupLandmark] = useState('');
+  const [chiefComplaint, setChiefComplaint] = useState('');
+  const [triageSeverity, setTriageSeverity] = useState('URGENT');
+  const [patientAge, setPatientAge] = useState('');
 
   // Filters
   const [searchQuery, setSearchQuery] = useState('');
@@ -54,12 +71,16 @@ export const EmergencyPage = () => {
   const fetchData = useCallback(async (isManualRefresh = false) => {
     if (isManualRefresh) setRefreshing(true);
     try {
-      const [hospData, sumData] = await Promise.all([
+      const [hospData, sumData, ambData, ambSum] = await Promise.all([
         hospitalsApi.list(),
         hospitalsApi.getSummary().catch(() => null),
+        ambulancesApi.list().catch(() => []),
+        ambulancesApi.getSummary().catch(() => null),
       ]);
       setHospitals(hospData);
       setSummary(sumData);
+      setAmbulances(ambData || []);
+      setAmbulanceSummary(ambSum);
       setError(null);
       setIsOfflineCached(false);
 
@@ -67,6 +88,7 @@ export const EmergencyPage = () => {
       try {
         localStorage.setItem('sehatsetu_cached_hospitals', JSON.stringify(hospData));
         if (sumData) localStorage.setItem('sehatsetu_cached_emergency_summary', JSON.stringify(sumData));
+        if (ambData) localStorage.setItem('sehatsetu_cached_ambulances', JSON.stringify(ambData));
       } catch (cacheWriteErr) {
         // quota exceeded or private mode
       }
@@ -76,9 +98,11 @@ export const EmergencyPage = () => {
       try {
         const cachedHosp = localStorage.getItem('sehatsetu_cached_hospitals');
         const cachedSum = localStorage.getItem('sehatsetu_cached_emergency_summary');
+        const cachedAmb = localStorage.getItem('sehatsetu_cached_ambulances');
         if (cachedHosp) {
           setHospitals(JSON.parse(cachedHosp));
           if (cachedSum) setSummary(JSON.parse(cachedSum));
+          if (cachedAmb) setAmbulances(JSON.parse(cachedAmb));
           setIsOfflineCached(true);
           setError(null);
           return;
@@ -92,6 +116,36 @@ export const EmergencyPage = () => {
       setRefreshing(false);
     }
   }, []);
+
+  const handleRequestAmbulance = async (e) => {
+    e.preventDefault();
+    if (!callerName.trim() || !callerPhone.trim() || !chiefComplaint.trim()) {
+      alert('ਕਿਰਪਾ ਕਰਕੇ ਸਾਰੀ ਲੋੜੀਂਦੀ ਜਾਣਕਾਰੀ ਭਰੋ (Please fill caller name, phone, and complaint)');
+      return;
+    }
+
+    setDispatchLoading(true);
+    try {
+      const res = await ambulancesApi.requestAmbulance({
+        caller_name: callerName.trim(),
+        caller_phone: callerPhone.trim(),
+        pickup_village: pickupVillage,
+        pickup_landmark: pickupLandmark.trim() || undefined,
+        chief_complaint: chiefComplaint.trim(),
+        triage_severity: triageSeverity,
+        patient_age: patientAge ? Number(patientAge) : undefined,
+        auto_assign: true,
+      });
+
+      setDispatchSuccess(res);
+      // Refresh fleet
+      fetchData(false);
+    } catch (err) {
+      alert(err.response?.data?.detail || 'ਐਂਬੂਲੈਂਸ ਬੇਨਤੀ ਅਸਫਲ ਰਹੀ (Ambulance request failed)');
+    } finally {
+      setDispatchLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchData();
@@ -179,19 +233,30 @@ export const EmergencyPage = () => {
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
+            <button
+              type="button"
+              onClick={() => {
+                setIsDispatchModalOpen(true);
+                setDispatchSuccess(null);
+              }}
+              className="bg-white text-red-700 hover:bg-red-50 font-extrabold px-3 py-1.5 rounded-lg flex items-center space-x-1 shadow transition cursor-pointer"
+            >
+              <Siren className="w-3.5 h-3.5 text-red-600 animate-bounce" />
+              <span>108 ਐਂਬੂਲੈਂਸ ਬੇਨਤੀ (Request)</span>
+            </button>
             <a
               href="tel:108"
-              className="bg-white text-red-700 hover:bg-red-50 font-extrabold px-3 py-1.5 rounded-lg flex items-center space-x-1 shadow transition"
+              className="bg-red-950/80 hover:bg-red-900 text-white font-bold px-3 py-1.5 rounded-lg flex items-center space-x-1 border border-red-500/50 transition"
             >
               <PhoneCall className="w-3.5 h-3.5" />
-              <span>108 ਐਂਬੂਲੈਂਸ (Free)</span>
+              <span>ਡਾਇਲ 108</span>
             </a>
             <a
               href="tel:01765220102"
               className="bg-red-950/80 hover:bg-red-900 text-white font-bold px-3 py-1.5 rounded-lg flex items-center space-x-1 border border-red-500/50 transition"
             >
               <Building2 className="w-3.5 h-3.5" />
-              <span>ਸਿਵਲ ਹਸਪਤਾਲ: 01765-220102</span>
+              <span>ਸਿਵਲ: 01765-220102</span>
             </a>
           </div>
         </div>
@@ -332,6 +397,91 @@ export const EmergencyPage = () => {
               </p>
               <p className="text-[10px] text-slate-400">ਸਿਵਲ ਤੇ ਸੀ.ਐਚ.ਸੀ. ਯੂਨਿਟ</p>
             </div>
+          </div>
+        </section>
+
+        {/* 3b. 108 Rapid Ambulance Fleet Strip */}
+        <section className="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-4 shadow-lg space-y-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-slate-700/60">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center shrink-0">
+                <Siren className="w-5 h-5 text-amber-400 animate-pulse" />
+              </div>
+              <div>
+                <h3 className="text-sm sm:text-base font-extrabold text-white flex items-center gap-2">
+                  <span>{t('ambulance_fleet')}</span>
+                  <span className="text-[10px] bg-red-600/30 text-red-300 border border-red-500/30 px-2 py-0.5 rounded-full font-bold">
+                    108 ਨਾਭਾ ਰੈਪਿਡ ਨੈੱਟਵਰਕ
+                  </span>
+                </h3>
+                <p className="text-xs text-slate-400">
+                  ਸਿਵਲ ਹਸਪਤਾਲ ਨਾਭਾ, ਸੀ.ਐਚ.ਸੀ. ਭਾਦਸੋਂ, ਰੋਹਟੀ ਛੰਨਾ ਅਤੇ ਦੁਲਾਦੀ ਕਲੱਸਟਰ ਵਿੱਚ ਤਾਇਨਾਤ ਸਰਕਾਰੀ ਐਂਬੂਲੈਂਸਾਂ
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => {
+                setIsDispatchModalOpen(true);
+                setDispatchSuccess(null);
+              }}
+              className="bg-red-600 hover:bg-red-500 text-white font-extrabold text-xs sm:text-sm px-4 py-2 rounded-xl flex items-center justify-center space-x-1.5 shadow-lg shadow-red-900/30 transition self-start sm:self-auto cursor-pointer"
+            >
+              <Truck className="w-4 h-4" />
+              <span>{t('dispatch_ambulance_btn')}</span>
+            </button>
+          </div>
+
+          {/* Ambulances Quick Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 pt-1">
+            {ambulances.map((amb) => {
+              const isAvail = amb.status === 'AVAILABLE';
+              return (
+                <div
+                  key={amb.id}
+                  className={`p-3 rounded-xl border flex flex-col justify-between space-y-2 transition ${
+                    isAvail
+                      ? 'bg-slate-900/90 border-slate-700/80 hover:border-emerald-500/50'
+                      : 'bg-slate-900/50 border-amber-600/40'
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-1">
+                    <div>
+                      <span className="font-mono font-black text-xs text-white tracking-wide">
+                        {amb.vehicle_number}
+                      </span>
+                      <span className={`ml-2 text-[10px] px-1.5 py-0.5 rounded font-bold uppercase ${
+                        amb.ambulance_type === 'ALS' ? 'bg-purple-900/50 text-purple-300 border border-purple-500/40' : 'bg-blue-900/50 text-blue-300'
+                      }`}>
+                        {amb.ambulance_type}
+                      </span>
+                    </div>
+                    <span className={`text-[10px] font-black px-2 py-0.5 rounded-full uppercase ${
+                      isAvail ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
+                    }`}>
+                      {isAvail ? 'ਉਪਲਬਧ' : 'ਰਵਾਨਾ'}
+                    </span>
+                  </div>
+
+                  <p className="text-[11px] text-slate-300 flex items-center gap-1 line-clamp-1">
+                    <MapPin className="w-3 h-3 text-slate-400 shrink-0" />
+                    <span>{amb.station_location}</span>
+                  </p>
+
+                  <div className="pt-1 border-t border-slate-800 text-[10px] text-slate-400 flex items-center justify-between">
+                    <span>ਚਾਲਕ: {amb.driver_name}</span>
+                    <a
+                      href={`tel:${amb.driver_phone}`}
+                      className="text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-0.5"
+                    >
+                      <PhoneCall className="w-2.5 h-2.5" />
+                      <span>ਕਾਲ</span>
+                    </a>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </section>
 
@@ -700,6 +850,253 @@ export const EmergencyPage = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* 108 Rapid Ambulance Request Modal */}
+      {isDispatchModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-red-500/50 rounded-2xl max-w-lg w-full p-5 sm:p-6 space-y-4 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <button
+              type="button"
+              onClick={() => {
+                setIsDispatchModalOpen(false);
+                setDispatchSuccess(null);
+              }}
+              className="absolute top-4 right-4 text-slate-400 hover:text-white transition"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="flex items-center space-x-3 pb-3 border-b border-slate-800">
+              <div className="w-10 h-10 rounded-xl bg-red-600/20 text-red-400 border border-red-500/30 flex items-center justify-center shrink-0">
+                <Siren className="w-5 h-5 text-red-400 animate-pulse" />
+              </div>
+              <div>
+                <h3 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                  <span>{t('dispatch_modal_title')}</span>
+                </h3>
+                <p className="text-xs text-slate-400">
+                  ਨਾਭਾ ਤਹਿਸੀਲ ਅਤੇ ਆਸ-ਪਾਸ ਦੇ ਪਿੰਡਾਂ ਲਈ ਸਰਕਾਰੀ 108 ਐਂਬੂਲੈਂਸ ਸੇਵਾ
+                </p>
+              </div>
+            </div>
+
+            {dispatchSuccess ? (
+              <div className="space-y-4 pt-1">
+                <div className="bg-emerald-950/60 border border-emerald-500/50 rounded-2xl p-4 text-emerald-200 space-y-2">
+                  <div className="flex items-center space-x-2 text-emerald-400 font-extrabold text-sm sm:text-base">
+                    <CheckCircle2 className="w-5 h-5 shrink-0" />
+                    <span>{t('ambulance_dispatched_success')}</span>
+                  </div>
+                  <p className="text-xs text-slate-300">
+                    ਬੇਨਤੀ ਨੰਬਰ: <span className="font-mono font-bold text-white">{dispatchSuccess.request_number}</span>
+                  </p>
+                </div>
+
+                {dispatchSuccess.ambulance && (
+                  <div className="bg-slate-800/90 border border-slate-700 rounded-xl p-4 space-y-2 text-xs">
+                    <div className="flex justify-between items-center border-b border-slate-750 pb-2">
+                      <span className="text-slate-400">{t('vehicle_no')}:</span>
+                      <span className="font-mono font-black text-sm text-emerald-400">{dispatchSuccess.ambulance.vehicle_number}</span>
+                    </div>
+                    <div className="flex justify-between items-center border-b border-slate-750 pb-2">
+                      <span className="text-slate-400">{t('driver_contact')}:</span>
+                      <span className="font-bold text-white">{dispatchSuccess.ambulance.driver_name}</span>
+                    </div>
+                    <div className="flex justify-between items-center border-b border-slate-750 pb-2">
+                      <span className="text-slate-400">{t('paramedic')}:</span>
+                      <span className="text-white">{dispatchSuccess.ambulance.paramedic_name || 'Emergency Medical Tech'}</span>
+                    </div>
+                    <div className="flex justify-between items-center border-b border-slate-750 pb-2">
+                      <span className="text-slate-400">ਸਟੇਸ਼ਨ ਬੇਸ:</span>
+                      <span className="text-white">{dispatchSuccess.ambulance.station_location}</span>
+                    </div>
+                    <div className="flex justify-between items-center pt-1">
+                      <span className="text-slate-400">ਲਕਸ਼ ਹਸਪਤਾਲ:</span>
+                      <span className="text-white font-semibold">
+                        {dispatchSuccess.destination_hospital?.hospital_name || 'ਸਿਵਲ ਹਸਪਤਾਲ ਨਾਭਾ'}
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                <div className="flex items-center gap-3 pt-2">
+                  {dispatchSuccess.ambulance?.driver_phone && (
+                    <a
+                      href={`tel:${dispatchSuccess.ambulance.driver_phone}`}
+                      className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 px-4 rounded-xl text-center text-xs sm:text-sm flex items-center justify-center space-x-1.5 shadow"
+                    >
+                      <PhoneCall className="w-4 h-4" />
+                      <span>ਡਰਾਈਵਰ ਨੂੰ ਕਾਲ ਕਰੋ ({dispatchSuccess.ambulance.driver_phone})</span>
+                    </a>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsDispatchModalOpen(false);
+                      setDispatchSuccess(null);
+                    }}
+                    className="bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold py-2.5 px-4 rounded-xl text-xs sm:text-sm transition"
+                  >
+                    ਬੰਦ ਕਰੋ
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <form onSubmit={handleRequestAmbulance} className="space-y-3.5 text-xs sm:text-sm">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-slate-300 font-semibold mb-1">
+                      {t('caller_name')} <span className="text-red-400">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={callerName}
+                      onChange={(e) => setCallerName(e.target.value)}
+                      placeholder="ਜਿਵੇਂ: ਗੁਰਮੀਤ ਸਿੰਘ"
+                      className="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-red-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-slate-300 font-semibold mb-1">
+                      {t('caller_phone')} <span className="text-red-400">*</span>
+                    </label>
+                    <input
+                      type="tel"
+                      required
+                      value={callerPhone}
+                      onChange={(e) => setCallerPhone(e.target.value)}
+                      placeholder="98765-XXXXX"
+                      className="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-red-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-slate-300 font-semibold mb-1">
+                      {t('pickup_village')} <span className="text-red-400">*</span>
+                    </label>
+                    <select
+                      value={pickupVillage}
+                      onChange={(e) => setPickupVillage(e.target.value)}
+                      className="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white focus:outline-none focus:border-red-500"
+                    >
+                      {NABHA_VILLAGES.map((v) => (
+                        <option key={v} value={v}>
+                          {v}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-slate-300 font-semibold mb-1">
+                      ਮਰੀਜ਼ ਦੀ ਉਮਰ (ਸਾਲ)
+                    </label>
+                    <input
+                      type="number"
+                      min="0"
+                      max="120"
+                      value={patientAge}
+                      onChange={(e) => setPatientAge(e.target.value)}
+                      placeholder="ਜਿਵੇਂ: 54"
+                      className="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-red-500"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-slate-300 font-semibold mb-1">
+                    ਪਛਾਣ ਚਿੰਨ੍ਹ / ਪਤਾ (Landmark)
+                  </label>
+                  <input
+                    type="text"
+                    value={pickupLandmark}
+                    onChange={(e) => setPickupLandmark(e.target.value)}
+                    placeholder="ਜਿਵੇਂ: ਗੁਰਦੁਆਰਾ ਸਾਹਿਬ ਨੇੜੇ, ਬੱਸ ਅੱਡਾ, ਮੇਨ ਗਲੀ"
+                    className="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-red-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-slate-300 font-semibold mb-1">
+                    {t('triage_severity')}
+                  </label>
+                  <div className="grid grid-cols-3 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setTriageSeverity('CRITICAL')}
+                      className={`p-2 rounded-xl font-bold text-xs border text-center transition ${
+                        triageSeverity === 'CRITICAL'
+                          ? 'bg-red-600 text-white border-red-500 shadow'
+                          : 'bg-slate-950 text-slate-400 border-slate-700 hover:text-white'
+                      }`}
+                    >
+                      {t('severity_critical')}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setTriageSeverity('URGENT')}
+                      className={`p-2 rounded-xl font-bold text-xs border text-center transition ${
+                        triageSeverity === 'URGENT'
+                          ? 'bg-amber-600 text-white border-amber-500 shadow'
+                          : 'bg-slate-950 text-slate-400 border-slate-700 hover:text-white'
+                      }`}
+                    >
+                      {t('severity_urgent')}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setTriageSeverity('NORMAL')}
+                      className={`p-2 rounded-xl font-bold text-xs border text-center transition ${
+                        triageSeverity === 'NORMAL'
+                          ? 'bg-emerald-600 text-white border-emerald-500 shadow'
+                          : 'bg-slate-950 text-slate-400 border-slate-700 hover:text-white'
+                      }`}
+                    >
+                      {t('severity_normal')}
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-slate-300 font-semibold mb-1">
+                    {t('chief_complaint')} <span className="text-red-400">*</span>
+                  </label>
+                  <textarea
+                    required
+                    rows="2"
+                    value={chiefComplaint}
+                    onChange={(e) => setChiefComplaint(e.target.value)}
+                    placeholder="ਜਿਵੇਂ: ਛਾਤੀ ਵਿੱਚ ਗੰਭੀਰ ਦਰਦ ਅਤੇ ਸਾਹ ਲੈਣ ਵਿੱਚ ਦਿੱਕਤ..."
+                    className="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-red-500"
+                  />
+                </div>
+
+                <div className="flex items-center justify-end space-x-2.5 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsDispatchModalOpen(false)}
+                    className="px-4 py-2 bg-slate-800 text-slate-300 rounded-xl hover:bg-slate-700 transition"
+                  >
+                    ਰੱਦ ਕਰੋ
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={dispatchLoading}
+                    className="px-5 py-2.5 bg-red-600 hover:bg-red-500 text-white rounded-xl font-extrabold transition shadow flex items-center space-x-1.5 cursor-pointer"
+                  >
+                    <Siren className="w-4 h-4" />
+                    <span>{dispatchLoading ? 'ਰਵਾਨਾ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ...' : '108 ਐਂਬੂਲੈਂਸ ਰਵਾਨਾ ਕਰੋ'}</span>
+                  </button>
+                </div>
+              </form>
+            )}
           </div>
         </div>
       )}

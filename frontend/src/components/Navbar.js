@@ -39,7 +39,7 @@ export const Navbar = () => {
             className="flex items-center space-x-1 font-bold text-red-400 hover:text-red-300 bg-red-950/60 px-2 py-0.5 rounded border border-red-800/80 transition"
           >
             <ShieldAlert className="w-3.5 h-3.5 animate-pulse" />
-            <span>ਬੈੱਡ ਟ੍ਰੈਕਰ (Live Beds)</span>
+            <span>ਬੈੱਡ ਤੇ 108 ਐਂਬੂਲੈਂਸ (Beds & 108)</span>
           </Link>
           <span className="text-slate-600">|</span>
           <a 
@@ -86,7 +86,7 @@ export const Navbar = () => {
           </Link>
           <Link to="/emergency" className="text-red-600 hover:text-red-700 font-semibold transition flex items-center space-x-1">
             <span className="w-2 h-2 rounded-full bg-red-500 animate-ping inline-block"></span>
-            <span>{t('emergency_dashboard')}</span>
+            <span>108 ਐਮਰਜੈਂਸੀ ਤੇ ਬੈੱਡ ਟ੍ਰੈਕਰ</span>
           </Link>
           <Link to="/#doctors" className="hover:text-blue-600 transition">
             {t('find_doctors')}

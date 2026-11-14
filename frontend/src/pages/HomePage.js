@@ -164,15 +164,30 @@ export const HomePage = () => {
             </p>
           </div>
 
-          <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 hover:border-blue-500 hover:shadow-md transition">
-            <div className="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center mb-3">
-              <Hospital className="w-5 h-5" />
+          <Link
+            to="/emergency"
+            className="group bg-white p-5 rounded-2xl shadow-sm border border-slate-200 hover:border-rose-400 hover:shadow-md transition block"
+          >
+            <div className="flex items-center justify-between mb-3">
+              <div className="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center group-hover:scale-105 transition-transform">
+                <Hospital className="w-5 h-5" />
+              </div>
+              <span className="inline-flex items-center space-x-1 text-[10px] bg-rose-50 text-rose-700 font-bold px-2 py-0.5 rounded-full border border-rose-200">
+                <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span>
+                <span>108 LIVE</span>
+              </span>
             </div>
-            <h3 className="font-bold text-slate-900 text-base mb-1">ਐਮਰਜੈਂਸੀ ਬਿਸਤਰੇ</h3>
-            <p className="text-xs text-slate-500 leading-relaxed">
-              ਸਿਵਲ ਹਸਪਤਾਲ ਨਾਭਾ ਵਿਖੇ ਆਕਸੀਜਨ ਅਤੇ ਐਮਰਜੈਂਸੀ ਬੈੱਡਾਂ ਦੀ ਲਾਈਵ ਸਥਿਤੀ।
+            <h3 className="font-bold text-slate-900 text-base mb-1 group-hover:text-rose-600 transition-colors">
+              ਐਮਰਜੈਂਸੀ ਬਿਸਤਰੇ ਤੇ 108 ਐਂਬੂਲੈਂਸ
+            </h3>
+            <p className="text-xs text-slate-500 leading-relaxed mb-3">
+              ਸਿਵਲ ਹਸਪਤਾਲ ਨਾਭਾ ਵਿਖੇ ਆਕਸੀਜਨ, ਬੈੱਡ ਅਤੇ 108 ਐਂਬੂਲੈਂਸ ਫਲੀਟ ਦੀ ਲਾਈਵ ਸਥਿਤੀ।
             </p>
-          </div>
+            <div className="flex items-center text-xs font-semibold text-rose-600 group-hover:text-rose-700">
+              <span>ਲਾਈਵ ਟ੍ਰੈਕਰ ਅਤੇ ਡਿਸਪੈਚ</span>
+              <ArrowRight className="w-3.5 h-3.5 ml-1 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </Link>
         </div>
       </section>
 

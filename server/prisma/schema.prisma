@@ -94,6 +94,43 @@ enum NotificationType {
   @@map("notificationtype")
 }
 
+enum AmbulanceType {
+  BLS
+  ALS
+  PATIENT_TRANSPORT
+
+  @@map("ambulancetype")
+}
+
+enum AmbulanceStatus {
+  AVAILABLE
+  DISPATCHED
+  ON_DUTY
+  MAINTENANCE
+
+  @@map("ambulancestatus")
+}
+
+enum TriageSeverity {
+  CRITICAL
+  URGENT
+  NORMAL
+
+  @@map("triageseverity")
+}
+
+enum EmergencyRequestStatus {
+  PENDING
+  DISPATCHED
+  EN_ROUTE
+  ARRIVED_SCENE
+  TRANSPORTING
+  COMPLETED
+  CANCELLED
+
+  @@map("emergencyrequeststatus")
+}
+
 model User {
   id                 Int                @id @default(autoincrement())
   phone              String             @unique @db.VarChar(20)
@@ -206,6 +243,7 @@ model Hospital {
   updated_at      DateTime @default(now()) @updatedAt @db.Timestamptz(6)
 
   user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  emergency_requests EmergencyRequest[]
 
   @@index([hospital_name])
   @@map("hospitals")
@@ -457,3 +495,57 @@ model AuditLog {
   @@index([timestamp])
   @@map("audit_logs")
 }
+
+model Ambulance {
+  id               Int             @id @default(autoincrement())
+  vehicle_number   String          @unique @db.VarChar(20)
+  ambulance_type   AmbulanceType   @default(BLS)
+  station_location String          @db.VarChar(150)
+  driver_name      String          @db.VarChar(100)
+  driver_phone     String          @db.VarChar(20)
+  paramedic_name   String?         @db.VarChar(100)
+  status           AmbulanceStatus @default(AVAILABLE)
+  has_oxygen       Boolean         @default(true)
+  has_ventilator   Boolean         @default(false)
+  is_demo          Boolean         @default(true)
+  created_at       DateTime        @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime        @default(now()) @updatedAt @db.Timestamptz(6)
+
+  emergency_requests EmergencyRequest[]
+
+  @@index([status])
+  @@index([station_location])
+  @@map("ambulances")
+}
+
+model EmergencyRequest {
+  id                      Int                    @id @default(autoincrement())
+  request_number          String                 @unique @db.VarChar(30)
+  caller_name             String                 @db.VarChar(100)
+  caller_phone            String                 @db.VarChar(20)
+  pickup_village          String                 @db.VarChar(100)
+  pickup_landmark         String?                @db.VarChar(255)
+  destination_hospital_id Int?
+  ambulance_id            Int?
+  triage_severity         TriageSeverity         @default(URGENT)
+  chief_complaint         String
+  patient_name            String?                @db.VarChar(100)
+  patient_age             Int?
+  status                  EmergencyRequestStatus @default(PENDING)
+  notes                   String?
+  dispatched_at           DateTime?              @db.Timestamptz(6)
+  completed_at            DateTime?              @db.Timestamptz(6)
+  is_demo                 Boolean                @default(true)
+  created_at              DateTime               @default(now()) @db.Timestamptz(6)
+  updated_at              DateTime               @default(now()) @updatedAt @db.Timestamptz(6)
+
+  ambulance            Ambulance? @relation(fields: [ambulance_id], references: [id], onDelete: SetNull)
+  destination_hospital Hospital?  @relation(fields: [destination_hospital_id], references: [id], onDelete: SetNull)
+
+  @@index([status])
+  @@index([pickup_village])
+  @@index([ambulance_id])
+  @@index([destination_hospital_id])
+  @@map("emergency_requests")
+}
+

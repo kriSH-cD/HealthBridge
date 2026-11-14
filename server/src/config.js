@@ -1,6 +1,8 @@
 const env = process.env;
 
 export const config = {
+  // Built frontend to serve from this server (single-service deploy); unset in dev.
+  webDist: env.WEB_DIST,
   port: Number(env.PORT ?? 8000),
   databaseUrl: env.DATABASE_URL ?? "postgresql://sehatsetu:sehatsetu@localhost:5432/sehatsetu",
   redisUrl: env.REDIS_URL ?? "redis://localhost:6379",
@@ -16,3 +18,7 @@ export const config = {
   region: "Nabha, Patiala, Punjab",
   supportedLanguages: ["pa", "hi", "en"],
 };
+
+if (env.NODE_ENV === "production" && config.secretKey === "change_me_in_production") {
+  throw new Error("Set SECRET_KEY in production: the default lets anyone forge login tokens");
+}

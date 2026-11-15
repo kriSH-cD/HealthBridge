@@ -29,6 +29,10 @@ erDiagram
     PHARMACY ||--o{ PHARMACY_INVENTORY : stocks
     MEDICINE ||--o{ PHARMACY_INVENTORY : "stocked as"
 
+    PHARMACY ||--o{ STOCK_TRANSFER_REQUEST : "sends"
+    PHARMACY ||--o{ STOCK_TRANSFER_REQUEST : "receives"
+    MEDICINE ||--o{ STOCK_TRANSFER_REQUEST : "transfers"
+
     HOSPITAL ||--o{ EMERGENCY_REQUEST : receives
     AMBULANCE ||--o{ EMERGENCY_REQUEST : dispatched
 
@@ -181,6 +185,19 @@ erDiagram
         text chief_complaint
         emergencyrequeststatus status
         timestamptz dispatched_at
+        timestamptz completed_at
+    }
+    STOCK_TRANSFER_REQUEST {
+        int id PK
+        varchar transfer_number UK
+        int source_pharmacy_id FK
+        int target_pharmacy_id FK
+        int medicine_id FK
+        varchar batch_number
+        int quantity "> 0"
+        date expiry_date
+        transferstatus status
+        timestamptz approved_at
         timestamptz completed_at
     }
 ```

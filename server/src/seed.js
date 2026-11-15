@@ -147,6 +147,7 @@ export async function seedDatabase(prisma) {
     hospitals: 0,
     ambulances: 0,
     emergency_requests: 0,
+    stock_transfers: 0,
   };
 
   // One transaction, like the single db.commit() in the Python version.
@@ -446,6 +447,87 @@ export async function seedDatabase(prisma) {
           } });
           stats.inventory++;
         }
+      }
+    }
+
+    // 4b. Near-Expiry & Surplus Inventory Batches (for Smart Rebalancing)
+    const amoxicillin = medicineEntities.find((m) => m.name === "Amoxicillin") || medicineEntities[1];
+    const insulin = medicineEntities.find((m) => m.name === "Insulin Regular") || medicineEntities[23];
+    const paracetamol = medicineEntities.find((m) => m.name === "Paracetamol") || medicineEntities[0];
+    const azithromycin = medicineEntities.find((m) => m.name === "Azithromycin") || medicineEntities[5];
+
+    const nearExpirySeed = [
+      // Jan Aushadhi Kendra Nabha (surplus near-expiry)
+      { pharmacy_id: pharmacyEntities[0].id, medicine_id: amoxicillin.id, batch_number: "BAT-EXP-AMOX-01", stock_quantity: 140, reorder_level: 20, unit_price: amoxicillin.price, expiry_date: dayOffset(25) },
+      { pharmacy_id: pharmacyEntities[0].id, medicine_id: insulin.id, batch_number: "BAT-EXP-INSU-02", stock_quantity: 85, reorder_level: 15, unit_price: insulin.price, expiry_date: dayOffset(42) },
+      // Guru Nanak Medicos (surplus near-expiry)
+      { pharmacy_id: pharmacyEntities[3].id, medicine_id: paracetamol.id, batch_number: "BAT-EXP-PARA-03", stock_quantity: 200, reorder_level: 30, unit_price: paracetamol.price, expiry_date: dayOffset(55) },
+      { pharmacy_id: pharmacyEntities[3].id, medicine_id: azithromycin.id, batch_number: "BAT-EXP-AZI-04", stock_quantity: 75, reorder_level: 15, unit_price: azithromycin.price, expiry_date: dayOffset(35) },
+      // Duladdi Village Chemist (deficit / critical stockout for Amoxicillin)
+      { pharmacy_id: pharmacyEntities[2].id, medicine_id: amoxicillin.id, batch_number: "BAT-DUL-AMOX-01", stock_quantity: 4, reorder_level: 20, unit_price: amoxicillin.price, expiry_date: dayOffset(150) },
+      // Bhadson Chemist Hall (deficit / critical stockout for Insulin)
+      { pharmacy_id: pharmacyEntities[4].id, medicine_id: insulin.id, batch_number: "BAT-BHD-INSU-01", stock_quantity: 2, reorder_level: 15, unit_price: insulin.price, expiry_date: dayOffset(120) },
+    ];
+
+    for (const item of nearExpirySeed) {
+      const existing = await db.pharmacyInventory.findFirst({
+        where: { pharmacy_id: item.pharmacy_id, medicine_id: item.medicine_id, batch_number: item.batch_number },
+      });
+      if (!existing) {
+        await db.pharmacyInventory.create({ data: { ...item, is_available: true } });
+        stats.inventory++;
+      } else {
+        await db.pharmacyInventory.update({
+          where: { id: existing.id },
+          data: { ...item, is_available: true },
+        });
+        stats.inventory++;
+      }
+    }
+
+    // 4c. Sample Inter-Pharmacy Stock Transfer Requests
+    const transferSeedData = [
+      {
+        transfer_number: "TRF-NBH-2026-0001",
+        source_pharmacy_id: pharmacyEntities[0].id,
+        target_pharmacy_id: pharmacyEntities[2].id,
+        medicine_id: amoxicillin.id,
+        batch_number: "BAT-EXP-AMOX-01",
+        quantity: 60,
+        expiry_date: dayOffset(25),
+        status: "PENDING",
+        reason: "SURPLUS_NEAR_EXPIRY_REBALANCE",
+        notes: "Rebalancing surplus near-expiry Amoxicillin from Jan Aushadhi Nabha to Duladdi rural dispensary",
+      },
+      {
+        transfer_number: "TRF-NBH-2026-0002",
+        source_pharmacy_id: pharmacyEntities[3].id,
+        target_pharmacy_id: pharmacyEntities[4].id,
+        medicine_id: paracetamol.id,
+        batch_number: "BAT-EXP-PARA-03",
+        quantity: 100,
+        expiry_date: dayOffset(55),
+        status: "COMPLETED",
+        reason: "EMERGENCY_STOCKOUT",
+        approved_at: new Date(Date.now() - 3600_000 * 24),
+        completed_at: new Date(Date.now() - 3600_000 * 2),
+        notes: "Successfully transferred 100 units to Bhadson Chemist Hall",
+      },
+    ];
+
+    for (const trf of transferSeedData) {
+      const existing = await db.stockTransferRequest.findUnique({
+        where: { transfer_number: trf.transfer_number },
+      });
+      if (!existing) {
+        await db.stockTransferRequest.create({ data: trf });
+        stats.stock_transfers++;
+      } else {
+        await db.stockTransferRequest.update({
+          where: { id: existing.id },
+          data: trf,
+        });
+        stats.stock_transfers++;
       }
     }
 

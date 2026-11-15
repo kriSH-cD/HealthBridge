@@ -131,6 +131,16 @@ enum EmergencyRequestStatus {
   @@map("emergencyrequeststatus")
 }
 
+enum TransferStatus {
+  PENDING
+  APPROVED
+  IN_TRANSIT
+  COMPLETED
+  CANCELLED
+
+  @@map("transferstatus")
+}
+
 model User {
   id                 Int                @id @default(autoincrement())
   phone              String             @unique @db.VarChar(20)
@@ -221,8 +231,10 @@ model Pharmacy {
   created_at      DateTime @default(now()) @db.Timestamptz(6)
   updated_at      DateTime @default(now()) @updatedAt @db.Timestamptz(6)
 
-  user      User                @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  inventory PharmacyInventory[]
+  user               User                   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  inventory          PharmacyInventory[]
+  outgoing_transfers StockTransferRequest[] @relation("outgoing_transfers")
+  incoming_transfers StockTransferRequest[] @relation("incoming_transfers")
 
   @@index([pharmacy_name])
   @@index([village])
@@ -295,6 +307,7 @@ model Medicine {
 
   inventory_items    PharmacyInventory[]
   prescription_items PrescriptionItem[]
+  stock_transfers    StockTransferRequest[]
 
   @@unique([name, strength]) // one catalogue entry per product strength
   @@index([generic_name])
@@ -547,5 +560,34 @@ model EmergencyRequest {
   @@index([ambulance_id])
   @@index([destination_hospital_id])
   @@map("emergency_requests")
+}
+
+model StockTransferRequest {
+  id                 Int            @id @default(autoincrement())
+  transfer_number    String         @unique @db.VarChar(30)
+  source_pharmacy_id Int
+  target_pharmacy_id Int
+  medicine_id        Int
+  batch_number       String         @db.VarChar(50)
+  quantity           Int
+  expiry_date        DateTime       @db.Date
+  status             TransferStatus @default(PENDING)
+  reason             String?        @db.VarChar(255)
+  notes              String?
+  approved_at        DateTime?      @db.Timestamptz(6)
+  completed_at       DateTime?      @db.Timestamptz(6)
+  is_demo            Boolean        @default(true)
+  created_at         DateTime       @default(now()) @db.Timestamptz(6)
+  updated_at         DateTime       @default(now()) @updatedAt @db.Timestamptz(6)
+
+  source_pharmacy Pharmacy @relation("outgoing_transfers", fields: [source_pharmacy_id], references: [id], onDelete: Cascade)
+  target_pharmacy Pharmacy @relation("incoming_transfers", fields: [target_pharmacy_id], references: [id], onDelete: Cascade)
+  medicine        Medicine @relation(fields: [medicine_id], references: [id], onDelete: Cascade)
+
+  @@index([status])
+  @@index([source_pharmacy_id])
+  @@index([target_pharmacy_id])
+  @@index([medicine_id])
+  @@map("stock_transfer_requests")
 }
 

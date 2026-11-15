@@ -47,16 +47,16 @@ export const LoginPage = () => {
 
   return (
     <div className="flex-1 max-w-md w-full mx-auto px-4 py-12 flex flex-col justify-center">
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-md p-6 sm:p-8 space-y-6">
+      <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-md p-6 sm:p-8 space-y-6 transition-colors">
         <div className="text-center space-y-1">
-          <h2 className="text-2xl font-bold text-slate-900">{t('sign_in_title')}</h2>
-          <p className="text-xs text-slate-500">
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white">{t('sign_in_title')}</h2>
+          <p className="text-xs text-slate-500 dark:text-slate-400">
             ਸਿਹਤ ਸੇਤੂ ਨਾਭਾ ਵਿੱਚ ਦਾਖਲ ਹੋਣ ਲਈ ਆਪਣਾ ਮੋਬਾਈਲ ਨੰਬਰ ਭਰੋ
           </p>
         </div>
 
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 text-xs p-3 rounded-xl flex items-center space-x-2">
+          <div className="bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 text-xs p-3 rounded-xl flex items-center space-x-2">
             <AlertCircle className="w-4 h-4 flex-shrink-0" />
             <span>{error}</span>
           </div>
@@ -64,7 +64,7 @@ export const LoginPage = () => {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">
+            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
               {t('phone_label')}
             </label>
             <div className="relative">
@@ -75,13 +75,13 @@ export const LoginPage = () => {
                 value={identifier}
                 onChange={(e) => setIdentifier(e.target.value)}
                 placeholder="e.g. 9876543201"
-                className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full pl-9 pr-3 py-2.5 bg-slate-50 dark:bg-slate-700/60 border border-slate-200 dark:border-slate-600 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">
+            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
               {t('password_label')}
             </label>
             <div className="relative">
@@ -92,7 +92,7 @@ export const LoginPage = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full pl-9 pr-3 py-2.5 bg-slate-50 dark:bg-slate-700/60 border border-slate-200 dark:border-slate-600 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
               />
             </div>
           </div>
@@ -108,19 +108,19 @@ export const LoginPage = () => {
         </form>
 
         {/* Quick Demo Test Accounts Bar */}
-        <div className="pt-4 border-t border-slate-100">
-          <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 text-center">
+        <div className="pt-4 border-t border-slate-100 dark:border-slate-700">
+          <p className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 text-center">
             {t('quick_demo_login')}
           </p>
           <div className="grid grid-cols-2 gap-2 text-xs">
             <button
               type="button"
               onClick={() => handleQuickDemoLogin('9876543201')}
-              className="p-2 border border-slate-200 rounded-lg hover:border-emerald-500 hover:bg-emerald-50 text-left transition flex items-center space-x-2"
+              className="p-2 border border-slate-200 dark:border-slate-700 rounded-lg hover:border-emerald-500 hover:bg-emerald-50 dark:hover:bg-slate-700/80 text-left transition flex items-center space-x-2"
             >
-              <Stethoscope className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
+              <Stethoscope className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
               <div className="overflow-hidden">
-                <p className="font-semibold text-slate-800 truncate">ਡਾਕਟਰ (Civil Hosp)</p>
+                <p className="font-semibold text-slate-800 dark:text-slate-200 truncate">ਡਾਕਟਰ (Civil Hosp)</p>
                 <p className="text-[10px] text-slate-400">9876543201</p>
               </div>
             </button>
@@ -128,11 +128,11 @@ export const LoginPage = () => {
             <button
               type="button"
               onClick={() => handleQuickDemoLogin('9876543101')}
-              className="p-2 border border-slate-200 rounded-lg hover:border-emerald-500 hover:bg-emerald-50 text-left transition flex items-center space-x-2"
+              className="p-2 border border-slate-200 dark:border-slate-700 rounded-lg hover:border-emerald-500 hover:bg-emerald-50 dark:hover:bg-slate-700/80 text-left transition flex items-center space-x-2"
             >
-              <UserIcon className="w-3.5 h-3.5 text-blue-600 flex-shrink-0" />
+              <UserIcon className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 flex-shrink-0" />
               <div className="overflow-hidden">
-                <p className="font-semibold text-slate-800 truncate">ਮਰੀਜ਼ (Alhoran)</p>
+                <p className="font-semibold text-slate-800 dark:text-slate-200 truncate">ਮਰੀਜ਼ (Alhoran)</p>
                 <p className="text-[10px] text-slate-400">9876543101</p>
               </div>
             </button>
@@ -140,11 +140,11 @@ export const LoginPage = () => {
             <button
               type="button"
               onClick={() => handleQuickDemoLogin('9876543301')}
-              className="p-2 border border-slate-200 rounded-lg hover:border-emerald-500 hover:bg-emerald-50 text-left transition flex items-center space-x-2"
+              className="p-2 border border-slate-200 dark:border-slate-700 rounded-lg hover:border-emerald-500 hover:bg-emerald-50 dark:hover:bg-slate-700/80 text-left transition flex items-center space-x-2"
             >
-              <Pill className="w-3.5 h-3.5 text-teal-600 flex-shrink-0" />
+              <Pill className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400 flex-shrink-0" />
               <div className="overflow-hidden">
-                <p className="font-semibold text-slate-800 truncate">Jan Aushadhi</p>
+                <p className="font-semibold text-slate-800 dark:text-slate-200 truncate">Jan Aushadhi</p>
                 <p className="text-[10px] text-slate-400">9876543301</p>
               </div>
             </button>
@@ -152,22 +152,22 @@ export const LoginPage = () => {
             <button
               type="button"
               onClick={() => handleQuickDemoLogin('9876543401')}
-              className="p-2 border border-slate-200 rounded-lg hover:border-emerald-500 hover:bg-emerald-50 text-left transition flex items-center space-x-2"
+              className="p-2 border border-slate-200 dark:border-slate-700 rounded-lg hover:border-emerald-500 hover:bg-emerald-50 dark:hover:bg-slate-700/80 text-left transition flex items-center space-x-2"
             >
-              <Hospital className="w-3.5 h-3.5 text-red-600 flex-shrink-0" />
+              <Hospital className="w-3.5 h-3.5 text-red-600 dark:text-red-400 flex-shrink-0" />
               <div className="overflow-hidden">
-                <p className="font-semibold text-slate-800 truncate">Hospital Admin</p>
+                <p className="font-semibold text-slate-800 dark:text-slate-200 truncate">Hospital Admin</p>
                 <p className="text-[10px] text-slate-400">9876543401</p>
               </div>
             </button>
           </div>
-          <p className="text-[10px] text-slate-400 text-center mt-2">ਸਾਰਿਆਂ ਦਾ ਪਾਸਵਰਡ: password123</p>
+          <p className="text-[10px] text-slate-400 dark:text-slate-500 text-center mt-2">ਸਾਰਿਆਂ ਦਾ ਪਾਸਵਰਡ: password123</p>
         </div>
 
         <div className="text-center pt-2">
-          <p className="text-xs text-slate-600">
+          <p className="text-xs text-slate-600 dark:text-slate-400">
             ਨਵਾਂ ਖਾਤਾ ਬਣਾਉਣਾ ਹੈ?{' '}
-            <Link to="/register" className="font-bold text-emerald-700 hover:underline">
+            <Link to="/register" className="font-bold text-emerald-700 dark:text-emerald-400 hover:underline">
               {t('register')}
             </Link>
           </p>

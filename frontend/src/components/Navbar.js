@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import { 
   HeartHandshake, 
   PhoneCall, 
@@ -9,12 +10,15 @@ import {
   LogOut, 
   User as UserIcon, 
   ShieldAlert,
-  Building2
+  Building2,
+  Sun,
+  Moon
 } from 'lucide-react';
 
 export const Navbar = () => {
   const { language, setLanguage, t } = useLanguage();
   const { user, isAuthenticated, logout } = useAuth();
+  const { isDark, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -23,9 +27,9 @@ export const Navbar = () => {
   };
 
   return (
-    <header className="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+    <header className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-50 shadow-sm transition-colors duration-200">
       {/* Top Banner: Nabha Emergency & Demo Notice */}
-      <div className="bg-slate-900 text-slate-200 text-xs px-4 py-1.5 flex justify-between items-center flex-wrap gap-2 border-b border-slate-800">
+      <div className="bg-slate-900 dark:bg-slate-950 text-slate-200 text-xs px-4 py-1.5 flex justify-between items-center flex-wrap gap-2 border-b border-slate-800 dark:border-slate-900">
         <div className="flex items-center space-x-2">
           <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
           <span className="font-medium text-slate-300">📍 {t('app_subtitle')} (Nabha Rural Sector)</span>
@@ -70,51 +74,67 @@ export const Navbar = () => {
           </div>
           <div>
             <div className="flex items-center space-x-1.5">
-              <span className="text-xl font-bold text-slate-900 tracking-tight">{t('app_title')}</span>
-              <span className="hidden sm:inline text-xs bg-blue-50 text-blue-700 font-semibold px-2 py-0.5 rounded-full border border-blue-200">
+              <span className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">{t('app_title')}</span>
+              <span className="hidden sm:inline text-xs bg-blue-50 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 font-semibold px-2 py-0.5 rounded-full border border-blue-200 dark:border-blue-800">
                 ਨਾਭਾ
               </span>
             </div>
-            <p className="hidden sm:block text-[11px] text-slate-500 leading-none">Rural Health Bridge</p>
+            <p className="hidden sm:block text-[11px] text-slate-500 dark:text-slate-400 leading-none">Rural Health Bridge</p>
           </div>
         </Link>
 
         {/* Center Navigation Links */}
-        <nav className="hidden md:flex items-center space-x-6 text-sm font-medium text-slate-700">
-          <Link to="/" className="hover:text-blue-600 transition">
+        <nav className="hidden md:flex items-center space-x-6 text-sm font-medium text-slate-700 dark:text-slate-200">
+          <Link to="/" className="hover:text-blue-600 dark:hover:text-blue-400 transition">
             {t('home')}
           </Link>
-          <Link to="/emergency" className="text-red-600 hover:text-red-700 font-semibold transition flex items-center space-x-1">
+          <Link to="/emergency" className="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 font-semibold transition flex items-center space-x-1">
             <span className="w-2 h-2 rounded-full bg-red-500 animate-ping inline-block"></span>
             <span>108 ਐਮਰਜੈਂਸੀ ਤੇ ਬੈੱਡ ਟ੍ਰੈਕਰ</span>
           </Link>
-          <Link to="/#doctors" className="hover:text-blue-600 transition">
+          <Link to="/#doctors" className="hover:text-blue-600 dark:hover:text-blue-400 transition">
             {t('find_doctors')}
           </Link>
-          <Link to="/#pharmacies" className="hover:text-blue-600 transition">
+          <Link to="/#pharmacies" className="hover:text-blue-600 dark:hover:text-blue-400 transition">
             {t('medicines')}
           </Link>
           {isAuthenticated && (
-            <Link to="/dashboard" className="text-blue-700 font-semibold hover:text-blue-800 transition">
+            <Link to="/dashboard" className="text-blue-700 dark:text-blue-400 font-semibold hover:text-blue-800 dark:hover:text-blue-300 transition">
               {t('dashboard')}
             </Link>
           )}
         </nav>
 
-        {/* Right Section: Language Switcher & Auth */}
-        <div className="flex items-center space-x-3">
+        {/* Right Section: Language Switcher, Theme Switcher & Auth */}
+        <div className="flex items-center space-x-2 sm:space-x-3">
+          {/* Dark / Light Mode Toggle Button */}
+          <button
+            type="button"
+            onClick={toggleTheme}
+            data-testid="theme-toggle-btn"
+            aria-label={isDark ? (t('light_mode') || 'Switch to Light Mode') : (t('dark_mode') || 'Switch to Dark Mode')}
+            title={isDark ? (t('light_mode') || 'Switch to Light Mode') : (t('dark_mode') || 'Switch to Dark Mode')}
+            className="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-amber-300 border border-slate-200 dark:border-slate-700 transition cursor-pointer"
+          >
+            {isDark ? (
+              <Sun className="w-4 h-4 text-amber-400" />
+            ) : (
+              <Moon className="w-4 h-4 text-slate-700" />
+            )}
+          </button>
+
           {/* Multilingual Selector */}
-          <div className="flex items-center bg-slate-100 rounded-lg p-1 border border-slate-200">
-            <Globe className="w-3.5 h-3.5 text-slate-500 ml-1.5 mr-1" />
+          <div className="flex items-center bg-slate-100 dark:bg-slate-800 rounded-lg p-1 border border-slate-200 dark:border-slate-700">
+            <Globe className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400 ml-1.5 mr-1" />
             <select
               value={language}
               onChange={(e) => setLanguage(e.target.value)}
-              className="bg-transparent text-xs font-medium text-slate-800 outline-none cursor-pointer pr-1"
+              className="bg-transparent text-xs font-medium text-slate-800 dark:text-slate-200 outline-none cursor-pointer pr-1"
               aria-label="Language Selector"
             >
-              <option value="pa">ਪੰਜਾਬੀ (PA)</option>
-              <option value="hi">हिंदी (HI)</option>
-              <option value="en">English (EN)</option>
+              <option value="pa" className="dark:bg-slate-800 dark:text-slate-100">ਪੰਜਾਬੀ (PA)</option>
+              <option value="hi" className="dark:bg-slate-800 dark:text-slate-100">हिंदी (HI)</option>
+              <option value="en" className="dark:bg-slate-800 dark:text-slate-100">English (EN)</option>
             </select>
           </div>
 
@@ -123,18 +143,18 @@ export const Navbar = () => {
             <div className="flex items-center space-x-2">
               <Link
                 to="/dashboard"
-                className="flex items-center space-x-1.5 bg-blue-50 text-blue-800 border border-blue-200 text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-blue-100 transition"
+                className="flex items-center space-x-1.5 bg-blue-50 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-800 text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/60 transition"
               >
                 <UserIcon className="w-3.5 h-3.5" />
                 <span className="sr-only sm:hidden">{t('dashboard')}</span>
                 <span className="hidden sm:inline max-w-[100px] truncate">{user?.full_name?.replace(' [DEMO DATA]', '')}</span>
-                <span className="hidden sm:inline text-[10px] bg-blue-200 text-blue-900 px-1.5 py-0.2 rounded font-bold uppercase">
+                <span className="hidden sm:inline text-[10px] bg-blue-200 dark:bg-blue-800 text-blue-900 dark:text-blue-100 px-1.5 py-0.2 rounded font-bold uppercase">
                   {user?.role}
                 </span>
               </Link>
               <button
                 onClick={handleLogout}
-                className="p-1.5 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
+                className="p-1.5 text-slate-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40 rounded-lg transition"
                 title={t('logout')}
                 aria-label="Logout"
               >
@@ -142,16 +162,16 @@ export const Navbar = () => {
               </button>
             </div>
           ) : (
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-1.5 sm:space-x-2">
               <Link
                 to="/login"
-                className="text-xs font-semibold text-slate-700 hover:text-blue-700 px-3 py-1.5 rounded-lg hover:bg-slate-100 transition"
+                className="text-xs font-semibold text-slate-700 dark:text-slate-200 hover:text-blue-700 dark:hover:text-blue-400 px-2.5 sm:px-3 py-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition"
               >
                 {t('login')}
               </Link>
               <Link
                 to="/register"
-                className="text-xs font-semibold bg-blue-600 text-white px-3.5 py-1.5 rounded-lg hover:bg-blue-700 shadow-sm transition"
+                className="text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white px-3 sm:px-3.5 py-1.5 rounded-lg shadow-sm transition"
               >
                 {t('register')}
               </Link>

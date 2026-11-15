@@ -14,3 +14,8 @@ if (!globalThis.localStorage?.getItem) {
   };
   Object.defineProperty(globalThis, 'localStorage', { value: storage, configurable: true });
 }
+
+// JSDOM canvas getContext fallback
+if (typeof HTMLCanvasElement !== 'undefined') {
+  HTMLCanvasElement.prototype.getContext = () => null;
+}

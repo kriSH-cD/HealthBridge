@@ -35,6 +35,14 @@ export const Navbar = () => {
         </div>
         <div className="flex items-center space-x-4">
           <Link
+            to="/triage-3d"
+            className="hidden sm:flex items-center space-x-1 font-bold text-sky-400 hover:text-sky-300 bg-sky-950/60 px-2 py-0.5 rounded border border-sky-800/80 transition"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse"></span>
+            <span>3D ਟ੍ਰਾਈਏਜ (ISD 3D)</span>
+          </Link>
+          <span className="hidden sm:inline text-slate-600">|</span>
+          <Link
             to="/emergency"
             className="flex items-center space-x-1 font-bold text-red-400 hover:text-red-300 bg-red-950/60 px-2 py-0.5 rounded border border-red-800/80 transition"
           >
@@ -87,6 +95,10 @@ export const Navbar = () => {
           <Link to="/emergency" className="text-red-600 hover:text-red-700 font-semibold transition flex items-center space-x-1">
             <span className="w-2 h-2 rounded-full bg-red-500 animate-ping inline-block"></span>
             <span>108 ਐਮਰਜੈਂਸੀ ਤੇ ਬੈੱਡ ਟ੍ਰੈਕਰ</span>
+          </Link>
+          <Link to="/triage-3d" className="text-sky-600 hover:text-sky-700 font-semibold transition flex items-center space-x-1">
+            <span className="w-2 h-2 rounded-full bg-sky-500 animate-pulse inline-block"></span>
+            <span>3D ਟ੍ਰਾਈਏਜ (ISD)</span>
           </Link>
           <Link to="/#doctors" className="hover:text-blue-600 transition">
             {t('find_doctors')}

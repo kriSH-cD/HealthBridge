@@ -233,6 +233,13 @@ export const EmergencyPage = () => {
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
+            <Link
+              to="/triage-3d"
+              className="bg-sky-400 hover:bg-sky-300 text-slate-950 font-extrabold px-3 py-1.5 rounded-lg flex items-center space-x-1 shadow transition cursor-pointer"
+            >
+              <Activity className="w-3.5 h-3.5 text-slate-950 animate-pulse" />
+              <span>3D ਇੰਟਰਐਕਟਿਵ ਟ੍ਰਾਈਏਜ (ISD 3D)</span>
+            </Link>
             <button
               type="button"
               onClick={() => {

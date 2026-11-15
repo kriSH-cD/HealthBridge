@@ -19,3 +19,6 @@ yarn-error.log*
 
 # Prisma client (generated)
 server/src/generated/
+
+# Docker local overrides
+docker-compose.override.yml

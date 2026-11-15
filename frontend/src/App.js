@@ -11,6 +11,7 @@ import { RegisterPage } from './pages/RegisterPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { ConsultationRoom } from './pages/ConsultationRoom';
 import { EmergencyPage } from './pages/EmergencyPage';
+import { InteractiveTriagePage } from './pages/InteractiveTriagePage';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
               <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/emergency" element={<EmergencyPage />} />
+                <Route path="/triage-3d" element={<InteractiveTriagePage />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
                 <Route element={<ProtectedRoute />}>

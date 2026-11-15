@@ -2,7 +2,7 @@
 
 **Nabha Rural Healthcare Platform • ਪੇਂਡੂ ਸਿਹਤ ਮਿਸ਼ਨ ਨਾਭਾ**
 
-Telemedicine, rural healthcare delivery, and emergency response platform built specifically for Nabha Tehsil (Patiala District, Punjab) and its 173 surrounding villages: multilingual (Punjabi, Hindi, English) teleconsultations, digital prescriptions, medicine inventory tracking at local Jan Aushadhi Kendras and village pharmacies, live civil hospital bed tracking, and the **108 Rapid Ambulance Fleet & Emergency Dispatch System**.
+Telemedicine, rural healthcare delivery, and emergency response platform built specifically for Nabha Tehsil (Patiala District, Punjab) and its 173 surrounding villages: multilingual (Punjabi, Hindi, English) teleconsultations, digital prescriptions, medicine inventory tracking at local Jan Aushadhi Kendras and village pharmacies, live civil hospital bed tracking, and the **108 Rapid Ambulance Fleet & Emergency Dispatch System**..
 
 **Stack:** React 18 + Vite + Tailwind CSS, Node.js 20 (Express + Prisma ORM), PostgreSQL 16, Redis 7, Vitest.
 

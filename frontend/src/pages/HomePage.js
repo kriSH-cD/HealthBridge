@@ -75,7 +75,7 @@ export const HomePage = () => {
   };
 
   return (
-    <div className="flex-1 pb-16 bg-slate-50 text-slate-800">
+    <div className="flex-1 pb-16 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-200">
       {/* Hero Section: Professional Medical Blue */}
       <section className="bg-gradient-to-b from-blue-900 via-blue-800 to-slate-900 text-white py-14 px-4 sm:px-6 lg:px-8 border-b border-blue-950">
         <div className="max-w-5xl mx-auto text-center space-y-6">
@@ -131,59 +131,59 @@ export const HomePage = () => {
         </div>
       </section>
 
-      {/* Feature Pillars: Clean White Cards with Grey Borders */}
+      {/* Feature Pillars: Clean Cards with Dark Mode Support */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 hover:border-blue-500 hover:shadow-md transition">
-            <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mb-3">
+          <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 hover:border-blue-500 dark:hover:border-blue-400 hover:shadow-md transition">
+            <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-300 flex items-center justify-center mb-3">
               <Stethoscope className="w-5 h-5" />
             </div>
-            <h3 className="font-bold text-slate-900 text-base mb-1">{t('find_doctors')}</h3>
-            <p className="text-xs text-slate-500 leading-relaxed">
+            <h3 className="font-bold text-slate-900 dark:text-white text-base mb-1">{t('find_doctors')}</h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
               ਸਿਵਲ ਹਸਪਤਾਲ ਨਾਭਾ ਅਤੇ ਭਾਦਸੋਂ ਪੀ.ਐਚ.ਸੀ ਦੇ ਮਾਹਿਰ ਡਾਕਟਰਾਂ ਨਾਲ ਆਨਲਾਈਨ ਮੁਲਾਕਾਤ।
             </p>
           </div>
 
-          <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 hover:border-blue-500 hover:shadow-md transition">
-            <div className="w-10 h-10 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center mb-3">
+          <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 hover:border-blue-500 dark:hover:border-blue-400 hover:shadow-md transition">
+            <div className="w-10 h-10 rounded-xl bg-sky-50 dark:bg-sky-900/40 text-sky-600 dark:text-sky-300 flex items-center justify-center mb-3">
               <Pill className="w-5 h-5" />
             </div>
-            <h3 className="font-bold text-slate-900 text-base mb-1">{t('medicines')}</h3>
-            <p className="text-xs text-slate-500 leading-relaxed">
+            <h3 className="font-bold text-slate-900 dark:text-white text-base mb-1">{t('medicines')}</h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
               ਜਨ ਔਸ਼ਧੀ ਕੇਂਦਰ ਅਤੇ ਪਿੰਡਾਂ ਦੀਆਂ ਦੁਕਾਨਾਂ 'ਤੇ ਜ਼ਰੂਰੀ ਦਵਾਈਆਂ ਦਾ ਲਾਈਵ ਸਟਾਕ।
             </p>
           </div>
 
-          <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 hover:border-blue-500 hover:shadow-md transition">
-            <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center mb-3">
+          <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 hover:border-blue-500 dark:hover:border-blue-400 hover:shadow-md transition">
+            <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-900/40 text-amber-600 dark:text-amber-300 flex items-center justify-center mb-3">
               <Sparkles className="w-5 h-5" />
             </div>
-            <h3 className="font-bold text-slate-900 text-base mb-1">AI ਲੱਛਣ ਜਾਂਚ (Triage)</h3>
-            <p className="text-xs text-slate-500 leading-relaxed">
+            <h3 className="font-bold text-slate-900 dark:text-white text-base mb-1">AI ਲੱਛਣ ਜਾਂਚ (Triage)</h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
               ਪੰਜਾਬੀ ਵਿੱਚ ਬੋਲ ਕੇ ਜਾਂ ਲਿਖ ਕੇ ਬਿਮਾਰੀ ਦੇ ਲੱਛਣਾਂ ਦੀ ਮੁੱਢਲੀ ਸਲਾਹ ਲਵੋ।
             </p>
           </div>
 
           <Link
             to="/emergency"
-            className="group bg-white p-5 rounded-2xl shadow-sm border border-slate-200 hover:border-rose-400 hover:shadow-md transition block"
+            className="group bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 hover:border-rose-400 dark:hover:border-rose-500 hover:shadow-md transition block"
           >
             <div className="flex items-center justify-between mb-3">
-              <div className="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center group-hover:scale-105 transition-transform">
+              <div className="w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-900/40 text-rose-600 dark:text-rose-300 flex items-center justify-center group-hover:scale-105 transition-transform">
                 <Hospital className="w-5 h-5" />
               </div>
-              <span className="inline-flex items-center space-x-1 text-[10px] bg-rose-50 text-rose-700 font-bold px-2 py-0.5 rounded-full border border-rose-200">
+              <span className="inline-flex items-center space-x-1 text-[10px] bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 font-bold px-2 py-0.5 rounded-full border border-rose-200 dark:border-rose-800">
                 <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span>
                 <span>108 LIVE</span>
               </span>
             </div>
-            <h3 className="font-bold text-slate-900 text-base mb-1 group-hover:text-rose-600 transition-colors">
+            <h3 className="font-bold text-slate-900 dark:text-white text-base mb-1 group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors">
               ਐਮਰਜੈਂਸੀ ਬਿਸਤਰੇ ਤੇ 108 ਐਂਬੂਲੈਂਸ
             </h3>
-            <p className="text-xs text-slate-500 leading-relaxed mb-3">
+            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed mb-3">
               ਸਿਵਲ ਹਸਪਤਾਲ ਨਾਭਾ ਵਿਖੇ ਆਕਸੀਜਨ, ਬੈੱਡ ਅਤੇ 108 ਐਂਬੂਲੈਂਸ ਫਲੀਟ ਦੀ ਲਾਈਵ ਸਥਿਤੀ।
             </p>
-            <div className="flex items-center text-xs font-semibold text-rose-600 group-hover:text-rose-700">
+            <div className="flex items-center text-xs font-semibold text-rose-600 dark:text-rose-400 group-hover:text-rose-700 dark:group-hover:text-rose-300">
               <span>ਲਾਈਵ ਟ੍ਰੈਕਰ ਅਤੇ ਡਿਸਪੈਚ</span>
               <ArrowRight className="w-3.5 h-3.5 ml-1 group-hover:translate-x-1 transition-transform" />
             </div>
@@ -193,22 +193,22 @@ export const HomePage = () => {
 
       {/* Directory Filter by Nabha Village */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h2 className="text-lg font-bold text-slate-900">
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white">
               ਨਾਭਾ ਡਾਕਟਰ ਅਤੇ ਫਾਰਮੇਸੀ ਡਾਇਰੈਕਟਰੀ
             </h2>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-slate-500 dark:text-slate-400">
               ਸਿੰਥੈਟਿਕ ਟੈਸਟ ਡਾਟਾ: ਪਿੰਡ ਅਨੁਸਾਰ ਸਿਹਤ ਸੁਵਿਧਾਵਾਂ ਫਿਲਟਰ ਕਰੋ
             </p>
           </div>
 
           <div className="flex items-center space-x-2">
-            <MapPin className="w-4 h-4 text-blue-600" />
+            <MapPin className="w-4 h-4 text-blue-600 dark:text-blue-400" />
             <select
               value={selectedVillage}
               onChange={(e) => setSelectedVillage(e.target.value)}
-              className="bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs font-semibold text-slate-800 outline-none focus:ring-2 focus:ring-blue-500"
+              className="bg-slate-50 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-xl px-3 py-2 text-xs font-semibold text-slate-800 dark:text-slate-100 outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">ਸਾਰੇ ਇਲਾਕੇ / ਪਿੰਡ (All Villages)</option>
               {NABHA_VILLAGES.map((v) => (
@@ -221,62 +221,62 @@ export const HomePage = () => {
         {/* Doctors List */}
         <div className="mt-8" id="doctors">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-base font-bold text-slate-900 flex items-center space-x-2">
-              <Stethoscope className="w-4 h-4 text-blue-600" />
+            <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center space-x-2">
+              <Stethoscope className="w-4 h-4 text-blue-600 dark:text-blue-400" />
               <span>ਉਪਲਬਧ ਡਾਕਟਰ ({doctors.length})</span>
             </h3>
-            <span className="text-[11px] bg-amber-100 text-amber-900 px-2 py-0.5 rounded font-bold">
+            <span className="text-[11px] bg-amber-100 dark:bg-amber-950 text-amber-900 dark:text-amber-200 px-2 py-0.5 rounded font-bold border border-amber-300 dark:border-amber-800">
               DEMO RECORDS
             </span>
           </div>
 
           {loading ? (
-            <div className="p-8 text-center text-xs text-slate-400">ਲੋਡ ਹੋ ਰਿਹਾ ਹੈ...</div>
+            <div className="p-8 text-center text-xs text-slate-400 dark:text-slate-500">ਲੋਡ ਹੋ ਰਿਹਾ ਹੈ...</div>
           ) : doctors.length === 0 ? (
-            <div className="bg-white border border-dashed border-slate-300 rounded-xl p-8 text-center space-y-2">
-              <p className="text-sm font-semibold text-slate-700">ਕੋਈ ਡਾਕਟਰ ਨਹੀਂ ਮਿਲਿਆ</p>
-              <p className="text-xs text-slate-500">ਉੱਪਰ ਦਿੱਤੇ "ਨਾਭਾ ਡੈਮੋ ਡਾਟਾ ਲੋਡ ਕਰੋ" ਬਟਨ ਨੂੰ ਦਬਾਓ।</p>
+            <div className="bg-white dark:bg-slate-800 border border-dashed border-slate-300 dark:border-slate-700 rounded-xl p-8 text-center space-y-2">
+              <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">ਕੋਈ ਡਾਕਟਰ ਨਹੀਂ ਮਿਲਿਆ</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">ਉੱਪਰ ਦਿੱਤੇ "ਨਾਭਾ ਡੈਮੋ ਡਾਟਾ ਲੋਡ ਕਰੋ" ਬਟਨ ਨੂੰ ਦਬਾਓ।</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {doctors.map((doc) => (
-                <div key={doc.id} className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition">
+                <div key={doc.id} className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm hover:shadow-md transition">
                   <div className="flex justify-between items-start mb-2">
                     <div>
-                      <h4 className="font-bold text-slate-900 text-sm">
+                      <h4 className="font-bold text-slate-900 dark:text-white text-sm">
                         {doc.full_name.replace(' [DEMO DATA]', '')}
                       </h4>
-                      <p className="text-xs font-medium text-blue-700">
+                      <p className="text-xs font-medium text-blue-700 dark:text-blue-400">
                         {doc.doctor_profile?.specialization || 'General Physician'}
                       </p>
                     </div>
-                    <span className="text-[10px] bg-blue-50 text-blue-800 font-bold px-2 py-0.5 rounded border border-blue-200">
+                    <span className="text-[10px] bg-blue-50 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300 font-bold px-2 py-0.5 rounded border border-blue-200 dark:border-blue-800">
                       {doc.doctor_profile?.consultation_fee === 0 ? 'ਸਰਕਾਰੀ / ਮੁਫ਼ਤ' : `₹${doc.doctor_profile?.consultation_fee}`}
                     </span>
                   </div>
 
-                  <div className="text-xs text-slate-600 space-y-1 my-3">
+                  <div className="text-xs text-slate-600 dark:text-slate-300 space-y-1 my-3">
                     <p className="flex items-center space-x-1.5">
-                      <Hospital className="w-3.5 h-3.5 text-slate-400" />
+                      <Hospital className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
                       <span>{doc.doctor_profile?.hospital_name}</span>
                     </p>
                     <p className="flex items-center space-x-1.5">
-                      <MapPin className="w-3.5 h-3.5 text-slate-400" />
+                      <MapPin className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
                       <span>ਪਿੰਡ/ਇਲਾਕਾ: {doc.village || 'Nabha'}</span>
                     </p>
-                    <p className="flex items-center space-x-1.5 text-slate-500">
-                      <Clock className="w-3.5 h-3.5 text-slate-400" />
+                    <p className="flex items-center space-x-1.5 text-slate-500 dark:text-slate-400">
+                      <Clock className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
                       <span>ਤਜਰਬਾ: {doc.doctor_profile?.experience_years} ਸਾਲ</span>
                     </p>
                   </div>
 
-                  <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
-                    <span className="text-[10px] text-slate-400">
+                  <div className="pt-3 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between">
+                    <span className="text-[10px] text-slate-400 dark:text-slate-500">
                       ਲਾਇਸੈਂਸ: {doc.doctor_profile?.license_number}
                     </span>
                     <Link
                       to="/login"
-                      className="text-xs font-semibold text-blue-700 hover:text-blue-800"
+                      className="text-xs font-semibold text-blue-700 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
                     >
                       ਮੁਲਾਕਾਤ ਬੁੱਕ ਕਰੋ →
                     </Link>
@@ -290,44 +290,44 @@ export const HomePage = () => {
         {/* Pharmacies List */}
         <div className="mt-12" id="pharmacies">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-base font-bold text-slate-900 flex items-center space-x-2">
-              <Pill className="w-4 h-4 text-sky-600" />
+            <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center space-x-2">
+              <Pill className="w-4 h-4 text-sky-600 dark:text-sky-400" />
               <span>ਨਾਭਾ ਮੈਡੀਕਲ ਸਟੋਰ ਅਤੇ ਫਾਰਮੇਸੀਆਂ ({pharmacies.length})</span>
             </h3>
-            <span className="text-[11px] bg-amber-100 text-amber-900 px-2 py-0.5 rounded font-bold">
+            <span className="text-[11px] bg-amber-100 dark:bg-amber-950 text-amber-900 dark:text-amber-200 px-2 py-0.5 rounded font-bold border border-amber-300 dark:border-amber-800">
               DEMO RECORDS
             </span>
           </div>
 
           {loading ? (
-            <div className="p-8 text-center text-xs text-slate-400">ਲੋਡ ਹੋ ਰਿਹਾ ਹੈ...</div>
+            <div className="p-8 text-center text-xs text-slate-400 dark:text-slate-500">ਲੋਡ ਹੋ ਰਿਹਾ ਹੈ...</div>
           ) : pharmacies.length === 0 ? (
-            <div className="bg-white border border-dashed border-slate-300 rounded-xl p-8 text-center space-y-2">
-              <p className="text-sm font-semibold text-slate-700">ਕੋਈ ਫਾਰਮੇਸੀ ਨਹੀਂ ਮਿਲੀ</p>
-              <p className="text-xs text-slate-500">ਉੱਪਰ ਦਿੱਤੇ "ਨਾਭਾ ਡੈਮੋ ਡਾਟਾ ਲੋਡ ਕਰੋ" ਬਟਨ ਨੂੰ ਦਬਾਓ।</p>
+            <div className="bg-white dark:bg-slate-800 border border-dashed border-slate-300 dark:border-slate-700 rounded-xl p-8 text-center space-y-2">
+              <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">ਕੋਈ ਫਾਰਮੇਸੀ ਨਹੀਂ ਮਿਲੀ</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">ਉੱਪਰ ਦਿੱਤੇ "ਨਾਭਾ ਡੈਮੋ ਡਾਟਾ ਲੋਡ ਕਰੋ" ਬਟਨ ਨੂੰ ਦਬਾਓ।</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {pharmacies.map((ph) => (
-                <div key={ph.id} className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition">
-                  <h4 className="font-bold text-slate-900 text-sm mb-1">
+                <div key={ph.id} className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm hover:shadow-md transition">
+                  <h4 className="font-bold text-slate-900 dark:text-white text-sm mb-1">
                     {ph.pharmacy_profile?.pharmacy_name || ph.full_name.replace(' [DEMO DATA]', '')}
                   </h4>
-                  <div className="text-xs text-slate-600 space-y-1.5 my-3">
+                  <div className="text-xs text-slate-600 dark:text-slate-300 space-y-1.5 my-3">
                     <p className="flex items-start space-x-1.5">
-                      <MapPin className="w-3.5 h-3.5 text-slate-400 mt-0.5 flex-shrink-0" />
+                      <MapPin className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 mt-0.5 flex-shrink-0" />
                       <span>{ph.pharmacy_profile?.address}</span>
                     </p>
                     <p className="flex items-center space-x-1.5">
-                      <Phone className="w-3.5 h-3.5 text-slate-400" />
+                      <Phone className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
                       <span>ਫੋਨ: {ph.phone}</span>
                     </p>
-                    <p className="flex items-center space-x-1.5 text-blue-700 font-medium">
+                    <p className="flex items-center space-x-1.5 text-blue-700 dark:text-blue-400 font-medium">
                       <Clock className="w-3.5 h-3.5" />
                       <span>{ph.pharmacy_profile?.operating_hours}</span>
                     </p>
                   </div>
-                  <div className="pt-2 border-t border-slate-100 text-[10px] text-slate-400">
+                  <div className="pt-2 border-t border-slate-100 dark:border-slate-700 text-[10px] text-slate-400 dark:text-slate-500">
                     ਰਜਿ: {ph.pharmacy_profile?.license_number}
                   </div>
                 </div>

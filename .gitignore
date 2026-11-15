@@ -9,6 +9,15 @@ yarn-error.log*
 # Environment files with secrets
 .env
 !.env.example
+*.db
+*.sqlite
+*.sqlite3
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
 
 # IDE
 .vscode/

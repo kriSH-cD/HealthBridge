@@ -99,16 +99,16 @@ export const RegisterPage = () => {
 
   return (
     <div className="flex-1 max-w-xl w-full mx-auto px-4 py-10 flex flex-col justify-center">
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-md p-6 sm:p-8 space-y-6">
+      <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-md p-6 sm:p-8 space-y-6 transition-colors">
         <div className="text-center space-y-1">
-          <h2 className="text-2xl font-bold text-slate-900">{t('register_title')}</h2>
-          <p className="text-xs text-slate-500">
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white">{t('register_title')}</h2>
+          <p className="text-xs text-slate-500 dark:text-slate-400">
             ਸਿਹਤ ਸੇਤੂ ਨਾਭਾ ਨਾਲ ਜੁੜੋ ਅਤੇ ਸਿਹਤ ਸੇਵਾਵਾਂ ਤੱਕ ਤੁਰੰਤ ਪਹੁੰਚ ਪਾਓ
           </p>
         </div>
 
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 text-xs p-3 rounded-xl flex items-center space-x-2">
+          <div className="bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 text-xs p-3 rounded-xl flex items-center space-x-2">
             <AlertCircle className="w-4 h-4 flex-shrink-0" />
             <span>{error}</span>
           </div>
@@ -116,7 +116,7 @@ export const RegisterPage = () => {
 
         {/* Role Selection Tabs */}
         <div>
-          <label className="block text-xs font-semibold text-slate-700 mb-2">
+          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2">
             {t('role_label')}
           </label>
           <div className="grid grid-cols-3 gap-2">
@@ -125,8 +125,8 @@ export const RegisterPage = () => {
               onClick={() => setRole('PATIENT')}
               className={`p-3 rounded-xl border text-xs font-bold flex flex-col items-center space-y-1 transition ${
                 role === 'PATIENT'
-                  ? 'border-emerald-600 bg-emerald-50 text-emerald-800 ring-2 ring-emerald-500'
-                  : 'border-slate-200 hover:border-slate-300 text-slate-600'
+                  ? 'border-emerald-600 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 ring-2 ring-emerald-500'
+                  : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-700/40'
               }`}
             >
               <UserIcon className="w-5 h-5" />
@@ -138,8 +138,8 @@ export const RegisterPage = () => {
               onClick={() => setRole('DOCTOR')}
               className={`p-3 rounded-xl border text-xs font-bold flex flex-col items-center space-y-1 transition ${
                 role === 'DOCTOR'
-                  ? 'border-emerald-600 bg-emerald-50 text-emerald-800 ring-2 ring-emerald-500'
-                  : 'border-slate-200 hover:border-slate-300 text-slate-600'
+                  ? 'border-emerald-600 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 ring-2 ring-emerald-500'
+                  : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-700/40'
               }`}
             >
               <Stethoscope className="w-5 h-5" />
@@ -151,8 +151,8 @@ export const RegisterPage = () => {
               onClick={() => setRole('PHARMACY')}
               className={`p-3 rounded-xl border text-xs font-bold flex flex-col items-center space-y-1 transition ${
                 role === 'PHARMACY'
-                  ? 'border-emerald-600 bg-emerald-50 text-emerald-800 ring-2 ring-emerald-500'
-                  : 'border-slate-200 hover:border-slate-300 text-slate-600'
+                  ? 'border-emerald-600 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 ring-2 ring-emerald-500'
+                  : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-700/40'
               }`}
             >
               <Pill className="w-5 h-5" />
@@ -164,7 +164,7 @@ export const RegisterPage = () => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
+              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
                 {t('full_name_label')} *
               </label>
               <input
@@ -173,12 +173,12 @@ export const RegisterPage = () => {
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 placeholder="e.g. Jaswinder Singh"
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-700/60 border border-slate-200 dark:border-slate-600 text-slate-900 dark:text-white rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
+              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
                 {t('phone_label')} *
               </label>
               <input
@@ -187,14 +187,14 @@ export const RegisterPage = () => {
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="10-digit mobile"
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-700/60 border border-slate-200 dark:border-slate-600 text-slate-900 dark:text-white rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
+              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
                 {t('password_label')} (ਘੱਟੋ-ਘੱਟ 6 ਅੱਖਰ) *
               </label>
               <input
@@ -204,21 +204,21 @@ export const RegisterPage = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-700/60 border border-slate-200 dark:border-slate-600 text-slate-900 dark:text-white rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
+              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
                 {t('village_label')} *
               </label>
               <select
                 value={village}
                 onChange={(e) => setVillage(e.target.value)}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-700/60 border border-slate-200 dark:border-slate-600 text-slate-900 dark:text-white rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
               >
                 {NABHA_VILLAGES.map((v) => (
-                  <option key={v} value={v}>{v}</option>
+                  <option key={v} value={v} className="dark:bg-slate-800">{v}</option>
                 ))}
               </select>
             </div>
@@ -226,110 +226,105 @@ export const RegisterPage = () => {
 
           {/* Role-Specific Fields */}
           {role === 'PATIENT' && (
-            <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
-              <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+            <div className="bg-slate-50 dark:bg-slate-700/40 p-4 rounded-xl border border-slate-200 dark:border-slate-700 space-y-3">
+              <h4 className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
                 ਮਰੀਜ਼ ਪ੍ਰੋਫਾਈਲ ਵੇਰਵਾ (Patient Details)
               </h4>
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-[11px] font-semibold text-slate-600 mb-1">{t('age_label')}</label>
+                  <label className="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">{t('age_label')}</label>
                   <input
                     type="number"
                     value={patientData.age}
                     onChange={(e) => setPatientData({ ...patientData, age: e.target.value })}
                     placeholder="45"
-                    className="w-full px-2 py-1.5 bg-white border border-slate-200 rounded-lg text-xs"
+                    className="w-full px-2 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-slate-900 dark:text-white rounded-lg text-xs"
                   />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-semibold text-slate-600 mb-1">{t('gender_label')}</label>
+                  <label className="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">{t('gender_label')}</label>
                   <select
                     value={patientData.gender}
                     onChange={(e) => setPatientData({ ...patientData, gender: e.target.value })}
-                    className="w-full px-2 py-1.5 bg-white border border-slate-200 rounded-lg text-xs"
+                    className="w-full px-2 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-slate-900 dark:text-white rounded-lg text-xs"
                   >
-                    <option value="Male">{t('male')}</option>
-                    <option value="Female">{t('female')}</option>
-                    <option value="Other">{t('other')}</option>
+                    <option value="Male" className="dark:bg-slate-800">{t('male')}</option>
+                    <option value="Female" className="dark:bg-slate-800">{t('female')}</option>
+                    <option value="Other" className="dark:bg-slate-800">{t('other')}</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-[11px] font-semibold text-slate-600 mb-1">{t('blood_group_label')}</label>
+                  <label className="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">{t('blood_group_label')}</label>
                   <select
                     value={patientData.blood_group}
                     onChange={(e) => setPatientData({ ...patientData, blood_group: e.target.value })}
-                    className="w-full px-2 py-1.5 bg-white border border-slate-200 rounded-lg text-xs"
+                    className="w-full px-2 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-slate-900 dark:text-white rounded-lg text-xs"
                   >
-                    <option value="A+">A+</option>
-                    <option value="A-">A-</option>
-                    <option value="B+">B+</option>
-                    <option value="B-">B-</option>
-                    <option value="O+">O+</option>
-                    <option value="O-">O-</option>
-                    <option value="AB+">AB+</option>
-                    <option value="AB-">AB-</option>
+                    {['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'].map((bg) => (
+                      <option key={bg} value={bg} className="dark:bg-slate-800">{bg}</option>
+                    ))}
                   </select>
                 </div>
               </div>
               <div>
-                <label className="block text-[11px] font-semibold text-slate-600 mb-1">{t('emergency_contact_label')}</label>
+                <label className="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">{t('emergency_contact_label')}</label>
                 <input
                   type="text"
                   value={patientData.emergency_contact}
                   onChange={(e) => setPatientData({ ...patientData, emergency_contact: e.target.value })}
                   placeholder="ਸੰਪਰਕ ਨੰਬਰ"
-                  className="w-full px-2 py-1.5 bg-white border border-slate-200 rounded-lg text-xs"
+                  className="w-full px-2 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-slate-900 dark:text-white rounded-lg text-xs"
                 />
               </div>
             </div>
           )}
 
           {role === 'DOCTOR' && (
-            <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
-              <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+            <div className="bg-slate-50 dark:bg-slate-700/40 p-4 rounded-xl border border-slate-200 dark:border-slate-700 space-y-3">
+              <h4 className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
                 ਡਾਕਟਰ ਵੇਰਵਾ (Doctor Professional Profile)
               </h4>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[11px] font-semibold text-slate-600 mb-1">{t('specialization_label')} *</label>
+                  <label className="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">{t('specialization_label')} *</label>
                   <input
                     type="text"
                     required
                     value={doctorData.specialization}
                     onChange={(e) => setDoctorData({ ...doctorData, specialization: e.target.value })}
                     placeholder="e.g. General Physician"
-                    className="w-full px-2 py-1.5 bg-white border border-slate-200 rounded-lg text-xs"
+                    className="w-full px-2 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-slate-900 dark:text-white rounded-lg text-xs"
                   />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-semibold text-slate-600 mb-1">{t('license_label')} *</label>
+                  <label className="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">{t('license_label')} *</label>
                   <input
                     type="text"
                     required
                     value={doctorData.license_number}
                     onChange={(e) => setDoctorData({ ...doctorData, license_number: e.target.value })}
                     placeholder="e.g. PB-MC-2024-XXXX"
-                    className="w-full px-2 py-1.5 bg-white border border-slate-200 rounded-lg text-xs"
+                    className="w-full px-2 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-slate-900 dark:text-white rounded-lg text-xs"
                   />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[11px] font-semibold text-slate-600 mb-1">{t('hospital_name_label')}</label>
+                  <label className="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">{t('hospital_name_label')}</label>
                   <input
                     type="text"
                     value={doctorData.hospital_name}
                     onChange={(e) => setDoctorData({ ...doctorData, hospital_name: e.target.value })}
-                    className="w-full px-2 py-1.5 bg-white border border-slate-200 rounded-lg text-xs"
+                    className="w-full px-2 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-slate-900 dark:text-white rounded-lg text-xs"
                   />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-semibold text-slate-600 mb-1">{t('fee_label')}</label>
+                  <label className="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">{t('fee_label')}</label>
                   <input
                     type="number"
                     value={doctorData.consultation_fee}
                     onChange={(e) => setDoctorData({ ...doctorData, consultation_fee: e.target.value })}
-                    className="w-full px-2 py-1.5 bg-white border border-slate-200 rounded-lg text-xs"
+                    className="w-full px-2 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-slate-900 dark:text-white rounded-lg text-xs"
                   />
                 </div>
               </div>
@@ -337,40 +332,40 @@ export const RegisterPage = () => {
           )}
 
           {role === 'PHARMACY' && (
-            <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
-              <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+            <div className="bg-slate-50 dark:bg-slate-700/40 p-4 rounded-xl border border-slate-200 dark:border-slate-700 space-y-3">
+              <h4 className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
                 ਫਾਰਮੇਸੀ / ਮੈਡੀਕਲ ਸਟੋਰ ਵੇਰਵਾ
               </h4>
               <div>
-                <label className="block text-[11px] font-semibold text-slate-600 mb-1">{t('pharmacy_name_label')} *</label>
+                <label className="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">{t('pharmacy_name_label')} *</label>
                 <input
                   type="text"
                   required
                   value={pharmacyData.pharmacy_name}
                   onChange={(e) => setPharmacyData({ ...pharmacyData, pharmacy_name: e.target.value })}
                   placeholder="e.g. Kisan Medicos"
-                  className="w-full px-2 py-1.5 bg-white border border-slate-200 rounded-lg text-xs"
+                  className="w-full px-2 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-slate-900 dark:text-white rounded-lg text-xs"
                 />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[11px] font-semibold text-slate-600 mb-1">{t('license_label')} *</label>
+                  <label className="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">{t('license_label')} *</label>
                   <input
                     type="text"
                     required
                     value={pharmacyData.license_number}
                     onChange={(e) => setPharmacyData({ ...pharmacyData, license_number: e.target.value })}
                     placeholder="DL-NABHA-2024"
-                    className="w-full px-2 py-1.5 bg-white border border-slate-200 rounded-lg text-xs"
+                    className="w-full px-2 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-slate-900 dark:text-white rounded-lg text-xs"
                   />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-semibold text-slate-600 mb-1">{t('operating_hours_label')}</label>
+                  <label className="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">{t('operating_hours_label')}</label>
                   <input
                     type="text"
                     value={pharmacyData.operating_hours}
                     onChange={(e) => setPharmacyData({ ...pharmacyData, operating_hours: e.target.value })}
-                    className="w-full px-2 py-1.5 bg-white border border-slate-200 rounded-lg text-xs"
+                    className="w-full px-2 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-slate-900 dark:text-white rounded-lg text-xs"
                   />
                 </div>
               </div>

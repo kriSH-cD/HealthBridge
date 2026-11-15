@@ -6,10 +6,10 @@ import { WritePrescriptionModal } from './WritePrescriptionModal';
 import { CompleteVisitForm } from './CompleteVisitForm';
 
 const STATUS_STYLE = {
-  SCHEDULED: 'bg-emerald-50 text-emerald-800 border-emerald-200',
-  COMPLETED: 'bg-slate-100 text-slate-700 border-slate-200',
-  CANCELLED: 'bg-red-50 text-red-700 border-red-200',
-  NO_SHOW: 'bg-amber-50 text-amber-800 border-amber-200',
+  SCHEDULED: 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800',
+  COMPLETED: 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700',
+  CANCELLED: 'bg-red-50 dark:bg-red-950/60 text-red-700 dark:text-red-300 border-red-200 dark:border-red-800',
+  NO_SHOW: 'bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-800',
 };
 
 // Status changes each role may make on a SCHEDULED appointment.
@@ -31,20 +31,20 @@ const friendlyDate = (ymd) => {
 
 /** The next visit, styled like the OPD slip (parchi) patients carry to the hospital. */
 const NextVisitSlip = ({ appointment, who, onJoinCall }) => (
-  <div className="mb-4 rounded-xl border-2 border-dashed border-emerald-300 bg-emerald-50/60 p-4 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+  <div className="mb-4 rounded-xl border-2 border-dashed border-emerald-300 dark:border-emerald-700 bg-emerald-50/60 dark:bg-emerald-950/40 p-4 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
     <div className="min-w-0">
-      <p className="text-[11px] font-semibold uppercase tracking-wider text-emerald-800">ਅਗਲੀ ਮੁਲਾਕਾਤ · Next visit</p>
-      <p className="text-xl font-semibold text-slate-900 mt-1 tabular-nums">
+      <p className="text-[11px] font-semibold uppercase tracking-wider text-emerald-800 dark:text-emerald-300">ਅਗਲੀ ਮੁਲਾਕਾਤ · Next visit</p>
+      <p className="text-xl font-semibold text-slate-900 dark:text-white mt-1 tabular-nums">
         {friendlyDate(appointment.appointment_date)} · {appointment.appointment_time}
       </p>
-      <p className="text-sm text-slate-700 mt-0.5 truncate">
+      <p className="text-sm text-slate-700 dark:text-slate-300 mt-0.5 truncate">
         {who} · {appointment.appointment_type === 'TELECONSULTATION' ? 'Video call' : 'At the clinic'}
       </p>
     </div>
-    <div className="shrink-0 flex sm:flex-col items-center sm:items-end justify-between border-t border-dashed border-emerald-300 pt-3 sm:border-0 sm:pt-0 gap-2">
+    <div className="shrink-0 flex sm:flex-col items-center sm:items-end justify-between border-t border-dashed border-emerald-300 dark:border-emerald-700 pt-3 sm:border-0 sm:pt-0 gap-2">
       <div>
-        <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 sm:text-right">OPD token</p>
-        <p className="font-mono text-sm font-bold text-slate-900">{appointment.appointment_number}</p>
+        <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 sm:text-right">OPD token</p>
+        <p className="font-mono text-sm font-bold text-slate-900 dark:text-white">{appointment.appointment_number}</p>
       </div>
       {appointment.appointment_type === 'TELECONSULTATION' && onJoinCall && (
         <button
@@ -112,31 +112,31 @@ export const AppointmentsPanel = ({ role, refreshKey = 0 }) => {
   const otherParty = (a) => (role === 'DOCTOR' ? a.patient_name : a.doctor_name).replace(' [DEMO DATA]', '');
 
   return (
-    <section className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-      <h3 className="text-sm font-bold text-slate-900 flex items-center space-x-2 mb-4">
-        <Calendar className="w-4 h-4 text-emerald-600" />
+    <section className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm transition-colors">
+      <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center space-x-2 mb-4">
+        <Calendar className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
         <span>ਮੇਰੀਆਂ ਮੁਲਾਕਾਤਾਂ (My Appointments: {items.length})</span>
       </h3>
 
-      {error && <p role="alert" className="text-xs text-red-600 pb-3">{error}</p>}
+      {error && <p role="alert" className="text-xs text-red-600 dark:text-red-400 pb-3">{error}</p>}
 
       {next && <NextVisitSlip appointment={next} who={otherParty(next)} onJoinCall={joinTeleconsultation} />}
 
       {loading ? (
-        <p className="text-xs text-slate-400 py-4">Loading…</p>
+        <p className="text-xs text-slate-400 dark:text-slate-500 py-4">Loading…</p>
       ) : items.length === 0 ? (
-        <p className="text-xs text-slate-500 py-4">ਕੋਈ ਮੁਲਾਕਾਤ ਨਹੀਂ (No appointments yet)</p>
+        <p className="text-xs text-slate-500 dark:text-slate-400 py-4">ਕੋਈ ਮੁਲਾਕਾਤ ਨਹੀਂ (No appointments yet)</p>
       ) : (
-        <ul className="divide-y divide-slate-100">
+        <ul className="divide-y divide-slate-100 dark:divide-slate-700">
           {items.map((a) => (
             <li key={a.id} className="py-3 text-xs">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div>
-                <p className="font-bold text-slate-800">{otherParty(a)}</p>
-                <p className="text-slate-500">
+                <p className="font-bold text-slate-800 dark:text-slate-200">{otherParty(a)}</p>
+                <p className="text-slate-500 dark:text-slate-400">
                   {a.appointment_date} • {a.appointment_time} • {a.appointment_type === 'TELECONSULTATION' ? 'Video' : 'In person'}
                 </p>
-                {a.symptom_summary && <p className="text-slate-600 mt-0.5">{a.symptom_summary}</p>}
+                {a.symptom_summary && <p className="text-slate-600 dark:text-slate-300 mt-0.5">{a.symptom_summary}</p>}
               </div>
               <div className="flex items-center gap-2 flex-wrap">
                 <span className={`border font-bold px-2 py-0.5 rounded ${STATUS_STYLE[a.status]}`}>{a.status}</span>
@@ -155,7 +155,7 @@ export const AppointmentsPanel = ({ role, refreshKey = 0 }) => {
                   <button
                     type="button"
                     onClick={() => setPrescribingAppointment(a)}
-                    className="border border-emerald-500 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-semibold px-2 py-1 rounded-lg transition"
+                    className="border border-emerald-500 bg-emerald-50 dark:bg-emerald-950/50 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 text-emerald-800 dark:text-emerald-300 font-semibold px-2 py-1 rounded-lg transition"
                   >
                     ਪਰਚੀ ਲਿਖੋ (Rx)
                   </button>
@@ -165,7 +165,7 @@ export const AppointmentsPanel = ({ role, refreshKey = 0 }) => {
                     key={status}
                     type="button"
                     onClick={() => (status === 'COMPLETED' ? setCompleting(a.id) : changeStatus(a.id, status))}
-                    className="border border-slate-300 hover:bg-slate-50 font-semibold px-2 py-1 rounded-lg transition"
+                    className="border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-semibold px-2 py-1 rounded-lg transition"
                   >
                     {label}
                   </button>

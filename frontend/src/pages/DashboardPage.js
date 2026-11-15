@@ -51,21 +51,21 @@ export const DashboardPage = () => {
   return (
     <div className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
       {/* Top Welcome Card */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4 transition-colors">
         <div className="flex items-center space-x-4">
-          <div className="w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-xl border border-emerald-300">
+          <div className="w-14 h-14 rounded-2xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 flex items-center justify-center font-bold text-xl border border-emerald-300 dark:border-emerald-700">
             {user?.full_name?.charAt(0) || 'U'}
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <h1 className="text-xl font-bold text-slate-900">
+              <h1 className="text-xl font-bold text-slate-900 dark:text-white">
                 {t('welcome')}, {user?.full_name?.replace(' [DEMO DATA]', '')}
               </h1>
-              <span className="text-xs bg-emerald-100 text-emerald-800 font-bold px-2.5 py-0.5 rounded-full uppercase">
+              <span className="text-xs bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-300 font-bold px-2.5 py-0.5 rounded-full uppercase border border-emerald-300 dark:border-emerald-700">
                 {user?.role}
               </span>
             </div>
-            <p className="text-xs text-slate-500 flex items-center space-x-2 mt-1">
+            <p className="text-xs text-slate-500 dark:text-slate-400 flex items-center space-x-2 mt-1">
               <MapPin className="w-3.5 h-3.5 text-slate-400" />
               <span>{user?.village || 'Nabha City'}, Punjab</span>
               <span>•</span>
@@ -77,12 +77,12 @@ export const DashboardPage = () => {
 
         {/* Synthetic Demo Tag */}
         {user?.is_demo && (
-        <div className="bg-amber-50 border border-amber-300 rounded-xl px-3.5 py-2 text-right">
-          <p className="text-[11px] font-bold text-amber-900 flex items-center space-x-1">
-            <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
+        <div className="bg-amber-50 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-700 rounded-xl px-3.5 py-2 text-right">
+          <p className="text-[11px] font-bold text-amber-900 dark:text-amber-200 flex items-center space-x-1">
+            <AlertTriangle className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
             <span>{t('demo_badge')}</span>
           </p>
-          <p className="text-[10px] text-amber-700">Account #{user?.id}</p>
+          <p className="text-[10px] text-amber-700 dark:text-amber-300">Account #{user?.id}</p>
         </div>
         )}
       </div>
@@ -93,7 +93,7 @@ export const DashboardPage = () => {
         <AppointmentsPanel role="PATIENT" refreshKey={appointmentsKey} />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Synthetic ABHA Card */}
-          <div className="bg-emerald-900 text-white rounded-2xl p-6 shadow-sm">
+          <div className="bg-emerald-900 dark:bg-emerald-950 text-white rounded-2xl p-6 shadow-sm border border-emerald-800">
             <p className="text-[10px] font-bold uppercase tracking-widest text-emerald-200 mb-4">
               Nabha Digital Health ID (DEMO ABHA)
             </p>
@@ -114,25 +114,25 @@ export const DashboardPage = () => {
           </div>
 
           {/* Health Summary */}
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-3">
-            <h3 className="text-sm font-bold text-slate-900 flex items-center space-x-2">
-              <Activity className="w-4 h-4 text-emerald-600" />
+          <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm space-y-3">
+            <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center space-x-2">
+              <Activity className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
               <span>ਸਿਹਤ ਜਾਣਕਾਰੀ (Health Records)</span>
             </h3>
-            <div className="text-xs text-slate-600 space-y-2">
+            <div className="text-xs text-slate-600 dark:text-slate-300 space-y-2">
               <p>
                 <strong>ਪੁਰਾਣੀ ਬਿਮਾਰੀ (Chronic):</strong>{' '}
-                <span className="text-slate-800">{user?.patient_profile?.chronic_conditions || 'None reported'}</span>
+                <span className="text-slate-800 dark:text-slate-100">{user?.patient_profile?.chronic_conditions || 'None reported'}</span>
               </p>
               <p>
                 <strong>ਐਮਰਜੈਂਸੀ ਸੰਪਰਕ:</strong>{' '}
-                <span className="text-slate-800">{user?.patient_profile?.emergency_contact || 'Not added'}</span>
+                <span className="text-slate-800 dark:text-slate-100">{user?.patient_profile?.emergency_contact || 'Not added'}</span>
               </p>
             </div>
-            <div className="pt-3 border-t border-slate-100 flex gap-2">
+            <div className="pt-3 border-t border-slate-100 dark:border-slate-700 flex gap-2">
               <a
                 href="#prescriptions-section"
-                className="flex-1 text-center bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 text-emerald-800 text-xs font-semibold py-2 rounded-lg transition"
+                className="flex-1 text-center bg-emerald-50 dark:bg-emerald-950/50 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 border border-emerald-300 dark:border-emerald-700 text-emerald-800 dark:text-emerald-300 text-xs font-semibold py-2 rounded-lg transition"
               >
                 ਮੇਰੀਆਂ ਪਰਚੀਆਂ (Digital Prescriptions) ↓
               </a>
@@ -140,9 +140,9 @@ export const DashboardPage = () => {
           </div>
 
           {/* Quick Actions */}
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-3">
-            <h3 className="text-sm font-bold text-slate-900 flex items-center space-x-2">
-              <Calendar className="w-4 h-4 text-emerald-600" />
+          <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm space-y-3">
+            <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center space-x-2">
+              <Calendar className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
               <span>ਤੁਰੰਤ ਸੇਵਾਵਾਂ (Quick Actions)</span>
             </h3>
             <div className="space-y-2">
@@ -150,11 +150,11 @@ export const DashboardPage = () => {
                 <span>ਡਾਕਟਰ ਨਾਲ ਮੁਲਾਕਾਤ ਬੁੱਕ ਕਰੋ</span>
                 <span>→</span>
               </button>
-              <a href="#find-medicine" className="w-full min-h-11 border border-slate-300 hover:bg-slate-50 text-slate-800 font-semibold px-3 rounded-xl text-xs flex items-center justify-between transition-colors">
+              <a href="#find-medicine" className="w-full min-h-11 border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-semibold px-3 rounded-xl text-xs flex items-center justify-between transition-colors">
                 <span>ਨੇੜਲੇ ਮੈਡੀਕਲ ਸਟੋਰ 'ਤੇ ਦਵਾਈ ਲੱਭੋ</span>
                 <span>→</span>
               </a>
-              <a href="#prescriptions-section" className="w-full min-h-11 border border-slate-300 hover:bg-slate-50 text-slate-800 font-semibold px-3 rounded-xl text-xs flex items-center justify-between transition-colors">
+              <a href="#prescriptions-section" className="w-full min-h-11 border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-semibold px-3 rounded-xl text-xs flex items-center justify-between transition-colors">
                 <span>ਡਿਜੀਟਲ ਪਰਚੀ ਵੇਖੋ (View Rx)</span>
                 <span>→</span>
               </a>
@@ -193,35 +193,35 @@ export const DashboardPage = () => {
           <PrescriptionsList role="DOCTOR" refreshKey={prescriptionsKey} />
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-2">
-              <span className="text-xs text-slate-400 uppercase font-semibold">ਵਿਸ਼ੇਸ਼ਤਾ (Specialization)</span>
-              <h3 className="text-lg font-bold text-slate-900">{user?.doctor_profile?.specialization}</h3>
-              <p className="text-xs text-slate-500">{user?.doctor_profile?.hospital_name}</p>
+            <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm space-y-2">
+              <span className="text-xs text-slate-400 dark:text-slate-500 uppercase font-semibold">ਵਿਸ਼ੇਸ਼ਤਾ (Specialization)</span>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">{user?.doctor_profile?.specialization}</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400">{user?.doctor_profile?.hospital_name}</p>
             </div>
 
-            <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-2">
-              <span className="text-xs text-slate-400 uppercase font-semibold">ਲਾਇਸੈਂਸ & ਤਜਰਬਾ</span>
-              <h3 className="text-lg font-bold text-slate-900">{user?.doctor_profile?.experience_years} ਸਾਲ ਦਾ ਤਜਰਬਾ</h3>
-              <p className="text-xs font-mono text-emerald-700">Reg: {user?.doctor_profile?.license_number}</p>
+            <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm space-y-2">
+              <span className="text-xs text-slate-400 dark:text-slate-500 uppercase font-semibold">ਲਾਇਸੈਂਸ & ਤਜਰਬਾ</span>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">{user?.doctor_profile?.experience_years} ਸਾਲ ਦਾ ਤਜਰਬਾ</h3>
+              <p className="text-xs font-mono text-emerald-700 dark:text-emerald-400">Reg: {user?.doctor_profile?.license_number}</p>
             </div>
 
-            <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-2">
-              <span className="text-xs text-slate-400 uppercase font-semibold">ਸਲਾਹ ਫੀਸ (Fee)</span>
-              <h3 className="text-lg font-bold text-slate-900">
+            <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm space-y-2">
+              <span className="text-xs text-slate-400 dark:text-slate-500 uppercase font-semibold">ਸਲਾਹ ਫੀਸ (Fee)</span>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">
                 {user?.doctor_profile?.consultation_fee === 0 ? 'ਮੁਫ਼ਤ (ਸਰਕਾਰੀ)' : `₹${user?.doctor_profile?.consultation_fee}`}
               </h3>
-              <p className="text-xs text-emerald-600 font-semibold">ਲਾਈਵ ਓ.ਪੀ.ਡੀ ਸੇਵਾ ਉਪਲਬਧ</p>
+              <p className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold">ਲਾਈਵ ਓ.ਪੀ.ਡੀ ਸੇਵਾ ਉਪਲਬਧ</p>
             </div>
           </div>
 
           {/* Patient Directory (RBAC Protected Data) */}
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-bold text-slate-900 flex items-center space-x-2">
-                <Users className="w-4 h-4 text-emerald-600" />
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center space-x-2">
+                <Users className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                 <span>ਰਜਿਸਟਰਡ ਮਰੀਜ਼ਾਂ ਦੀ ਸੂਚੀ (RBAC Protected: {patients.length})</span>
               </h3>
-              <span className="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded font-bold">
+              <span className="text-xs bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 px-2 py-0.5 rounded font-bold">
                 Doctor Authorized Access
               </span>
             </div>
@@ -229,16 +229,16 @@ export const DashboardPage = () => {
             {loadingPatients ? (
               <p className="text-xs text-slate-400 py-4">ਮਰੀਜ਼ਾਂ ਦਾ ਡਾਟਾ ਲੋਡ ਹੋ ਰਿਹਾ ਹੈ...</p>
             ) : patientError ? (
-              <p className="text-xs text-red-600 py-4">{patientError}</p>
+              <p className="text-xs text-red-600 dark:text-red-400 py-4">{patientError}</p>
             ) : patients.length === 0 ? (
-              <p className="text-xs text-slate-500 py-4">ਕੋਈ ਮਰੀਜ਼ ਰਜਿਸਟਰਡ ਨਹੀਂ। ਹੋਮ ਪੇਜ 'ਤੇ ਡੈਮੋ ਡਾਟਾ ਸੀਡ ਕਰੋ।</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 py-4">ਕੋਈ ਮਰੀਜ਼ ਰਜਿਸਟਰਡ ਨਹੀਂ। ਹੋਮ ਪੇਜ 'ਤੇ ਡੈਮੋ ਡਾਟਾ ਸੀਡ ਕਰੋ।</p>
             ) : (
-              <div className="divide-y divide-slate-100">
+              <div className="divide-y divide-slate-100 dark:divide-slate-700">
                 {patients.map((pt) => (
                   <div key={pt.id} className="py-3 flex items-center justify-between text-xs">
                     <div>
-                      <p className="font-bold text-slate-800">{pt.full_name}</p>
-                      <p className="text-slate-500">
+                      <p className="font-bold text-slate-800 dark:text-slate-200">{pt.full_name}</p>
+                      <p className="text-slate-500 dark:text-slate-400">
                         ਪਿੰਡ: {pt.village} • ਮੋਬਾਈਲ: {pt.phone}
                       </p>
                     </div>
@@ -246,11 +246,11 @@ export const DashboardPage = () => {
                       <button
                         type="button"
                         onClick={() => setDoctorPrescribingPatient(pt)}
-                        className="bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 text-emerald-800 font-bold px-2 py-1 rounded-lg text-xs transition"
+                        className="bg-emerald-50 dark:bg-emerald-950/50 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 border border-emerald-300 dark:border-emerald-700 text-emerald-800 dark:text-emerald-300 font-bold px-2 py-1 rounded-lg text-xs transition"
                       >
                         ਪਰਚੀ ਲਿਖੋ (Rx)
                       </button>
-                      <span className="bg-slate-100 text-slate-700 font-bold px-2 py-1 rounded">
+                      <span className="bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold px-2 py-1 rounded">
                         ਬਲੱਡ: {pt.patient_profile?.blood_group || 'N/A'}
                       </span>
                     </div>
@@ -278,12 +278,12 @@ export const DashboardPage = () => {
           <PrescriptionsList role="PHARMACY" />
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
-            <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-3">
-              <h3 className="text-sm font-bold text-slate-900 flex items-center space-x-2">
-                <Pill className="w-4 h-4 text-teal-600" />
+            <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm space-y-3">
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center space-x-2">
+                <Pill className="w-4 h-4 text-teal-600 dark:text-teal-400" />
                 <span>ਫਾਰਮੇਸੀ ਪ੍ਰੋਫਾਈਲ ਵੇਰਵਾ</span>
               </h3>
-              <div className="text-xs text-slate-600 space-y-2">
+              <div className="text-xs text-slate-600 dark:text-slate-300 space-y-2">
                 <p>
                   <strong>ਦੁਕਾਨ ਦਾ ਨਾਮ:</strong> {user?.pharmacy_profile?.pharmacy_name || user?.full_name}
                 </p>
@@ -305,27 +305,27 @@ export const DashboardPage = () => {
       )}
 
       {user?.role === 'HOSPITAL_ADMIN' && (
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
-          <h3 className="text-sm font-bold text-slate-900 flex items-center space-x-2">
-            <Hospital className="w-4 h-4 text-emerald-600" />
+        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm space-y-4">
+          <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center space-x-2">
+            <Hospital className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
             <span>ਹਸਪਤਾਲ ਪ੍ਰਬੰਧਨ ({user?.hospital_profile?.hospital_name || 'Hospital'} • Bed Status)</span>
           </h3>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <div className="bg-slate-50 p-4 rounded-xl text-center">
-              <p className="text-xs text-slate-500">ਕੁੱਲ ਬਿਸਤਰੇ</p>
-              <p className="text-2xl font-bold text-slate-900">{user?.hospital_profile?.total_beds ?? '—'}</p>
+            <div className="bg-slate-50 dark:bg-slate-700/60 p-4 rounded-xl text-center">
+              <p className="text-xs text-slate-500 dark:text-slate-400">ਕੁੱਲ ਬਿਸਤਰੇ</p>
+              <p className="text-2xl font-bold text-slate-900 dark:text-white">{user?.hospital_profile?.total_beds ?? '—'}</p>
             </div>
-            <div className="bg-emerald-50 p-4 rounded-xl text-center">
-              <p className="text-xs text-emerald-700">ਉਪਲਬਧ ਬਿਸਤਰੇ</p>
-              <p className="text-2xl font-bold text-emerald-800">{user?.hospital_profile?.available_beds ?? '—'}</p>
+            <div className="bg-emerald-50 dark:bg-emerald-950/60 p-4 rounded-xl text-center">
+              <p className="text-xs text-emerald-700 dark:text-emerald-300">ਉਪਲਬਧ ਬਿਸਤਰੇ</p>
+              <p className="text-2xl font-bold text-emerald-800 dark:text-emerald-200">{user?.hospital_profile?.available_beds ?? '—'}</p>
             </div>
-            <div className="bg-slate-50 p-4 rounded-xl text-center">
-              <p className="text-xs text-slate-500">ਆਕਸੀਜਨ ਸੁਵਿਧਾ</p>
-              <p className="text-2xl font-bold text-slate-900">{user?.hospital_profile?.has_oxygen ? 'ਹਾਂ' : 'ਨਹੀਂ'}</p>
+            <div className="bg-slate-50 dark:bg-slate-700/60 p-4 rounded-xl text-center">
+              <p className="text-xs text-slate-500 dark:text-slate-400">ਆਕਸੀਜਨ ਸੁਵਿਧਾ</p>
+              <p className="text-2xl font-bold text-slate-900 dark:text-white">{user?.hospital_profile?.has_oxygen ? 'ਹਾਂ' : 'ਨਹੀਂ'}</p>
             </div>
-            <div className="bg-slate-50 p-4 rounded-xl text-center">
-              <p className="text-xs text-slate-500">ਐਮਰਜੈਂਸੀ ਓ.ਪੀ.ਡੀ</p>
-              <p className="text-2xl font-bold text-slate-900">{user?.hospital_profile?.has_emergency ? '24x7' : 'ਨਹੀਂ'}</p>
+            <div className="bg-slate-50 dark:bg-slate-700/60 p-4 rounded-xl text-center">
+              <p className="text-xs text-slate-500 dark:text-slate-400">ਐਮਰਜੈਂਸੀ ਓ.ਪੀ.ਡੀ</p>
+              <p className="text-2xl font-bold text-slate-900 dark:text-white">{user?.hospital_profile?.has_emergency ? '24x7' : 'ਨਹੀਂ'}</p>
             </div>
           </div>
         </div>

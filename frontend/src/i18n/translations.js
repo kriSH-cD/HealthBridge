@@ -103,6 +103,10 @@ export const translations = {
     driver_contact: "ਡਰਾਈਵਰ ਸੰਪਰਕ",
     paramedic: "ਪੈਰਾਮੈਡਿਕ",
     vehicle_no: "ਗੱਡੀ ਨੰਬਰ",
+    dark_mode: "ਡਾਰਕ ਮੋਡ",
+    light_mode: "ਲਾਈਟ ਮੋਡ",
+    toggle_theme: "ਥੀਮ ਬਦਲੋ",
+    scroll_to_top: "ਸਿਖਰ 'ਤੇ ਜਾਓ",
   },
   hi: {
     app_title: "सेहत सेतु",
@@ -208,6 +212,10 @@ export const translations = {
     driver_contact: "ड्राइवर संपर्क",
     paramedic: "पैरामेडिक",
     vehicle_no: "गाड़ी नंबर",
+    dark_mode: "डार्क मोड",
+    light_mode: "लाइट मोड",
+    toggle_theme: "थीम बदलें",
+    scroll_to_top: "शीर्ष पर जाएं",
   },
   en: {
     app_title: "SehatSetu",
@@ -313,6 +321,10 @@ export const translations = {
     driver_contact: "Driver Contact",
     paramedic: "Paramedic",
     vehicle_no: "Vehicle No",
+    dark_mode: "Dark Mode",
+    light_mode: "Light Mode",
+    toggle_theme: "Toggle Theme",
+    scroll_to_top: "Scroll to top",
   }
 };
 

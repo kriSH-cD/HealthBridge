@@ -78,12 +78,12 @@ export const PrescriptionsList = ({
   };
 
   return (
-    <section className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
+    <section className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm space-y-4 transition-colors">
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center space-x-2">
-          <FileText className="w-5 h-5 text-emerald-600" />
-          <h3 className="text-sm font-bold text-slate-900">
+          <FileText className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+          <h3 className="text-sm font-bold text-slate-900 dark:text-white">
             {t('prescriptions_title')} ({items.length})
           </h3>
         </div>
@@ -103,7 +103,7 @@ export const PrescriptionsList = ({
 
       {/* Success Notification */}
       {dispenseSuccess && (
-        <div className="bg-emerald-50 border border-emerald-300 text-emerald-800 px-4 py-2.5 rounded-xl text-xs flex items-center space-x-2">
+        <div className="bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 px-4 py-2.5 rounded-xl text-xs flex items-center space-x-2">
           <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
           <span>{dispenseSuccess}</span>
         </div>
@@ -111,7 +111,7 @@ export const PrescriptionsList = ({
 
       {/* Error Alert */}
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-2.5 rounded-xl text-xs flex items-center space-x-2">
+        <div className="bg-red-50 dark:bg-red-950/60 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-2.5 rounded-xl text-xs flex items-center space-x-2">
           <AlertCircle className="w-4 h-4 shrink-0" />
           <span>{error}</span>
         </div>
@@ -128,24 +128,24 @@ export const PrescriptionsList = ({
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="ਟੋਕਨ ਨੰਬਰ (RX-NBH...) ਜਾਂ ਮਰੀਜ਼ ਦਾ ਫ਼ੋਨ / ਨਾਮ ਲੱਭੋ..."
-                className="w-full bg-slate-50 border border-slate-300 rounded-xl pl-9 pr-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full bg-slate-50 dark:bg-slate-700/60 border border-slate-300 dark:border-slate-600 rounded-xl pl-9 pr-3 py-1.5 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
               />
             </div>
             <button
               type="submit"
-              className="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs font-semibold transition"
+              className="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-900 dark:bg-slate-700 dark:hover:bg-slate-600 text-white rounded-xl text-xs font-semibold transition"
             >
               ਖੋਜ (Search)
             </button>
           </form>
 
           {/* Filter Pills */}
-          <div className="flex items-center space-x-1 bg-slate-100 p-1 rounded-xl self-start sm:self-auto">
+          <div className="flex items-center space-x-1 bg-slate-100 dark:bg-slate-700 p-1 rounded-xl self-start sm:self-auto">
             <button
               type="button"
               onClick={() => setStatusFilter('all')}
               className={`px-2.5 py-1 text-xs rounded-lg font-semibold transition ${
-                statusFilter === 'all' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-600 hover:text-slate-900'
+                statusFilter === 'all' ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               ਸਭ (All)
@@ -154,7 +154,7 @@ export const PrescriptionsList = ({
               type="button"
               onClick={() => setStatusFilter('pending')}
               className={`px-2.5 py-1 text-xs rounded-lg font-semibold transition ${
-                statusFilter === 'pending' ? 'bg-white text-amber-900 shadow-sm' : 'text-slate-600 hover:text-slate-900'
+                statusFilter === 'pending' ? 'bg-white dark:bg-slate-800 text-amber-900 dark:text-amber-300 shadow-sm' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               ਬਕਾਇਆ (Pending)
@@ -163,7 +163,7 @@ export const PrescriptionsList = ({
               type="button"
               onClick={() => setStatusFilter('dispensed')}
               className={`px-2.5 py-1 text-xs rounded-lg font-semibold transition ${
-                statusFilter === 'dispensed' ? 'bg-white text-emerald-900 shadow-sm' : 'text-slate-600 hover:text-slate-900'
+                statusFilter === 'dispensed' ? 'bg-white dark:bg-slate-800 text-emerald-900 dark:text-emerald-300 shadow-sm' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               ਦਿੱਤੀਆਂ ਗਈਆਂ (Dispensed)
@@ -174,11 +174,11 @@ export const PrescriptionsList = ({
 
       {/* Prescriptions List */}
       {loading ? (
-        <p className="text-xs text-slate-400 py-6 text-center">ਪਰਚੀਆਂ ਲੋਡ ਹੋ ਰਹੀਆਂ ਹਨ (Loading prescriptions)…</p>
+        <p className="text-xs text-slate-400 dark:text-slate-500 py-6 text-center">ਪਰਚੀਆਂ ਲੋਡ ਹੋ ਰਹੀਆਂ ਹਨ (Loading prescriptions)…</p>
       ) : items.length === 0 ? (
-        <div className="text-center py-8 bg-slate-50 border border-dashed border-slate-200 rounded-xl space-y-2">
+        <div className="text-center py-8 bg-slate-50 dark:bg-slate-700/30 border border-dashed border-slate-200 dark:border-slate-700 rounded-xl space-y-2">
           <FileText className="w-8 h-8 text-slate-400 mx-auto" />
-          <p className="text-xs text-slate-600 font-medium">ਕੋਈ ਪਰਚੀ ਉਪਲਬਧ ਨਹੀਂ (No prescriptions found)</p>
+          <p className="text-xs text-slate-600 dark:text-slate-400 font-medium">ਕੋਈ ਪਰਚੀ ਉਪਲਬਧ ਨਹੀਂ (No prescriptions found)</p>
           {role === 'DOCTOR' && (
             <button
               type="button"
@@ -194,19 +194,19 @@ export const PrescriptionsList = ({
           {items.map((rx) => (
             <div
               key={rx.id}
-              className="border border-slate-200 hover:border-emerald-300 rounded-xl p-4 bg-white transition hover:shadow-sm space-y-3"
+              className="border border-slate-200 dark:border-slate-700 hover:border-emerald-300 dark:hover:border-emerald-600 rounded-xl p-4 bg-white dark:bg-slate-800/90 transition hover:shadow-sm space-y-3"
             >
               {/* Row 1: Header & Status */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <div className="flex items-center space-x-2">
-                  <span className="font-mono font-bold text-xs bg-slate-100 text-slate-800 px-2 py-0.5 rounded border border-slate-200">
+                  <span className="font-mono font-bold text-xs bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-200 px-2 py-0.5 rounded border border-slate-200 dark:border-slate-600">
                     {rx.prescription_number}
                   </span>
-                  <span className="text-xs text-slate-500">
+                  <span className="text-xs text-slate-500 dark:text-slate-400">
                     {rx.issue_date}
                   </span>
                   {rx.is_demo && (
-                    <span className="text-[10px] bg-amber-50 text-amber-700 font-bold px-1.5 py-0.2 rounded">
+                    <span className="text-[10px] bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 font-bold px-1.5 py-0.2 rounded border border-amber-200 dark:border-amber-800">
                       Demo
                     </span>
                   )}
@@ -214,12 +214,12 @@ export const PrescriptionsList = ({
 
                 <div>
                   {rx.is_dispensed ? (
-                    <span className="inline-flex items-center space-x-1 text-emerald-700 font-bold bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full text-xs">
+                    <span className="inline-flex items-center space-x-1 text-emerald-700 dark:text-emerald-300 font-bold bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 px-2.5 py-0.5 rounded-full text-xs">
                       <CheckCircle className="w-3.5 h-3.5" />
                       <span>{t('dispensed')}</span>
                     </span>
                   ) : (
-                    <span className="inline-flex items-center space-x-1 text-amber-700 font-bold bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-full text-xs">
+                    <span className="inline-flex items-center space-x-1 text-amber-700 dark:text-amber-300 font-bold bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800 px-2.5 py-0.5 rounded-full text-xs">
                       <Clock className="w-3.5 h-3.5" />
                       <span>{t('pending_dispense')}</span>
                     </span>
@@ -230,13 +230,13 @@ export const PrescriptionsList = ({
               {/* Row 2: Doctor/Patient & Diagnosis */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                 <div>
-                  <span className="text-slate-400 block text-[10px] uppercase font-bold">
+                  <span className="text-slate-400 dark:text-slate-500 block text-[10px] uppercase font-bold">
                     {role === 'PATIENT' ? t('prescribed_by') : 'ਮਰੀਜ਼ (Patient)'}
                   </span>
-                  <p className="font-bold text-slate-800">
+                  <p className="font-bold text-slate-800 dark:text-slate-200">
                     {role === 'PATIENT' ? rx.doctor_name : rx.patient_name}
                   </p>
-                  <p className="text-slate-500 text-[11px]">
+                  <p className="text-slate-500 dark:text-slate-400 text-[11px]">
                     {role === 'PATIENT'
                       ? `${rx.doctor_hospital || 'Nabha Health'} • ${rx.doctor_specialization || 'General'}`
                       : `ਪਿੰਡ: ${rx.patient_village || 'Nabha'} • +91 ${rx.patient_phone || '—'}`}
@@ -244,38 +244,38 @@ export const PrescriptionsList = ({
                 </div>
 
                 <div>
-                  <span className="text-slate-400 block text-[10px] uppercase font-bold">ਜਾਂਚ (Diagnosis)</span>
-                  <p className="font-semibold text-slate-800">{rx.diagnosis}</p>
+                  <span className="text-slate-400 dark:text-slate-500 block text-[10px] uppercase font-bold">ਜਾਂਚ (Diagnosis)</span>
+                  <p className="font-semibold text-slate-800 dark:text-slate-200">{rx.diagnosis}</p>
                   {rx.instructions && (
-                    <p className="text-[11px] text-slate-500 italic mt-0.5 truncate">{rx.instructions}</p>
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400 italic mt-0.5 truncate">{rx.instructions}</p>
                   )}
                 </div>
               </div>
 
               {/* Row 3: Medicines pills preview */}
-              <div className="pt-2 border-t border-slate-100 flex items-center gap-1.5 flex-wrap">
-                <span className="text-[11px] text-slate-400 font-bold mr-1 flex items-center space-x-1">
-                  <Pill className="w-3 h-3 text-emerald-600" />
+              <div className="pt-2 border-t border-slate-100 dark:border-slate-700 flex items-center gap-1.5 flex-wrap">
+                <span className="text-[11px] text-slate-400 dark:text-slate-500 font-bold mr-1 flex items-center space-x-1">
+                  <Pill className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
                   <span>ਦਵਾਈਆਂ ({rx.items?.length || 0}):</span>
                 </span>
                 {(rx.items || []).map((it, i) => (
                   <span
                     key={it.id || i}
-                    className="inline-flex items-center text-[11px] bg-slate-100 text-slate-700 font-medium px-2 py-0.5 rounded-md"
+                    className="inline-flex items-center text-[11px] bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-medium px-2 py-0.5 rounded-md"
                   >
-                    {it.medicine_name} · <strong className="ml-1 font-mono text-slate-900">{it.quantity_prescribed}</strong>
+                    {it.medicine_name} · <strong className="ml-1 font-mono text-slate-900 dark:text-white">{it.quantity_prescribed}</strong>
                   </span>
                 ))}
               </div>
 
               {/* Row 4: Action Buttons */}
-              <div className="pt-2 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2">
+              <div className="pt-2 border-t border-slate-100 dark:border-slate-700 flex flex-wrap items-center justify-between gap-2">
                 <button
                   type="button"
                   onClick={() => setSelectedPrescription(rx)}
-                  className="inline-flex items-center space-x-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-lg text-xs font-semibold transition"
+                  className="inline-flex items-center space-x-1.5 px-3 py-1.5 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 rounded-lg text-xs font-semibold transition"
                 >
-                  <Eye className="w-3.5 h-3.5 text-slate-600" />
+                  <Eye className="w-3.5 h-3.5 text-slate-600 dark:text-slate-300" />
                   <span>{t('view_print')}</span>
                 </button>
 
